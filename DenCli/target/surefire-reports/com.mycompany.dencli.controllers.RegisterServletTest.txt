@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.mycompany.dencli.controllers.RegisterServletTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.011 sec <<< FAILURE!
+com.mycompany.dencli.controllers.RegisterServletTest.testRegisterValidInput()  Time elapsed: 0.008 sec  <<< FAILURE!
+java.lang.NullPointerException: Cannot invoke "jakarta.servlet.http.HttpServletRequest.getContentType()" because "this.request" is null
+	at com.mycompany.dencli.controllers.RegisterServletTest.testRegisterValidInput(RegisterServletTest.java:53)
+
+com.mycompany.dencli.controllers.RegisterServletTest.testRegisterMissingFields()  Time elapsed: 0.002 sec  <<< FAILURE!
+java.lang.NullPointerException: Cannot invoke "jakarta.servlet.http.HttpServletRequest.getContentType()" because "this.request" is null
+	at com.mycompany.dencli.controllers.RegisterServletTest.testRegisterMissingFields(RegisterServletTest.java:76)
+

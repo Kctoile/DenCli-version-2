@@ -1,0 +1,150 @@
+{
+    "info": {
+        "name": "DenCli API Tests",
+        "_postman_id": "dencli-api-tests-v1",
+        "description": "Bộ kiểm thử API tự động cho các endpoint chính của hệ thống DenCli.\nChạy bằng lệnh: npx newman run postman/DenCli_API_Tests.postman_collection.json",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8888/DenCli"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Register - Success",
+            "request": {
+                "method": "POST",
+                "header": [
+                    { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/register" },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"full_name\": \"Postman Test User\",\n  \"email\": \"postman_{{$timestamp}}@test.com\",\n  \"phone\": \"09051{{$randomInt}}\",\n  \"password\": \"TestPass123\",\n  \"gender\": \"Nam\",\n  \"dob\": \"1995-06-15\",\n  \"address\": \"Đà Nẵng\"\n}"
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Kiem tra HTTP Status Code tra ve 201 Created",
+                            "pm.test('Register returns 201', function() {",
+                            "    pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "// Kiem tra body JSON chua success = true",
+                            "pm.test('Register success is true', function() {",
+                            "    var json = pm.response.json();",
+                            "    pm.expect(json.success).to.eql(true);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Register - Duplicate Email/Phone",
+            "request": {
+                "method": "POST",
+                "header": [
+                    { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/register" },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"full_name\": \"Duplicate User\",\n  \"email\": \"bena@gmail.com\",\n  \"phone\": \"0905111222\",\n  \"password\": \"TestPass123\",\n  \"gender\": \"Nam\",\n  \"dob\": \"1995-06-15\",\n  \"address\": \"Đà Nẵng\"\n}"
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Kiem tra HTTP Status Code tra ve 400 Bad Request",
+                            "pm.test('Duplicate register returns 400', function() {",
+                            "    pm.response.to.have.status(400);",
+                            "});",
+                            "",
+                            "// Kiem tra body JSON chua ma loi ERR_DUPLICATE_USER",
+                            "pm.test('Error code is ERR_DUPLICATE_USER', function() {",
+                            "    var json = pm.response.json();",
+                            "    pm.expect(json.success).to.eql(false);",
+                            "    pm.expect(json.error_code).to.eql('ERR_DUPLICATE_USER');",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Login - Wrong Password",
+            "request": {
+                "method": "POST",
+                "header": [
+                    { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/login" },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email_or_phone\": \"bena@gmail.com\",\n  \"password\": \"WrongPassword\"\n}"
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Kiem tra HTTP Status Code tra ve 401 Unauthorized",
+                            "pm.test('Wrong password returns 401', function() {",
+                            "    pm.response.to.have.status(401);",
+                            "});",
+                            "",
+                            "// Kiem tra body JSON chua success = false",
+                            "pm.test('Login failed', function() {",
+                            "    var json = pm.response.json();",
+                            "    pm.expect(json.success).to.eql(false);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Book Appointment - No Session (Unauthorized)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/api/appointments/book" },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"doctor_id\": 2,\n  \"appointment_date\": \"2026-08-25\",\n  \"appointment_time\": \"09:00:00\",\n  \"service_ids\": [1],\n  \"notes\": \"Test\"\n}"
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Kiem tra HTTP Status Code tra ve 401 vi chua dang nhap",
+                            "pm.test('Booking without session returns 401', function() {",
+                            "    pm.response.to.have.status(401);",
+                            "});",
+                            "",
+                            "// Kiem tra body JSON chua ma loi ERR_NOT_LOGGED_IN",
+                            "pm.test('Error code is ERR_NOT_LOGGED_IN', function() {",
+                            "    var json = pm.response.json();",
+                            "    pm.expect(json.success).to.eql(false);",
+                            "    pm.expect(json.error_code).to.eql('ERR_NOT_LOGGED_IN');",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

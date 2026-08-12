@@ -1,0 +1,22 @@
+<!-- 
+ * Purpose: Gateway home page redirecting visitors to index.jsp.
+ * Created Date: 12/08/2026
+ * Last Updated Date: 12/08/2026
+-->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=index.jsp"> <!-- Khởi tạo thẻ meta chuyển hướng ngay lập tức -->
+    <title>Đang chuyển hướng | DenCli</title>
+</head>
+<body>
+    <script>
+        // Fallback chuyển hướng bằng Javascript nếu trình duyệt không hỗ trợ thẻ meta-refresh
+        window.location.href = "index.jsp"; // Gọi hàm gán địa chỉ URL mới
+    </script>
+    <p style="font-family: sans-serif; text-align: center; margin-top: 50px; color: #64748b;">
+        Đang chuyển hướng tới trang chủ... <a href="index.jsp" style="color: #2563eb; font-weight: 600;">Click vào đây nếu đợi lâu</a>.
+    </p>
+</body>
+</html>
