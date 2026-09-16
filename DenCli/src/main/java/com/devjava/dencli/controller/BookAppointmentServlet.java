@@ -25,13 +25,15 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "BookAppointmentServletV2", urlPatterns = {"/api/appointments/book"})
 public class BookAppointmentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     /**
      * Tiếp nhận yêu cầu POST để đặt lịch hẹn khám bệnh trực tuyến.
@@ -83,7 +85,7 @@ public class BookAppointmentServlet extends HttpServlet {
         if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
             return parseJsonRequest(request, response);
         }
-        return parseFormRequest(request);
+        return parseFormRequest(request, response);
     }
 
     private BookingRequestDTO parseJsonRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -95,7 +97,7 @@ public class BookAppointmentServlet extends HttpServlet {
             }
         }
         try {
-            return gson.fromJson(sb.toString(), BookingRequestDTO.class);
+            return GSON.fromJson(sb.toString(), BookingRequestDTO.class);
         } catch (Exception e) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                     "Dữ liệu JSON không đúng định dạng.", "ERR_INVALID_JSON");
@@ -103,14 +105,16 @@ public class BookAppointmentServlet extends HttpServlet {
         }
     }
 
-    private BookingRequestDTO parseFormRequest(HttpServletRequest request) {
+    private BookingRequestDTO parseFormRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BookingRequestDTO dto = new BookingRequestDTO();
         String docIdStr = request.getParameter("doctor_id");
         if (docIdStr != null && !docIdStr.trim().isEmpty()) {
             try {
                 dto.setDoctorId(Integer.parseInt(docIdStr.trim()));
-            } catch (NumberFormatException ignored) {
-                // DoctorId không hợp lệ sẽ được kiểm tra ở validateBookingData
+            } catch (NumberFormatException e) {
+                sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Mã bác sĩ không hợp lệ.", "ERR_INVALID_FORMAT");
+                return null;
             }
         }
         dto.setAppointmentDate(request.getParameter("appointment_date"));
@@ -123,8 +127,10 @@ public class BookAppointmentServlet extends HttpServlet {
             for (String s : svcIds) {
                 try {
                     sList.add(Integer.parseInt(s.trim()));
-                } catch (NumberFormatException ignored) {
-                    // Bỏ qua ID dịch vụ không hợp lệ
+                } catch (NumberFormatException e) {
+                    sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                            "Mã dịch vụ không hợp lệ.", "ERR_INVALID_FORMAT");
+                    return null;
                 }
             }
             dto.setServiceIds(sList);
@@ -170,7 +176,10 @@ public class BookAppointmentServlet extends HttpServlet {
 
     private void sendError(HttpServletResponse response, int status, String message, String errorCode) throws IOException {
         response.setStatus(status);
-        PrintWriter out = response.getWriter();
-        out.print("{\"success\":false,\"message\":\"" + message + "\",\"error_code\":\"" + errorCode + "\"}");
+        Map<String, Object> error = new HashMap<>();
+        error.put("success", false);
+        error.put("message", message);
+        error.put("error_code", errorCode);
+        response.getWriter().print(GSON.toJson(error));
     }
 }

@@ -61,6 +61,9 @@ public class AppointmentDAOImpl implements AppointmentDAO {
      */
     @Override // Ghi đè phương thức insertAppointmentWithServices từ interface AppointmentDAO
     public int insertAppointmentWithServices(Appointment appointment, List<Integer> serviceIds) {
+        String sqlDuplicate = "SELECT 1 FROM appointments WITH (UPDLOCK, HOLDLOCK) "
+                            + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? "
+                            + "AND status <> 'Cancelled'";
         String sqlApp = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, status, notes, room) "
                       + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         String sqlService = "INSERT INTO appointment_services (appointment_id, service_id) VALUES (?, ?)";
@@ -68,6 +71,18 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         // Sử dụng try-with-resources để tự động đóng kết nối sau khi hoàn tất Transaction
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false); // Vô hiệu hóa chế độ tự động commit để bắt đầu Transaction thủ công
+
+            try (PreparedStatement psDuplicate = conn.prepareStatement(sqlDuplicate)) {
+                psDuplicate.setInt(1, appointment.getDoctorId());
+                psDuplicate.setDate(2, appointment.getAppointmentDate());
+                psDuplicate.setTime(3, appointment.getAppointmentTime());
+                try (ResultSet rs = psDuplicate.executeQuery()) {
+                    if (rs.next()) {
+                        conn.rollback();
+                        return -1;
+                    }
+                }
+            }
 
             int generatedAppId = -1;
 
