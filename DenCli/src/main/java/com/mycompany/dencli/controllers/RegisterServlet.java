@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 // @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Phương thức xử lý yêu cầu POST gửi dữ liệu đăng ký người dùng mới.
      */

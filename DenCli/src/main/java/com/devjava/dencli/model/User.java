@@ -4,10 +4,13 @@
  */
 package com.devjava.dencli.model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int userId;
     private String fullName;

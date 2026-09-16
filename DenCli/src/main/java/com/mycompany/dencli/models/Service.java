@@ -5,7 +5,11 @@
  */
 package com.mycompany.dencli.models;
 
-public class Service {
+import java.io.Serializable;
+
+public class Service implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int serviceId;
     private String serviceName;
     private String description;

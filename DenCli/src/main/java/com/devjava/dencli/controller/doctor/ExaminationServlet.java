@@ -33,7 +33,8 @@ import java.util.Map;
 @WebServlet(name = "DoctorExaminationServlet", urlPatterns = {"/doctor/examination"})
 public class ExaminationServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /doctor/examination: Lấy danh sách bệnh nhân được chỉ định cho Bác sĩ hiện tại.
@@ -70,8 +71,8 @@ public class ExaminationServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String contentType = request.getContentType();
-        boolean isJson = (contentType != null && contentType.contains("application/json"))
-                || "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
+                || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
         int appointmentId = 0;
         String diagnosis = null;
@@ -114,7 +115,9 @@ public class ExaminationServlet extends HttpServlet {
             if (appStr != null && !appStr.trim().isEmpty()) {
                 try {
                     appointmentId = Integer.parseInt(appStr.trim());
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                    // AppointmentId không hợp lệ sẽ được kiểm tra ở validate
+                }
             }
             diagnosis = request.getParameter("diagnosis");
             String[] svcIds = request.getParameterValues("service_ids");
@@ -124,7 +127,9 @@ public class ExaminationServlet extends HttpServlet {
                         PrescribedService ps = new PrescribedService();
                         ps.setServiceId(Integer.parseInt(sid.trim()));
                         additionalServices.add(ps);
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                        // Bỏ qua ID dịch vụ không hợp lệ
+                    }
                 }
             }
         }
@@ -142,7 +147,7 @@ public class ExaminationServlet extends HttpServlet {
         if (resultId > 0) {
             if (isJson) {
                 response.setStatus(HttpServletResponse.SC_CREATED);
-                response.setContentType("application/json;charset=UTF-8");
+                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("success", true);
                 resData.put("message", "Ghi nhận kết quả khám thành công!");
@@ -161,7 +166,7 @@ public class ExaminationServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

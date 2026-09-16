@@ -4,12 +4,15 @@
  */
 package com.devjava.dencli.model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Appointment {
+public class Appointment implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int appointmentId;
     private Integer patientId;

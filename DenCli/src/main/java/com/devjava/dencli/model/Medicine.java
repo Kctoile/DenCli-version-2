@@ -4,9 +4,12 @@
  */
 package com.devjava.dencli.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Medicine {
+public class Medicine implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int medicineId;
     private String medicineName;

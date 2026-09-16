@@ -15,7 +15,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import com.devjava.dencli.util.Constants;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,8 @@ import java.util.Map;
 @WebServlet(name = "AdminRevenueReportServlet", urlPatterns = {"/admin/api/revenue"})
 public class RevenueReportServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /admin/api/revenue: Trả về danh sách doanh thu 12 tháng theo định dạng JSON.
@@ -32,15 +35,17 @@ public class RevenueReportServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
 
         String yearStr = request.getParameter("year");
-        int year = LocalDate.now().getYear();
+        int year = LocalDate.now(ZoneId.of(Constants.DEFAULT_TIMEZONE)).getYear();
 
         if (yearStr != null && !yearStr.trim().isEmpty()) {
             try {
                 year = Integer.parseInt(yearStr.trim());
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+                // Sử dụng năm hiện tại làm mặc định nếu tham số không hợp lệ
+            }
         }
 
         AppointmentService appointmentService = ServiceFactory.getAppointmentService();

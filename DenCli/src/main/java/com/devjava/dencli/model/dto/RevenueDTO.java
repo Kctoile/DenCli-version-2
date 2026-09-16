@@ -4,9 +4,12 @@
  */
 package com.devjava.dencli.model.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class RevenueDTO {
+public class RevenueDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int year;
     private int month;

@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 // @WebServlet(name = "BookAppointmentServlet", urlPatterns = {"/api/appointments/book"})
 public class BookAppointmentServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Phương thức tiếp nhận yêu cầu POST để đặt lịch hẹn khám trực tuyến.
      */

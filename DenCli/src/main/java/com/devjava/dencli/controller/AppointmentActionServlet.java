@@ -22,21 +22,21 @@ import java.io.PrintWriter;
 @WebServlet(name = "AppointmentActionServlet", urlPatterns = {"/api/appointments/action"})
 public class AppointmentActionServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
 
         // 1. Kiểm tra xác thực phiên đăng nhập
         HttpSession session = request.getSession(false);
         User currentUser = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
 
         if (currentUser == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\":false,\"message\":\"Yêu cầu đăng nhập trước khi thực hiện.\"}");
+            sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, false, "Yêu cầu đăng nhập trước khi thực hiện.");
             return;
         }
 
@@ -44,8 +44,7 @@ public class AppointmentActionServlet extends HttpServlet {
         String appIdStr = request.getParameter("appointment_id");
 
         if (action == null || appIdStr == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\":false,\"message\":\"Thiếu tham số hành động hoặc mã lịch hẹn.\"}");
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thiếu tham số hành động hoặc mã lịch hẹn.");
             return;
         }
 
@@ -53,59 +52,77 @@ public class AppointmentActionServlet extends HttpServlet {
         try {
             appointmentId = Integer.parseInt(appIdStr.trim());
         } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\":false,\"message\":\"Mã lịch hẹn không hợp lệ.\"}");
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Mã lịch hẹn không hợp lệ.");
             return;
         }
 
-        AppointmentService service = ServiceFactory.getAppointmentService();
-        boolean success = false;
-        String successMsg = "Thao tác thành công!";
+        executeAction(request, response, currentUser, action.toLowerCase(), appointmentId);
+    }
 
-        switch (action.toLowerCase()) {
+    private void executeAction(HttpServletRequest request, HttpServletResponse response,
+                               User currentUser, String action, int appointmentId) throws IOException {
+        switch (action) {
             case "checkin":
-                // Chỉ Lễ tân (STAFF) hoặc ADMIN mới được check-in
-                if (currentUser.getRoleId() != Constants.ROLE_STAFF_ID && currentUser.getRoleId() != Constants.ROLE_ADMIN_ID) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    out.print("{\"success\":false,\"message\":\"Chỉ lễ tân mới được thực hiện check-in.\"}");
-                    return;
-                }
-                String room = request.getParameter("room");
-                if (room == null || room.trim().isEmpty()) {
-                    room = "Phòng 01";
-                }
-                success = service.checkInAppointment(appointmentId, room.trim());
-                successMsg = "Tiếp đón và phân phòng khám thành công!";
+                handleCheckIn(request, response, currentUser, appointmentId);
                 break;
-
             case "complete":
-                // Bác sĩ (DOCTOR) hoặc ADMIN mới được hoàn thành khám
-                if (currentUser.getRoleId() != Constants.ROLE_DOCTOR_ID && currentUser.getRoleId() != Constants.ROLE_ADMIN_ID) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    out.print("{\"success\":false,\"message\":\"Chỉ bác sĩ phụ trách mới được hoàn thành ca khám.\"}");
-                    return;
-                }
-                success = service.completeAppointment(appointmentId);
-                successMsg = "Đã cập nhật hoàn thành ca khám!";
+                handleComplete(response, currentUser, appointmentId);
                 break;
-
             case "cancel":
-                success = service.cancelAppointment(appointmentId, currentUser.getUserId(), currentUser.getRoleId());
-                successMsg = "Đã hủy lịch hẹn thành công!";
+                handleCancel(response, currentUser, appointmentId);
                 break;
-
             default:
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\":false,\"message\":\"Hành động không được hỗ trợ.\"}");
-                return;
+                sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Hành động không được hỗ trợ.");
+                break;
         }
+    }
 
-        if (success) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            out.print("{\"success\":true,\"message\":\"" + successMsg + "\"}");
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\":false,\"message\":\"Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.\"}");
+    private void handleCheckIn(HttpServletRequest request, HttpServletResponse response,
+                               User currentUser, int appointmentId) throws IOException {
+        if (currentUser.getRoleId() != Constants.ROLE_STAFF_ID && currentUser.getRoleId() != Constants.ROLE_ADMIN_ID) {
+            sendJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, false, "Chỉ lễ tân mới được thực hiện check-in.");
+            return;
         }
+        String room = request.getParameter("room");
+        if (room == null || room.trim().isEmpty()) {
+            room = "Phòng 01";
+        }
+        AppointmentService service = ServiceFactory.getAppointmentService();
+        boolean success = service.checkInAppointment(appointmentId, room.trim());
+        if (success) {
+            sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Tiếp đón và phân phòng khám thành công!");
+        } else {
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+        }
+    }
+
+    private void handleComplete(HttpServletResponse response, User currentUser, int appointmentId) throws IOException {
+        if (currentUser.getRoleId() != Constants.ROLE_DOCTOR_ID && currentUser.getRoleId() != Constants.ROLE_ADMIN_ID) {
+            sendJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, false, "Chỉ bác sĩ phụ trách mới được hoàn thành ca khám.");
+            return;
+        }
+        AppointmentService service = ServiceFactory.getAppointmentService();
+        boolean success = service.completeAppointment(appointmentId);
+        if (success) {
+            sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Đã cập nhật hoàn thành ca khám!");
+        } else {
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+        }
+    }
+
+    private void handleCancel(HttpServletResponse response, User currentUser, int appointmentId) throws IOException {
+        AppointmentService service = ServiceFactory.getAppointmentService();
+        boolean success = service.cancelAppointment(appointmentId, currentUser.getUserId(), currentUser.getRoleId());
+        if (success) {
+            sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Đã hủy lịch hẹn thành công!");
+        } else {
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+        }
+    }
+
+    private void sendJsonResponse(HttpServletResponse response, int status, boolean success, String message) throws IOException {
+        response.setStatus(status);
+        PrintWriter out = response.getWriter();
+        out.print("{\"success\":" + success + ",\"message\":\"" + message + "\"}");
     }
 }

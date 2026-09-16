@@ -30,8 +30,9 @@ import java.util.Map;
 @WebServlet(name = "CustomerBookingServlet", urlPatterns = {"/customer/book"})
 public class AppointmentBookingServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
-    private final ServiceDAO serviceDAO = new ServiceDAOImpl();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
+    private static final ServiceDAO serviceDAO = new ServiceDAOImpl();
 
     /**
      * GET /customer/book: Lấy danh sách bác sĩ và danh mục dịch vụ, chuyển tiếp sang trang đặt lịch.
@@ -58,28 +59,51 @@ public class AppointmentBookingServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String contentType = request.getContentType();
-        boolean isJson = (contentType != null && contentType.contains("application/json"))
-                || "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
+                || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
         HttpSession session = request.getSession(false);
         User currentUser = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
 
         if (currentUser == null) {
-            if (isJson) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json;charset=UTF-8");
-                Map<String, Object> err = new HashMap<>();
-                err.put("success", false);
-                err.put("message", "Vui lòng đăng nhập để thực hiện đặt lịch.");
-                response.getWriter().print(gson.toJson(err));
-            } else {
-                response.sendRedirect(request.getContextPath() + "/login.jsp");
-            }
+            handleUnauthorized(request, response, isJson);
             return;
         }
 
-        BookingRequestDTO bookingDto = new BookingRequestDTO();
+        BookingRequestDTO bookingDto = parseBookingData(request, isJson);
 
+        if (bookingDto.getDoctorId() == null || bookingDto.getAppointmentDate() == null
+                || bookingDto.getAppointmentTime() == null) {
+            handleBookingError(request, response, isJson, "Vui lòng chọn đầy đủ bác sĩ, ngày khám và khung giờ.");
+            return;
+        }
+
+        AppointmentService appointmentService = ServiceFactory.getAppointmentService();
+        int appointmentId = appointmentService.bookAppointment(bookingDto, currentUser.getUserId());
+
+        if (appointmentId > 0) {
+            handleBookingSuccess(request, response, appointmentId, isJson);
+        } else {
+            handleBookingError(request, response, isJson,
+                    "Khung giờ này Bác sĩ đã có lịch hẹn trùng lịch hoặc thông tin không hợp lệ. Vui lòng chọn khung giờ khác!");
+        }
+    }
+
+    private void handleUnauthorized(HttpServletRequest request, HttpServletResponse response, boolean isJson)
+            throws IOException {
+        if (isJson) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "Vui lòng đăng nhập để thực hiện đặt lịch.");
+            response.getWriter().print(gson.toJson(err));
+        } else {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+        }
+    }
+
+    private BookingRequestDTO parseBookingData(HttpServletRequest request, boolean isJson) throws IOException {
         if (isJson) {
             StringBuilder sb = new StringBuilder();
             try (BufferedReader reader = request.getReader()) {
@@ -88,63 +112,52 @@ public class AppointmentBookingServlet extends HttpServlet {
                     sb.append(line);
                 }
             }
-            bookingDto = gson.fromJson(sb.toString(), BookingRequestDTO.class);
-        } else {
-            String doctorIdStr = request.getParameter("doctor_id");
-            String dateStr = request.getParameter("appointment_date");
-            String timeStr = request.getParameter("appointment_time");
-            String notes = request.getParameter("notes");
-            String[] serviceIdStrs = request.getParameterValues("service_ids");
+            BookingRequestDTO dto = gson.fromJson(sb.toString(), BookingRequestDTO.class);
+            return dto != null ? dto : new BookingRequestDTO();
+        }
 
-            if (doctorIdStr != null && !doctorIdStr.trim().isEmpty()) {
-                try {
-                    bookingDto.setDoctorId(Integer.parseInt(doctorIdStr.trim()));
-                } catch (NumberFormatException ignored) {}
+        BookingRequestDTO dto = new BookingRequestDTO();
+        String doctorIdStr = request.getParameter("doctor_id");
+        if (doctorIdStr != null && !doctorIdStr.trim().isEmpty()) {
+            try {
+                dto.setDoctorId(Integer.parseInt(doctorIdStr.trim()));
+            } catch (NumberFormatException ignored) {
+                // Giữ null để kiểm tra ở bước validate
             }
-            bookingDto.setAppointmentDate(dateStr);
-            bookingDto.setAppointmentTime(timeStr);
-            bookingDto.setNotes(notes);
+        }
+        dto.setAppointmentDate(request.getParameter("appointment_date"));
+        dto.setAppointmentTime(request.getParameter("appointment_time"));
+        dto.setNotes(request.getParameter("notes"));
 
+        String[] serviceIdStrs = request.getParameterValues("service_ids");
+        if (serviceIdStrs != null) {
             List<Integer> svcIds = new ArrayList<>();
-            if (serviceIdStrs != null) {
-                for (String s : serviceIdStrs) {
-                    try {
-                        svcIds.add(Integer.parseInt(s.trim()));
-                    } catch (NumberFormatException ignored) {}
+            for (String s : serviceIdStrs) {
+                try {
+                    svcIds.add(Integer.parseInt(s.trim()));
+                } catch (NumberFormatException ignored) {
+                    // Bỏ qua ID không hợp lệ
                 }
             }
-            bookingDto.setServiceIds(svcIds);
+            dto.setServiceIds(svcIds);
         }
+        return dto;
+    }
 
-        // Validate cơ bản
-        if (bookingDto == null || bookingDto.getDoctorId() == null || bookingDto.getAppointmentDate() == null
-                || bookingDto.getAppointmentTime() == null) {
-            handleBookingError(request, response, isJson, "Vui lòng chọn đầy đủ bác sĩ, ngày khám và khung giờ.");
-            return;
-        }
-
-        // Gọi Tầng Service (No Fat Servlet)
-        AppointmentService appointmentService = ServiceFactory.getAppointmentService();
-        int appointmentId = appointmentService.bookAppointment(bookingDto, currentUser.getUserId());
-
-        if (appointmentId > 0) {
-            if (isJson) {
-                response.setStatus(HttpServletResponse.SC_CREATED);
-                response.setContentType("application/json;charset=UTF-8");
-                Map<String, Object> resData = new HashMap<>();
-                resData.put("success", true);
-                resData.put("message", "Đặt lịch khám bệnh thành công! Mã cuộc hẹn: #" + appointmentId);
-                resData.put("appointment_id", appointmentId);
-                response.getWriter().print(gson.toJson(resData));
-            } else {
-                request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE,
-                        "Đặt lịch khám thành công! Mã cuộc hẹn: #" + appointmentId);
-                response.sendRedirect(request.getContextPath() + "/customer/profile");
-            }
+    private void handleBookingSuccess(HttpServletRequest request, HttpServletResponse response, int appointmentId, boolean isJson)
+            throws IOException {
+        if (isJson) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            Map<String, Object> resData = new HashMap<>();
+            resData.put("success", true);
+            resData.put("message", "Đặt lịch khám bệnh thành công! Mã cuộc hẹn: #" + appointmentId);
+            resData.put("appointment_id", appointmentId);
+            response.getWriter().print(gson.toJson(resData));
         } else {
-            // Lỗi slot conflict hoặc dữ liệu không hợp lệ
-            handleBookingError(request, response, isJson,
-                    "Khung giờ này Bác sĩ đã có lịch hẹn trùng lịch hoặc thông tin không hợp lệ. Vui lòng chọn khung giờ khác!");
+            request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE,
+                    "Đặt lịch khám thành công! Mã cuộc hẹn: #" + appointmentId);
+            response.sendRedirect(request.getContextPath() + "/customer/profile");
         }
     }
 
@@ -152,7 +165,7 @@ public class AppointmentBookingServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

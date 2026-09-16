@@ -28,7 +28,8 @@ import java.util.Map;
 @WebServlet(name = "DoctorPrescriptionServlet", urlPatterns = {"/doctor/prescription"})
 public class PrescriptionServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /doctor/prescription: Lấy danh mục thuốc trong kho để bác sĩ chọn kê đơn.
@@ -53,8 +54,8 @@ public class PrescriptionServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String contentType = request.getContentType();
-        boolean isJson = (contentType != null && contentType.contains("application/json"))
-                || "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
+                || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
         int resultId = 0;
         String instructions = null;
@@ -105,7 +106,9 @@ public class PrescriptionServlet extends HttpServlet {
             if (resStr != null && !resStr.trim().isEmpty()) {
                 try {
                     resultId = Integer.parseInt(resStr.trim());
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                    // ResultId không hợp lệ sẽ được kiểm tra ở validate
+                }
             }
             instructions = request.getParameter("instructions");
             if (instructions == null) {
@@ -121,7 +124,9 @@ public class PrescriptionServlet extends HttpServlet {
                         pd.setMedicineId(Integer.parseInt(medIds[i].trim()));
                         pd.setPrescribedQuantity(Integer.parseInt(quantities[i].trim()));
                         details.add(pd);
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                        // Bỏ qua chi tiết thuốc không hợp lệ
+                    }
                 }
             }
         }
@@ -144,7 +149,7 @@ public class PrescriptionServlet extends HttpServlet {
         if (success) {
             if (isJson) {
                 response.setStatus(HttpServletResponse.SC_CREATED);
-                response.setContentType("application/json;charset=UTF-8");
+                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("success", true);
                 resData.put("message", "Kê đơn thuốc và trừ tồn kho thành công!");
@@ -162,7 +167,7 @@ public class PrescriptionServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

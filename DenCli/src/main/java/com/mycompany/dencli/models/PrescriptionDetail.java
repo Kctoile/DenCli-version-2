@@ -5,7 +5,11 @@
  */
 package com.mycompany.dencli.models;
 
-public class PrescriptionDetail {
+import java.io.Serializable;
+
+public class PrescriptionDetail implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int prescriptionId;
     private int medicineId;
     private int prescribedQuantity;

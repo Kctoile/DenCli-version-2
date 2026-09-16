@@ -48,4 +48,8 @@ public final class Constants {
     public static final String SESSION_ROLE = "role";
     public static final String SESSION_ERROR_MESSAGE = "errorMessage";
     public static final String SESSION_SUCCESS_MESSAGE = "successMessage";
+
+    // --- ĐỊNH DẠNG VÀ MÚI GIỜ (CONTENT TYPE & TIMEZONE) ---
+    public static final String CONTENT_TYPE_JSON = "application/json";
+    public static final String DEFAULT_TIMEZONE = "Asia/Ho_Chi_Minh";
 }

@@ -17,10 +17,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin/dashboard"})
 public class DashboardServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * GET /admin/dashboard: Thống kê số lượng người dùng, bác sĩ, nhân viên, lịch hẹn và doanh thu 12 tháng.
@@ -38,7 +41,7 @@ public class DashboardServlet extends HttpServlet {
         int totalCustomers = userService.countUsersByRole(Constants.ROLE_CUSTOMER_ID);
         int totalAppointments = appointmentService.countAllAppointments(null, null);
 
-        int currentYear = LocalDate.now().getYear();
+        int currentYear = LocalDate.now(ZoneId.of(Constants.DEFAULT_TIMEZONE)).getYear();
         List<RevenueDTO> monthlyRevenues = appointmentService.getMonthlyRevenueReport(currentYear);
 
         request.setAttribute("totalUsers", totalUsers);

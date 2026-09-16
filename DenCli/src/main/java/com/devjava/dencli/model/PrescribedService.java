@@ -4,9 +4,12 @@
  */
 package com.devjava.dencli.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class PrescribedService {
+public class PrescribedService implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int resultId;
     private int serviceId;

@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 // @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     // ponytail: Lưu trữ số lần đăng nhập sai của từng tài khoản trong bộ nhớ để phòng chống dò mật khẩu
     private static final ConcurrentHashMap<String, Integer> failedAttempts = new ConcurrentHashMap<>();
     private static final int MAX_FAILED_ATTEMPTS = 5;

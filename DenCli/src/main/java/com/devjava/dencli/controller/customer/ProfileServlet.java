@@ -27,7 +27,7 @@ import java.util.Map;
 @WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/customer/profile"})
 public class ProfileServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
 
     /**
      * GET /customer/profile: Lấy hồ sơ cá nhân và danh sách lịch sử khám bệnh của bệnh nhân.
@@ -95,7 +95,9 @@ public class ProfileServlet extends HttpServlet {
         if (dobStr != null && !dobStr.trim().isEmpty()) {
             try {
                 updatedUser.setDob(Date.valueOf(dobStr.trim()));
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+                // Bỏ qua định dạng ngày sinh không hợp lệ
+            }
         }
 
         UserService userService = ServiceFactory.getUserService();

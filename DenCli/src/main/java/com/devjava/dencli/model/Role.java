@@ -4,7 +4,11 @@
  */
 package com.devjava.dencli.model;
 
-public class Role {
+import java.io.Serializable;
+
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int roleId;
     private String roleName;

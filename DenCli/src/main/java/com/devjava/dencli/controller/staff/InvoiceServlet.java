@@ -24,7 +24,8 @@ import java.util.Map;
 @WebServlet(name = "StaffInvoiceServlet", urlPatterns = {"/staff/invoice"})
 public class InvoiceServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /staff/invoice: Tính toán và hiển thị chi tiết hóa đơn viện phí cho một cuộc hẹn.
@@ -38,7 +39,9 @@ public class InvoiceServlet extends HttpServlet {
         if (appStr != null && !appStr.trim().isEmpty()) {
             try {
                 appointmentId = Integer.parseInt(appStr.trim());
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+                // Giữ appointmentId = 0 để xử lý lỗi ở dưới
+            }
         }
 
         if (appointmentId <= 0) {
@@ -49,9 +52,9 @@ public class InvoiceServlet extends HttpServlet {
         BillingService billingService = ServiceFactory.getBillingService();
         InvoiceResponseDTO invoice = billingService.calculateInvoice(appointmentId);
 
-        boolean isJson = "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
         if (isJson) {
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             response.getWriter().print(gson.toJson(invoice));
         } else {
             request.setAttribute("invoice", invoice);
@@ -69,8 +72,8 @@ public class InvoiceServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String contentType = request.getContentType();
-        boolean isJson = (contentType != null && contentType.contains("application/json"))
-                || "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
+                || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
         int appointmentId = 0;
         if (isJson) {
@@ -90,7 +93,9 @@ public class InvoiceServlet extends HttpServlet {
             if (appStr != null && !appStr.trim().isEmpty()) {
                 try {
                     appointmentId = Integer.parseInt(appStr.trim());
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                    // AppointmentId không hợp lệ sẽ được kiểm tra ở bước sau
+                }
             }
         }
 
@@ -104,7 +109,7 @@ public class InvoiceServlet extends HttpServlet {
 
         if (success) {
             if (isJson) {
-                response.setContentType("application/json;charset=UTF-8");
+                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("success", true);
                 resData.put("message", "Thanh toán viện phí thành công! Cuộc hẹn đã chuyển trạng thái Hoàn tất.");
@@ -123,7 +128,7 @@ public class InvoiceServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

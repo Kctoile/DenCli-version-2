@@ -42,6 +42,7 @@ public final class DateUtil {
             return new Date(parsed.getTime());
 
         } catch (ParseException e) {
+            // Định dạng ngày không hợp lệ, trả về null theo thiết kế
             return null;
         }
     }
@@ -74,6 +75,7 @@ public final class DateUtil {
             return new Time(parsed.getTime());
 
         } catch (ParseException e) {
+            // Định dạng giờ không hợp lệ, trả về null theo thiết kế
             return null;
         }
     }
@@ -96,6 +98,7 @@ public final class DateUtil {
             return new Timestamp(parsed.getTime());
 
         } catch (ParseException e) {
+            // Định dạng ngày giờ không hợp lệ, trả về null theo thiết kế
             return null;
         }
     }

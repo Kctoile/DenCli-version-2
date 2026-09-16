@@ -98,14 +98,14 @@ public class AuthorizationFilter implements Filter {
         // 4. Xử lý khi VI PHẠM PHÂN QUYỀN (Unauthorized / 403 Forbidden)
         String acceptHeader = httpRequest.getHeader("Accept");
         String xRequestedWith = httpRequest.getHeader("X-Requested-With");
-        boolean isApiOrJson = (acceptHeader != null && acceptHeader.contains("application/json"))
+        boolean isApiOrJson = (acceptHeader != null && acceptHeader.contains(Constants.CONTENT_TYPE_JSON))
                 || "XMLHttpRequest".equalsIgnoreCase(xRequestedWith)
                 || path.startsWith("/api/");
 
         if (isApiOrJson) {
             // Trả về JSON lỗi 403 Forbidden cho yêu cầu API/Fetch
             httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            httpResponse.setContentType("application/json;charset=UTF-8");
+            httpResponse.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             httpResponse.getWriter().print("{\"success\":false,\"message\":\"Bạn không có quyền truy cập chức năng này.\",\"error_code\":\"ERR_FORBIDDEN\"}");
             return;
         }

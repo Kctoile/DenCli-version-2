@@ -23,7 +23,8 @@ import java.util.Map;
 @WebServlet(name = "AdminManageUserServlet", urlPatterns = {"/admin/users"})
 public class ManageUserServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /admin/users: Lấy danh sách người dùng theo vai trò có phân trang.
@@ -41,13 +42,25 @@ public class ManageUserServlet extends HttpServlet {
         int pageSize = Constants.DEFAULT_PAGE_SIZE;
 
         if (roleStr != null && !roleStr.trim().isEmpty()) {
-            try { roleId = Integer.parseInt(roleStr.trim()); } catch (NumberFormatException ignored) {}
+            try { 
+                roleId = Integer.parseInt(roleStr.trim()); 
+            } catch (NumberFormatException ignored) {
+                // Giữ roleId = 0 (tất cả vai trò)
+            }
         }
         if (pageStr != null && !pageStr.trim().isEmpty()) {
-            try { page = Integer.parseInt(pageStr.trim()); } catch (NumberFormatException ignored) {}
+            try { 
+                page = Integer.parseInt(pageStr.trim()); 
+            } catch (NumberFormatException ignored) {
+                // Giữ page mặc định = 1
+            }
         }
         if (pageSizeStr != null && !pageSizeStr.trim().isEmpty()) {
-            try { pageSize = Integer.parseInt(pageSizeStr.trim()); } catch (NumberFormatException ignored) {}
+            try { 
+                pageSize = Integer.parseInt(pageSizeStr.trim()); 
+            } catch (NumberFormatException ignored) {
+                // Giữ pageSize mặc định
+            }
         }
 
         UserService userService = ServiceFactory.getUserService();
@@ -55,9 +68,9 @@ public class ManageUserServlet extends HttpServlet {
         int totalRecords = userService.countUsersByRole(roleId);
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
-        boolean isJson = "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
         if (isJson) {
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> data = new HashMap<>();
             data.put("users", userList);
             data.put("total_records", totalRecords);

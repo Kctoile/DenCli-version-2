@@ -25,7 +25,8 @@ import java.util.Map;
 @WebServlet(name = "AuthLoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * GET /login: Chuyển tiếp (forward) hiển thị trang đăng nhập login.jsp.
@@ -44,30 +45,11 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        String contentType = request.getContentType();
-        boolean isJson = (contentType != null && contentType.contains("application/json"))
-                || "application/json".equalsIgnoreCase(request.getHeader("Accept"));
+        boolean isJson = isJsonRequest(request);
 
-        String emailOrPhone = null;
-        String password = null;
-
-        if (contentType != null && contentType.contains("application/json")) {
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = request.getReader()) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
-            Map<?, ?> jsonMap = gson.fromJson(sb.toString(), Map.class);
-            if (jsonMap != null) {
-                emailOrPhone = (String) jsonMap.get("email_or_phone");
-                password = (String) jsonMap.get("password");
-            }
-        } else {
-            emailOrPhone = request.getParameter("email_or_phone");
-            password = request.getParameter("password");
-        }
+        String[] creds = parseCredentials(request);
+        String emailOrPhone = creds[0];
+        String password = creds[1];
 
         // Validate cơ bản
         if (emailOrPhone == null || emailOrPhone.trim().isEmpty() || password == null || password.trim().isEmpty()) {
@@ -80,41 +62,76 @@ public class LoginServlet extends HttpServlet {
         User user = userService.login(emailOrPhone.trim(), password.trim());
 
         if (user != null) {
-            HttpSession session = request.getSession(true);
-            String roleName = resolveRoleName(user.getRoleId());
-            user.setRoleName(roleName);
-
-            session.setAttribute(Constants.SESSION_USER, user);
-            session.setAttribute(Constants.SESSION_ROLE, roleName);
-
-            // Xác định URL đích đến: Ưu tiên targetUrl nếu có từ AuthenticationFilter
-            String targetUrl = (String) session.getAttribute("targetUrl");
-            if (targetUrl != null) {
-                session.removeAttribute("targetUrl");
-            }
-
-            String dashboardUrl = resolveDashboardUrl(request.getContextPath(), user.getRoleId());
-            String redirectUrl = (targetUrl != null && !targetUrl.isEmpty()) ? targetUrl : dashboardUrl;
-
-            if (isJson) {
-                response.setContentType("application/json;charset=UTF-8");
-                Map<String, Object> resData = new HashMap<>();
-                resData.put("success", true);
-                resData.put("message", "Đăng nhập thành công!");
-                Map<String, Object> userData = new HashMap<>();
-                userData.put("user_id", user.getUserId());
-                userData.put("full_name", user.getFullName());
-                userData.put("role", roleName);
-                userData.put("role_id", user.getRoleId());
-                userData.put("redirect_url", redirectUrl);
-                userData.put("target_url", redirectUrl);
-                resData.put("data", userData);
-                response.getWriter().print(gson.toJson(resData));
-            } else {
-                response.sendRedirect(redirectUrl);
-            }
+            handleSuccess(request, response, user, isJson);
         } else {
             handleFailure(request, response, isJson, "Email/Số điện thoại hoặc mật khẩu không chính xác.");
+        }
+    }
+
+    private boolean isJsonRequest(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        return (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
+                || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
+    }
+
+    private String[] parseCredentials(HttpServletRequest request) throws IOException {
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader reader = request.getReader()) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+            Map<?, ?> jsonMap = gson.fromJson(sb.toString(), Map.class);
+            if (jsonMap != null) {
+                return new String[]{
+                    (String) jsonMap.get("email_or_phone"),
+                    (String) jsonMap.get("password")
+                };
+            }
+        }
+        return new String[]{
+            request.getParameter("email_or_phone"),
+            request.getParameter("password")
+        };
+    }
+
+    private void handleSuccess(HttpServletRequest request, HttpServletResponse response, User user, boolean isJson)
+            throws IOException {
+        HttpSession session = request.getSession(true);
+        String roleName = resolveRoleName(user.getRoleId());
+        user.setRoleName(roleName);
+
+        session.setAttribute(Constants.SESSION_USER, user);
+        session.setAttribute(Constants.SESSION_ROLE, roleName);
+
+        // Xác định URL đích đến: Ưu tiên targetUrl nếu có từ AuthenticationFilter
+        String targetUrl = (String) session.getAttribute("targetUrl");
+        if (targetUrl != null) {
+            session.removeAttribute("targetUrl");
+        }
+
+        String dashboardUrl = resolveDashboardUrl(request.getContextPath(), user.getRoleId());
+        String redirectUrl = (targetUrl != null && !targetUrl.isEmpty()) ? targetUrl : dashboardUrl;
+
+        if (isJson) {
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            Map<String, Object> resData = new HashMap<>();
+            resData.put("success", true);
+            resData.put("message", "Đăng nhập thành công!");
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("user_id", user.getUserId());
+            userData.put("full_name", user.getFullName());
+            userData.put("role", roleName);
+            userData.put("role_id", user.getRoleId());
+            userData.put("redirect_url", redirectUrl);
+            userData.put("target_url", redirectUrl);
+            resData.put("data", userData);
+            response.getWriter().print(gson.toJson(resData));
+        } else {
+            response.sendRedirect(redirectUrl);
         }
     }
 
@@ -122,7 +139,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             Map<String, Object> errData = new HashMap<>();
             errData.put("success", false);
             errData.put("message", message);

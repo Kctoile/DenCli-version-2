@@ -5,10 +5,13 @@
  */
 package com.mycompany.dencli.models;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
-public class Appointment {
+public class Appointment implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int appointmentId;
     private int patientId;
     private int doctorId;

@@ -67,14 +67,14 @@ public class AuthenticationFilter implements Filter {
         // Kiểm tra xem yêu cầu gửi lên là API/JSON hay yêu cầu tải trang HTML
         String acceptHeader = httpRequest.getHeader("Accept");
         String xRequestedWith = httpRequest.getHeader("X-Requested-With");
-        boolean isApiOrJson = (acceptHeader != null && acceptHeader.contains("application/json"))
+        boolean isApiOrJson = (acceptHeader != null && acceptHeader.contains(Constants.CONTENT_TYPE_JSON))
                 || "XMLHttpRequest".equalsIgnoreCase(xRequestedWith)
                 || path.startsWith("/api/");
 
         if (isApiOrJson) {
             // Nếu là gọi API ngầm qua Fetch/AJAX: Trả về mã lỗi HTTP 401 Unauthorized kèm JSON
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpResponse.setContentType("application/json;charset=UTF-8");
+            httpResponse.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
             httpResponse.getWriter().print("{\"success\":false,\"message\":\"Yêu cầu đăng nhập trước khi thực hiện.\",\"error_code\":\"ERR_UNAUTHORIZED\"}");
             return;
         }

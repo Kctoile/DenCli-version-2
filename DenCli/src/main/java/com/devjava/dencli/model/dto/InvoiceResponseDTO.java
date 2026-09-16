@@ -6,11 +6,14 @@ package com.devjava.dencli.model.dto;
 
 import com.devjava.dencli.model.PrescriptionDetail;
 import com.devjava.dencli.model.Service;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvoiceResponseDTO {
+public class InvoiceResponseDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int appointmentId;
     private String patientName;

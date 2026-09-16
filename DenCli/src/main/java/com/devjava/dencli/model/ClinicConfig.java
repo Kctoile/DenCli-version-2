@@ -4,9 +4,12 @@
  */
 package com.devjava.dencli.model;
 
+import java.io.Serializable;
 import java.sql.Time;
 
-public class ClinicConfig {
+public class ClinicConfig implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int configId;
     private Time openingTime;

@@ -4,10 +4,13 @@
  */
 package com.devjava.dencli.model.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookingRequestDTO {
+public class BookingRequestDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer doctorId;
     private String appointmentDate;

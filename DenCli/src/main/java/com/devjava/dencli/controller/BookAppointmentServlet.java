@@ -30,119 +30,147 @@ import java.util.List;
 @WebServlet(name = "BookAppointmentServletV2", urlPatterns = {"/api/appointments/book"})
 public class BookAppointmentServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final long serialVersionUID = 1L;
+    private static final Gson gson = new Gson();
 
     /**
      * Tiếp nhận yêu cầu POST để đặt lịch hẹn khám bệnh trực tuyến.
      */
-    @Override // Ghi đè phương thức doPost từ HttpServlet
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         // Cấu hình phản hồi đầu ra là JSON và UTF-8
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        PrintWriter out = response.getWriter();
-
-        // 1. Kiểm tra xác thực phiên làm việc (Session) của Bệnh nhân
-        HttpSession session = request.getSession(false);
-        User currentUser = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
-
+        User currentUser = getCurrentCustomer(request, response);
         if (currentUser == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            out.print("{\"success\":false,\"message\":\"Yêu cầu đăng nhập trước khi đặt lịch hẹn.\",\"error_code\":\"ERR_UNAUTHORIZED\"}");
             return;
         }
 
-        // Đảm bảo người dùng trong Session có vai trò là CUSTOMER (role_id = 5)
-        if (currentUser.getRoleId() != Constants.ROLE_CUSTOMER_ID) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            out.print("{\"success\":false,\"message\":\"Chỉ bệnh nhân mới được phép đặt lịch hẹn trực tuyến.\",\"error_code\":\"ERR_FORBIDDEN\"}");
+        BookingRequestDTO bookingDTO = parseRequest(request, response);
+        if (bookingDTO == null) {
             return;
         }
 
-        // 2. Tiếp nhận và phân tích dữ liệu đầu vào (JSON body hoặc Form parameters)
-        BookingRequestDTO bookingDTO = null;
+        if (!validateBookingData(bookingDTO, response)) {
+            return;
+        }
+
+        processBooking(bookingDTO, currentUser.getUserId(), response);
+    }
+
+    private User getCurrentCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
+
+        if (user == null) {
+            sendError(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "Yêu cầu đăng nhập trước khi đặt lịch hẹn.", "ERR_UNAUTHORIZED");
+            return null;
+        }
+        if (user.getRoleId() != Constants.ROLE_CUSTOMER_ID) {
+            sendError(response, HttpServletResponse.SC_FORBIDDEN,
+                    "Chỉ bệnh nhân mới được phép đặt lịch hẹn trực tuyến.", "ERR_FORBIDDEN");
+            return null;
+        }
+        return user;
+    }
+
+    private BookingRequestDTO parseRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String contentType = request.getContentType();
+        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
+            return parseJsonRequest(request, response);
+        }
+        return parseFormRequest(request);
+    }
 
-        if (contentType != null && contentType.contains("application/json")) {
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = request.getReader()) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
+    private BookingRequestDTO parseJsonRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
             }
+        }
+        try {
+            return gson.fromJson(sb.toString(), BookingRequestDTO.class);
+        } catch (Exception e) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                    "Dữ liệu JSON không đúng định dạng.", "ERR_INVALID_JSON");
+            return null;
+        }
+    }
 
+    private BookingRequestDTO parseFormRequest(HttpServletRequest request) {
+        BookingRequestDTO dto = new BookingRequestDTO();
+        String docIdStr = request.getParameter("doctor_id");
+        if (docIdStr != null && !docIdStr.trim().isEmpty()) {
             try {
-                bookingDTO = gson.fromJson(sb.toString(), BookingRequestDTO.class);
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"success\":false,\"message\":\"Dữ liệu JSON không đúng định dạng.\",\"error_code\":\"ERR_INVALID_JSON\"}");
-                return;
+                dto.setDoctorId(Integer.parseInt(docIdStr.trim()));
+            } catch (NumberFormatException ignored) {
+                // DoctorId không hợp lệ sẽ được kiểm tra ở validateBookingData
             }
-        } else {
-            // Đọc dữ liệu từ form thông thường
-            bookingDTO = new BookingRequestDTO();
-            String docIdStr = request.getParameter("doctor_id");
-            if (docIdStr != null && !docIdStr.trim().isEmpty()) {
+        }
+        dto.setAppointmentDate(request.getParameter("appointment_date"));
+        dto.setAppointmentTime(request.getParameter("appointment_time"));
+        dto.setNotes(request.getParameter("notes"));
+
+        String[] svcIds = request.getParameterValues("service_ids");
+        if (svcIds != null) {
+            List<Integer> sList = new ArrayList<>();
+            for (String s : svcIds) {
                 try {
-                    bookingDTO.setDoctorId(Integer.parseInt(docIdStr.trim()));
+                    sList.add(Integer.parseInt(s.trim()));
                 } catch (NumberFormatException ignored) {
+                    // Bỏ qua ID dịch vụ không hợp lệ
                 }
             }
-            bookingDTO.setAppointmentDate(request.getParameter("appointment_date"));
-            bookingDTO.setAppointmentTime(request.getParameter("appointment_time"));
-            bookingDTO.setNotes(request.getParameter("notes"));
+            dto.setServiceIds(sList);
+        }
+        return dto;
+    }
 
-            String[] svcIds = request.getParameterValues("service_ids");
-            if (svcIds != null) {
-                List<Integer> sList = new ArrayList<>();
-                for (String s : svcIds) {
-                    try {
-                        sList.add(Integer.parseInt(s.trim()));
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
-                bookingDTO.setServiceIds(sList);
-            }
+    private boolean validateBookingData(BookingRequestDTO dto, HttpServletResponse response) throws IOException {
+        if (dto.getDoctorId() == null || dto.getDoctorId() <= 0
+                || dto.getAppointmentDate() == null || dto.getAppointmentDate().trim().isEmpty()
+                || dto.getAppointmentTime() == null || dto.getAppointmentTime().trim().isEmpty()) {
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                    "Thiếu thông tin bác sĩ, ngày hẹn hoặc giờ hẹn.", "ERR_REQUIRED_FIELDS");
+            return false;
         }
 
-        // 3. Kiểm tra tính hợp lệ của dữ liệu đầu vào bắt buộc
-        if (bookingDTO == null || bookingDTO.getDoctorId() == null || bookingDTO.getDoctorId() <= 0
-                || bookingDTO.getAppointmentDate() == null || bookingDTO.getAppointmentDate().trim().isEmpty()
-                || bookingDTO.getAppointmentTime() == null || bookingDTO.getAppointmentTime().trim().isEmpty()) {
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\":false,\"message\":\"Thiếu thông tin bác sĩ, ngày hẹn hoặc giờ hẹn.\",\"error_code\":\"ERR_REQUIRED_FIELDS\"}");
-            return;
-        }
-
-        // Kiểm tra hợp lệ định dạng ngày và giờ
-        Date parsedDate = DateUtil.parseDate(bookingDTO.getAppointmentDate());
-        Time parsedTime = DateUtil.parseTime(bookingDTO.getAppointmentTime());
+        Date parsedDate = DateUtil.parseDate(dto.getAppointmentDate());
+        Time parsedTime = DateUtil.parseTime(dto.getAppointmentTime());
 
         if (parsedDate == null || parsedTime == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.print("{\"success\":false,\"message\":\"Định dạng ngày hoặc giờ khám không hợp lệ.\",\"error_code\":\"ERR_INVALID_FORMAT\"}");
-            return;
+            sendError(response, HttpServletResponse.SC_BAD_REQUEST,
+                    "Định dạng ngày hoặc giờ khám không hợp lệ.", "ERR_INVALID_FORMAT");
+            return false;
         }
+        return true;
+    }
 
-        // 4. Gọi AppointmentService thực hiện nghiệp vụ đặt lịch (có kiểm tra trùng lịch)
+    private void processBooking(BookingRequestDTO dto, int userId, HttpServletResponse response) throws IOException {
         AppointmentService appointmentService = ServiceFactory.getAppointmentService();
-        int appointmentId = appointmentService.bookAppointment(bookingDTO, currentUser.getUserId());
+        int appointmentId = appointmentService.bookAppointment(dto, userId);
 
         if (appointmentId > 0) {
             response.setStatus(HttpServletResponse.SC_CREATED);
+            PrintWriter out = response.getWriter();
             out.print("{\"success\":true,\"message\":\"Đăng ký lịch hẹn thành công! Vui lòng chờ cuộc gọi xác nhận.\","
                     + "\"data\":{\"appointment_id\":" + appointmentId + ",\"status\":\"" + Constants.APPOINTMENT_PENDING + "\"}}");
         } else {
-            // bookAppointment trả về -1 khi trùng lịch hoặc lỗi hệ thống
-            // Kiểm tra xem có trùng lịch không để trả về mã lỗi 409 thích hợp
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-            out.print("{\"success\":false,\"message\":\"Rất tiếc, khung giờ này của Bác sĩ đã bị trùng hoặc hệ thống bận. Vui lòng chọn khung giờ khác.\","
-                    + "\"error_code\":\"ERR_SLOT_TAKEN\"}");
+            sendError(response, HttpServletResponse.SC_CONFLICT,
+                    "Rất tiếc, khung giờ này của Bác sĩ đã bị trùng hoặc hệ thống bận. Vui lòng chọn khung giờ khác.",
+                    "ERR_SLOT_TAKEN");
         }
+    }
+
+    private void sendError(HttpServletResponse response, int status, String message, String errorCode) throws IOException {
+        response.setStatus(status);
+        PrintWriter out = response.getWriter();
+        out.print("{\"success\":false,\"message\":\"" + message + "\",\"error_code\":\"" + errorCode + "\"}");
     }
 }

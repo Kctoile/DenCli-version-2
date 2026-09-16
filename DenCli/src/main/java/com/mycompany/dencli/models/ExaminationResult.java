@@ -5,9 +5,12 @@
  */
 package com.mycompany.dencli.models;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ExaminationResult {
+public class ExaminationResult implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int resultId;
     private int appointmentId;
     private String resultDetails;
