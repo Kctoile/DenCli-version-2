@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+DenCli/src
+DenCli/target/endorsed
+DenCli/target/classes
+DenCli/target/generated-sources
+DenCli/target/generated-test-sources
+DenCli/target/maven-status
+DenCli/target/test-classes
+DenCli/target/surefire-reports
+*.md
+*.sql
+cookies.txt

@@ -1,13 +1,21 @@
-name: SonarCloud
+name: DenCli CI/CD
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
 jobs:
-  build:
-    name: Build and analyze
+  ci:
+    name: Build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -18,24 +26,102 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
-      - name: Cache SonarCloud packages
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('DenCli/**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: Build and test
         working-directory: ./DenCli
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=Kctoile_DenCli-version-2 
-          -Dsonar.organization=kctoile 
-          -Dsonar.host.url=https://sonarcloud.io
+        run: mvn -B clean verify
+
+      - name: Upload WAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DenCli-war
+          path: DenCli/target/*.war
+          if-no-files-found: error
+
+  sonar:
+    name: SonarCloud analysis
+    needs: ci
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          java-version: 17
+          distribution: zulu
+      - name: Cache SonarCloud packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Analyze
+        if: env.SONAR_TOKEN != ''
+        working-directory: ./DenCli
+        run: mvn -B sonar:sonar -Dsonar.projectKey=Kctoile_DenCli-version-2 -Dsonar.organization=kctoile -Dsonar.host.url=https://sonarcloud.io
+      - name: Skip SonarCloud when token is not configured
+        if: env.SONAR_TOKEN == ''
+        run: echo "SONAR_TOKEN is not configured; skipping SonarCloud analysis."
+
+  publish:
+    name: Publish container image
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Download WAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DenCli-war
+          path: DenCli/target
+      - name: Log in to GHCR
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push image
+        uses: docker/build-push-action@1dc73863535b631f98b2378c5c3a2c86e2bb0d3c # v6.18.0
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy:
+    name: Deploy to server
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+    steps:
+      - name: Deploy latest image over SSH
+        if: env.DEPLOY_HOST != '' && env.DEPLOY_USER != '' && env.DEPLOY_SSH_KEY != ''
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ env.DEPLOY_HOST }}
+          username: ${{ env.DEPLOY_USER }}
+          key: ${{ env.DEPLOY_SSH_KEY }}
+          script: |
+            docker login ghcr.io -u '${{ github.actor }}' -p '${{ secrets.GITHUB_TOKEN }}'
+            docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            docker stop dencli 2>/dev/null || true
+            docker rm dencli 2>/dev/null || true
+            docker run -d --name dencli --restart unless-stopped -p 8080:8080 ${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: Skip server deploy when SSH secrets are not configured
+        if: env.DEPLOY_HOST == '' || env.DEPLOY_USER == '' || env.DEPLOY_SSH_KEY == ''
+        run: echo "Deployment secrets are not configured; image publishing completed without server deployment."
