@@ -8,10 +8,6 @@ on:
     types: [opened, synchronize, reopened]
 permissions:
   contents: read
-  packages: write
-
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
   ci:
@@ -72,56 +68,25 @@ jobs:
         if: env.SONAR_TOKEN == ''
         run: echo "SONAR_TOKEN is not configured; skipping SonarCloud analysis."
 
-  publish:
-    name: Publish container image
+  deploy-tomcat:
+    name: Deploy to local Tomcat
     needs: ci
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Windows, X64, tomcat-local]
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Download WAR artifact
         uses: actions/download-artifact@v4
         with:
           name: DenCli-war
-          path: DenCli/target
-      - name: Log in to GHCR
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.5.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push image
-        uses: docker/build-push-action@1dc73863535b631f98b2378c5c3a2c86e2bb0d3c # v6.18.0
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-  deploy:
-    name: Deploy to server
-    needs: publish
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    env:
-      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-    steps:
-      - name: Deploy latest image over SSH
-        if: env.DEPLOY_HOST != '' && env.DEPLOY_USER != '' && env.DEPLOY_SSH_KEY != ''
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ env.DEPLOY_HOST }}
-          username: ${{ env.DEPLOY_USER }}
-          key: ${{ env.DEPLOY_SSH_KEY }}
-          script: |
-            docker login ghcr.io -u '${{ github.actor }}' -p '${{ secrets.GITHUB_TOKEN }}'
-            docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-            docker stop dencli 2>/dev/null || true
-            docker rm dencli 2>/dev/null || true
-            docker run -d --name dencli --restart unless-stopped -p 8080:8080 ${{ env.IMAGE_NAME }}:${{ github.sha }}
-      - name: Skip server deploy when SSH secrets are not configured
-        if: env.DEPLOY_HOST == '' || env.DEPLOY_USER == '' || env.DEPLOY_SSH_KEY == ''
-        run: echo "Deployment secrets are not configured; image publishing completed without server deployment."
+          path: deploy-artifact
+      - name: Deploy WAR to Tomcat
+        shell: powershell
+        run: |
+          $tomcatHome = 'C:\Program Files\Apache Software Foundation\Tomcat 10.1'
+          $webapps = Join-Path $tomcatHome 'webapps'
+          $war = Get-ChildItem 'deploy-artifact\*.war' | Select-Object -First 1
+          if (-not $war) { throw 'WAR artifact was not found.' }
+          Remove-Item (Join-Path $webapps 'DenCli') -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item (Join-Path $webapps 'DenCli.war') -Force -ErrorAction SilentlyContinue
+          Copy-Item $war.FullName (Join-Path $webapps 'DenCli.war')
+          Write-Host "Deployed $($war.Name) to $webapps"
