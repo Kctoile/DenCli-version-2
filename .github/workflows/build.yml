@@ -63,7 +63,7 @@ jobs:
       - name: Analyze
         if: env.SONAR_TOKEN != ''
         working-directory: ./DenCli
-        run: mvn -B sonar:sonar -Dsonar.projectKey=Kctoile_DenCli-version-2 -Dsonar.organization=kctoile -Dsonar.host.url=https://sonarcloud.io
+        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Kctoile_DenCli-version-2 -Dsonar.organization=kctoile -Dsonar.host.url=https://sonarcloud.io
       - name: Skip SonarCloud when token is not configured
         if: env.SONAR_TOKEN == ''
         run: echo "SONAR_TOKEN is not configured; skipping SonarCloud analysis."
@@ -80,7 +80,7 @@ jobs:
           name: DenCli-war
           path: deploy-artifact
       - name: Deploy WAR to Tomcat
-        shell: powershell
+        shell: powershell -ExecutionPolicy Bypass -File {0}
         run: |
           $tomcatHome = 'C:\Program Files\Apache Software Foundation\Tomcat 10.1'
           $webapps = Join-Path $tomcatHome 'webapps'
