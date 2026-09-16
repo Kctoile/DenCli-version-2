@@ -51,17 +51,13 @@ public class AppointmentDAO {
     public boolean insertAppointment(Appointment app, List<Integer> serviceIds) {
         String sqlApp = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, status, notes, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String sqlService = "INSERT INTO appointment_services (appointment_id, service_id) VALUES (?, ?)";
-        Connection conn = null;
-        PreparedStatement psApp = null;
-        PreparedStatement psService = null;
+        try (Connection conn = DBContext.getConnection()) { // Lấy kết nối CSDL từ DBContext
+            try {
 
-        try {
-            conn = DBContext.getConnection(); // Lấy kết nối CSDL từ DBContext
+                conn.setAutoCommit(false); // Vô hiệu hóa tính năng tự động commit của JDBC để bắt đầu Transaction
 
-            conn.setAutoCommit(false); // Vô hiệu hóa tính năng tự động commit của JDBC để bắt đầu Transaction
-
-            // Khởi tạo PreparedStatement cho việc chèn lịch hẹn và yêu cầu trả về khóa chính tự sinh
-            psApp = conn.prepareStatement(sqlApp, Statement.RETURN_GENERATED_KEYS); // Gọi hàm RETURN_GENERATED_KEYS từ thư viện JDBC
+                // Khởi tạo PreparedStatement cho việc chèn lịch hẹn và yêu cầu trả về khóa chính tự sinh
+                try (PreparedStatement psApp = conn.prepareStatement(sqlApp, Statement.RETURN_GENERATED_KEYS)) { // Gọi hàm RETURN_GENERATED_KEYS từ thư viện JDBC
 
             psApp.setInt(1, app.getPatientId());
             psApp.setInt(2, app.getDoctorId());
@@ -92,42 +88,35 @@ public class AppointmentDAO {
             app.setAppointmentId(appId);
 
             // Nếu bệnh nhân có chọn dịch vụ cụ thể đi kèm
-            if (serviceIds != null && !serviceIds.isEmpty()) {
-                psService = conn.prepareStatement(sqlService); // Tạo câu lệnh PreparedStatement cho bảng trung gian
+                    if (serviceIds != null && !serviceIds.isEmpty()) {
+                        try (PreparedStatement psService = conn.prepareStatement(sqlService)) { // Tạo câu lệnh PreparedStatement cho bảng trung gian
 
-                for (int serviceId : serviceIds) { // Vòng lặp duyệt qua các ID dịch vụ để chuẩn bị chèn
-                    psService.setInt(1, appId);
-                    psService.setInt(2, serviceId);
+                            for (int serviceId : serviceIds) { // Vòng lặp duyệt qua các ID dịch vụ để chuẩn bị chèn
+                                psService.setInt(1, appId);
+                                psService.setInt(2, serviceId);
 
-                    psService.addBatch(); // Sử dụng tính năng addBatch của JDBC để tối ưu hóa hiệu năng chèn mảng
+                                psService.addBatch(); // Sử dụng tính năng addBatch của JDBC để tối ưu hóa hiệu năng chèn mảng
+                            }
+
+                            psService.executeBatch(); // Thực thi chạy nhiều lệnh chèn cùng lúc bằng executeBatch của JDBC
+                        }
+                    }
+
+                    conn.commit(); // Commit toàn bộ Transaction nếu không xảy ra bất cứ lỗi nào qua JDBC
+                    return true;
                 }
 
-                psService.executeBatch(); // Thực thi chạy nhiều lệnh chèn cùng lúc bằng executeBatch của JDBC
-            }
+            } catch (Exception e) {
+                e.printStackTrace();
 
-            conn.commit(); // Commit toàn bộ Transaction nếu không xảy ra bất cứ lỗi nào qua JDBC
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            if (conn != null) {
                 try {
                     conn.rollback(); // Rollback khôi phục lại dữ liệu nếu xảy ra lỗi trong quá trình chạy qua JDBC
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
-
-        } finally {
-            // Giải phóng tài nguyên thủ công để đảm bảo kết nối được đóng chính xác
-            try {
-                if (psApp != null) psApp.close(); // Đóng PreparedStatement lịch hẹn
-                if (psService != null) psService.close(); // Đóng PreparedStatement dịch vụ lịch hẹn
-                if (conn != null) conn.close(); // Trả kết nối về Connection Pool của JDBC
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return false;
