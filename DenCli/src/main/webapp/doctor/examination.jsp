@@ -173,8 +173,8 @@
                             <textarea id="modalDiagnosis" name="diagnosis" class="form-control" rows="3" required placeholder="Ví dụ: Viêm tủy răng hàm dưới P.36 giai đoạn cấp, có lỗ sâu mặt nhai..."></textarea>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Chỉ định thêm dịch vụ / Thủ thuật điều trị</label>
+                        <fieldset class="mb-3 p-0 border-0">
+                            <legend class="form-label fw-semibold">Chỉ định thêm dịch vụ / Thủ thuật điều trị</legend>
                             <div class="border rounded p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
                                 <div class="row g-2">
                                     <c:forEach items="${services}" var="svc">
@@ -193,7 +193,7 @@
                                 </div>
                             </div>
                             <div class="form-text">Các thủ thuật/dịch vụ chỉ định thêm sẽ được tự động cộng vào hóa đơn viện phí.</div>
-                        </div>
+                        </fieldset>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>

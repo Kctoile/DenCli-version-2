@@ -120,6 +120,7 @@
                 <!-- Tìm kiếm dịch vụ -->
                 <div class="input-group" style="max-width: 280px;">
                     <span class="input-group-text bg-white border-end-0">🔍</span>
+                    <label for="serviceSearch" class="visually-hidden">Tìm dịch vụ</label>
                     <input type="text" id="serviceSearch" class="form-control border-start-0" placeholder="Tìm tên dịch vụ..." onkeyup="filterServices()">
                 </div>
             </div>

@@ -97,7 +97,8 @@
                                         <!-- Hàng mặc định đầu tiên -->
                                         <tr class="med-row">
                                             <td>
-                                                <select name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
+                                                <label class="visually-hidden" for="medicine-0">Loại thuốc</label>
+                                                <select id="medicine-0" name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
                                                     <option value="" data-price="0">-- Chọn thuốc trong kho --</option>
                                                     <c:forEach items="${medicines}" var="m">
                                                         <option value="${m.medicineId}" data-price="${m.price}" data-unit="${m.unit}" data-stock="${m.stockQuantity}">
@@ -107,10 +108,12 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="number" name="quantity" class="form-control med-qty" value="1" min="1" required oninput="updateRowCalculations(this)">
+                                                <label class="visually-hidden" for="quantity-0">Số lượng</label>
+                                                <input type="number" id="quantity-0" name="quantity" class="form-control med-qty" value="1" min="1" required oninput="updateRowCalculations(this)">
                                             </td>
                                             <td>
-                                                <input type="text" name="dosage" class="form-control" placeholder="2 viên/ngày, sáng-tối" required>
+                                                <label class="visually-hidden" for="dosage-0">Liều dùng chỉ định</label>
+                                                <input type="text" id="dosage-0" name="dosage" class="form-control" placeholder="2 viên/ngày, sáng-tối" required>
                                             </td>
                                             <td class="text-end fw-semibold text-primary med-subtotal">
                                                 0 VNĐ
@@ -148,7 +151,8 @@
     <template id="rowTemplate">
         <tr class="med-row">
             <td>
-                <select name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
+                <label class="visually-hidden" for="medicine-template">Loại thuốc</label>
+                <select id="medicine-template" name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
                     <option value="" data-price="0">-- Chọn thuốc trong kho --</option>
                     <c:forEach items="${medicines}" var="m">
                         <option value="${m.medicineId}" data-price="${m.price}" data-unit="${m.unit}" data-stock="${m.stockQuantity}">
@@ -158,10 +162,12 @@
                 </select>
             </td>
             <td>
-                <input type="number" name="quantity" class="form-control med-qty" value="1" min="1" required oninput="updateRowCalculations(this)">
+                <label class="visually-hidden" for="quantity-template">Số lượng</label>
+                <input type="number" id="quantity-template" name="quantity" class="form-control med-qty" value="1" min="1" required oninput="updateRowCalculations(this)">
             </td>
             <td>
-                <input type="text" name="dosage" class="form-control" placeholder="2 viên/ngày, sáng-tối" required>
+                <label class="visually-hidden" for="dosage-template">Liều dùng chỉ định</label>
+                <input type="text" id="dosage-template" name="dosage" class="form-control" placeholder="2 viên/ngày, sáng-tối" required>
             </td>
             <td class="text-end fw-semibold text-primary med-subtotal">
                 0 VNĐ
@@ -215,9 +221,18 @@
             document.getElementById('grandTotalText').textContent = formatVND(grandTotal);
         }
 
+        var nextMedicineRowIndex = 1;
+
         function addMedicineRow() {
             var template = document.getElementById('rowTemplate');
             var clone = template.content.cloneNode(true);
+            var index = nextMedicineRowIndex++;
+            ['medicine', 'quantity', 'dosage'].forEach(function(name) {
+                var control = clone.querySelector('#' + name + '-template');
+                var id = name + '-' + index;
+                control.id = id;
+                clone.querySelector('label[for="' + name + '-template"]').htmlFor = id;
+            });
             document.getElementById('medicineTableBody').appendChild(clone);
             recalculateGrandTotal();
         }

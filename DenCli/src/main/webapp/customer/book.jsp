@@ -84,8 +84,8 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Dịch vụ nha khoa mong muốn</label>
+                        <fieldset class="mb-3 p-0 border-0">
+                            <legend class="form-label fw-semibold">Dịch vụ nha khoa mong muốn</legend>
                             <div class="border rounded p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
                                 <div class="row g-2">
                                     <c:forEach items="${services}" var="svc">
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="form-text">Bạn có thể chọn một hoặc nhiều dịch vụ trước, bác sĩ sẽ tư vấn thêm khi khám.</div>
-                        </div>
+                        </fieldset>
 
                         <div class="mb-4">
                             <label for="notes" class="form-label fw-semibold">Ghi chú triệu chứng hoặc yêu cầu đặc biệt</label>

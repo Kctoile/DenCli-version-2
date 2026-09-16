@@ -63,33 +63,33 @@
                         <form action="${pageContext.request.contextPath}/customer/profile" method="POST">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
-                                    <input type="text" name="full_name" class="form-control" value="<c:out value='${profileUser.fullName}' />" required>
+                                    <label for="profileFullName" class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                                    <input type="text" id="profileFullName" name="full_name" class="form-control" value="<c:out value='${profileUser.fullName}' />" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
-                                    <input type="tel" name="phone" class="form-control" value="<c:out value='${profileUser.phone}' />" required>
+                                    <label for="profilePhone" class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="tel" id="profilePhone" name="phone" class="form-control" value="<c:out value='${profileUser.phone}' />" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Địa chỉ Email</label>
-                                    <input type="email" class="form-control bg-light" value="<c:out value='${profileUser.email}' />" readonly>
+                                    <label for="profileEmail" class="form-label fw-semibold">Địa chỉ Email</label>
+                                    <input type="email" id="profileEmail" class="form-control bg-light" value="<c:out value='${profileUser.email}' />" readonly>
                                     <div class="form-text">Email dùng làm tên đăng nhập chính, không thể thay đổi.</div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Giới tính</label>
-                                    <select name="gender" class="form-select">
+                                    <label for="profileGender" class="form-label fw-semibold">Giới tính</label>
+                                    <select id="profileGender" name="gender" class="form-select">
                                         <option value="Nam" ${profileUser.gender == 'Nam' ? 'selected' : ''}>Nam</option>
                                         <option value="Nữ" ${profileUser.gender == 'Nữ' ? 'selected' : ''}>Nữ</option>
                                         <option value="Khác" ${profileUser.gender == 'Khác' ? 'selected' : ''}>Khác</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label fw-semibold">Ngày sinh</label>
-                                    <input type="date" name="dob" class="form-control" value="<c:out value='${profileUser.dob}' />">
+                                    <label for="profileDob" class="form-label fw-semibold">Ngày sinh</label>
+                                    <input type="date" id="profileDob" name="dob" class="form-control" value="<c:out value='${profileUser.dob}' />">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold">Địa chỉ liên hệ</label>
-                                    <input type="text" name="address" class="form-control" value="<c:out value='${profileUser.address}' />" placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">
+                                    <label for="profileAddress" class="form-label fw-semibold">Địa chỉ liên hệ</label>
+                                    <input type="text" id="profileAddress" name="address" class="form-control" value="<c:out value='${profileUser.address}' />" placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">
                                 </div>
                             </div>
                             <div class="text-end mt-3">

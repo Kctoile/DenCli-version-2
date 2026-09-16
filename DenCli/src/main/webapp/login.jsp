@@ -47,12 +47,12 @@
 
             <form id="loginForm" onsubmit="return handleLogin(event)">
                 <div class="form-group">
-                    <label>Email hoặc Số điện thoại <span class="required">*</span></label>
+                    <label for="emailOrPhone">Email hoặc Số điện thoại <span class="required">*</span></label>
                     <input type="text" id="emailOrPhone" name="email_or_phone" class="form-control" placeholder="nguyenvana@gmail.com hoặc 0905123456" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Mật khẩu <span class="required">*</span></label>
+                    <label for="password">Mật khẩu <span class="required">*</span></label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
                 </div>
 

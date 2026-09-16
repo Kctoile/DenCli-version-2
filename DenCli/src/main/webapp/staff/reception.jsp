@@ -57,7 +57,8 @@
 
                             <!-- Bộ lọc Trạng thái và Ngày hẹn -->
                             <form action="${pageContext.request.contextPath}/staff/reception" method="GET" class="d-flex flex-wrap gap-2 align-items-center">
-                                <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                <label for="statusFilter" class="visually-hidden">Trạng thái</label>
+                                <select id="statusFilter" name="status" class="form-select form-select-sm" style="width: auto;">
                                     <option value="" ${empty selectedStatus ? 'selected' : ''}>-- Tất cả trạng thái --</option>
                                     <option value="Pending" ${selectedStatus == 'Pending' ? 'selected' : ''}>Chờ xác nhận</option>
                                     <option value="Confirmed" ${selectedStatus == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
@@ -65,7 +66,8 @@
                                     <option value="Completed" ${selectedStatus == 'Completed' ? 'selected' : ''}>Đã hoàn thành</option>
                                     <option value="Cancelled" ${selectedStatus == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                 </select>
-                                <input type="date" name="date" class="form-control form-control-sm" value="${selectedDate}" style="width: auto;">
+                                <label for="dateFilter" class="visually-hidden">Ngày hẹn</label>
+                                <input type="date" id="dateFilter" name="date" class="form-control form-control-sm" value="${selectedDate}" style="width: auto;">
                                 <button type="submit" class="btn btn-sm btn-primary">Lọc</button>
                                 <a href="${pageContext.request.contextPath}/staff/reception" class="btn btn-sm btn-outline-secondary">Xóa lọc</a>
                             </form>

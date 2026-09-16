@@ -32,29 +32,29 @@
 
             <form id="registerForm" onsubmit="return handleRegister(event)">
                 <div class="form-group">
-                    <label>Họ và tên <span class="required">*</span></label>
+                    <label for="fullName">Họ và tên <span class="required">*</span></label>
                     <input type="text" id="fullName" name="full_name" class="form-control" placeholder="Nguyễn Văn A" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
+                        <label for="email">Email <span class="required">*</span></label>
                         <input type="email" id="email" name="email" class="form-control" placeholder="email@gmail.com" required>
                     </div>
                     <div class="form-group">
-                        <label>Số điện thoại <span class="required">*</span></label>
+                        <label for="phone">Số điện thoại <span class="required">*</span></label>
                         <input type="tel" id="phone" name="phone" class="form-control" placeholder="0905 123 456" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Mật khẩu <span class="required">*</span></label>
+                    <label for="password">Mật khẩu <span class="required">*</span></label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)" minlength="6" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Giới tính</label>
+                        <label for="gender">Giới tính</label>
                         <select id="gender" name="gender" class="form-control">
                             <option value="">-- Chọn --</option>
                             <option value="Nam">Nam</option>
@@ -62,13 +62,13 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Ngày sinh</label>
+                        <label for="dob">Ngày sinh</label>
                         <input type="date" id="dob" name="dob" class="form-control">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Địa chỉ</label>
+                    <label for="address">Địa chỉ</label>
                     <input type="text" id="address" name="address" class="form-control" placeholder="123 Nguyễn Trãi, Đà Nẵng">
                 </div>
 
