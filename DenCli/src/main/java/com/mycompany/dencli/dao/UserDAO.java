@@ -20,6 +20,8 @@ public class UserDAO {
 
     /**
      * Hàm kiểm tra xem email đã tồn tại trong cơ sở dữ liệu hay chưa.
+     * @param email
+     * @return 
      */
     public boolean checkEmailExists(String email) {
         String sql = "SELECT 1 FROM users WHERE email = ?";
@@ -43,6 +45,8 @@ public class UserDAO {
 
     /**
      * Hàm kiểm tra xem số điện thoại đã tồn tại trong cơ sở dữ liệu hay chưa.
+     * @param phone
+     * @return 
      */
     public boolean checkPhoneExists(String phone) {
         String sql = "SELECT 1 FROM users WHERE phone = ?";
@@ -97,6 +101,8 @@ public class UserDAO {
 
     /**
      * Hàm tìm kiếm người dùng theo địa chỉ email phục vụ chức năng đăng nhập.
+     * @param emailOrPhone
+     * @return 
      */
     public User getUserByEmail(String emailOrPhone) {
         String sql = "SELECT * FROM users WHERE email = ? OR phone = ?";
@@ -136,6 +142,7 @@ public class UserDAO {
 
     /**
      * Hàm lấy danh sách tất cả các bác sĩ nha khoa (role_id = 2) từ bảng users.
+     * @return 
      */
     public List<User> getDoctors() {
         List<User> list = new ArrayList<>(); // Khởi tạo danh sách ArrayList từ thư viện Java

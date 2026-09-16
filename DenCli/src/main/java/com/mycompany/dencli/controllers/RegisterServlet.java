@@ -20,7 +20,8 @@ import java.sql.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(name = "RegisterServlet", urlPatterns = {"/register"}) // Khai báo Servlet ánh xạ tới url /register
+// @WebServlet đã bị vô hiệu hóa — URL /register nay được xử lý bởi com.devjava.dencli.controller.RegisterServlet
+// @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
 
     /**

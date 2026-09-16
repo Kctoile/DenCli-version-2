@@ -1,5 +1,6 @@
-<%-- Trang Đăng ký tài khoản Bệnh nhân (UC-03) --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%-- Trang Đăng ký tài khoản Bệnh nhân (UC-03: Dang ki tai khoan) --%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -18,7 +19,14 @@
                 <p>Đăng ký để đặt lịch khám nha khoa trực tuyến</p>
             </div>
 
-            <!-- Thông báo kết quả -->
+            <!-- Thông báo lỗi từ server (JSTL, 0 scriptlet) -->
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-error" style="display: block;">
+                    <c:out value="${errorMessage}" />
+                </div>
+            </c:if>
+
+            <!-- Thông báo kết quả qua AJAX -->
             <div id="alertSuccess" class="alert alert-success"></div>
             <div id="alertError" class="alert alert-error"></div>
 
@@ -76,7 +84,7 @@
     <script>
         // Hàm xử lý sự kiện submit form đăng ký, gửi dữ liệu JSON tới Servlet /register
         function handleRegister(event) {
-            event.preventDefault(); // Ngăn hành vi submit mặc định của trình duyệt
+            event.preventDefault();
 
             var alertSuccess = document.getElementById('alertSuccess');
             var alertError = document.getElementById('alertError');
@@ -87,7 +95,6 @@
             btn.disabled = true;
             btn.textContent = 'Đang xử lý...';
 
-            // Tạo đối tượng JSON từ dữ liệu nhập trên form
             var payload = {
                 full_name: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
@@ -98,13 +105,12 @@
                 address: document.getElementById('address').value.trim()
             };
 
-            // Gọi API /register sử dụng Fetch API từ trình duyệt
             fetch('${pageContext.request.contextPath}/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload) // Chuyển đổi object thành chuỗi JSON bằng hàm JSON.stringify
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload)
             })
-            .then(function(response) { return response.json(); }) // Phân tích phản hồi JSON từ server
+            .then(function(response) { return response.json(); })
             .then(function(data) {
                 btn.disabled = false;
                 btn.textContent = 'Đăng ký tài khoản';
@@ -112,18 +118,17 @@
                 if (data.success) {
                     alertSuccess.textContent = data.message;
                     alertSuccess.style.display = 'block';
-                    document.getElementById('registerForm').reset(); // Xóa dữ liệu trên form
+                    document.getElementById('registerForm').reset();
 
-                    // Chuyển hướng sang trang đăng nhập sau 2 giây
                     setTimeout(function() {
                         window.location.href = '${pageContext.request.contextPath}/login.jsp';
-                    }, 2000);
+                    }, 1500);
                 } else {
                     alertError.textContent = data.message;
                     alertError.style.display = 'block';
                 }
             })
-            .catch(function(err) { // Xử lý lỗi mạng hoặc server không phản hồi
+            .catch(function(err) {
                 btn.disabled = false;
                 btn.textContent = 'Đăng ký tài khoản';
                 alertError.textContent = 'Lỗi kết nối đến máy chủ. Vui lòng thử lại sau.';

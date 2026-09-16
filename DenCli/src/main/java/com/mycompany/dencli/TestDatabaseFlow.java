@@ -108,7 +108,7 @@ public class TestDatabaseFlow {
 
             // Thử kiểm tra lại trùng lịch (Lần này phải báo trùng)
             boolean checkAgain = appDAO.checkDuplicateSlot(doctorId, appDate, appTime);
-            System.out.println("Kiểm tra lại trùng sau khi đặt: " + (checkAgain ? "TRÙNG (Đúng)" : "KHOÔNG TRÙNG (Sai)"));
+            System.out.println("Kiểm tra lại trùng sau khi đặt: " + (checkAgain ? "TRÙNG (Đúng)" : "KHÔNG TRÙNG (Sai)"));
         } else {
             System.out.println("Bác sĩ đã bị trùng lịch, bỏ qua bước đặt thử lịch.");
         }

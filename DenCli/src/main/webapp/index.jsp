@@ -1,21 +1,7 @@
-<%-- 
- * Purpose: Public homepage & landing page of the clinic (UC-01, UC-02) for Guests and Patients.
- * Created Date: 12/08/2026
- * Last Updated Date: 12/08/2026
- --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="com.mycompany.dencli.models.User"%>
-<%@page import="com.mycompany.dencli.models.Service"%>
-<%@page import="com.mycompany.dencli.dao.ServiceDAO"%>
-<%@page import="java.util.List"%>
-<%
-    // 1. Kiểm tra trạng thái đăng nhập của người dùng để tùy biến hiển thị
-    User currentUser = (User) session.getAttribute("user");
-
-    // 2. Lấy danh sách dịch vụ thực tế từ cơ sở dữ liệu để hiển thị bảng giá
-    ServiceDAO serviceDAO = new ServiceDAO();
-    List<Service> services = serviceDAO.getAllServices(); // Gọi hàm lấy danh sách từ CSDL
-%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<jsp:useBean id="serviceDAO" class="com.devjava.dencli.dao.impl.ServiceDAOImpl" scope="page" />
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -23,232 +9,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Chào mừng tới Nha khoa Công nghệ cao DenCli - Chăm sóc nụ cười Việt">
     <title>Nha khoa Công nghệ cao DenCli</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Tùy chỉnh thêm các thành phần đặc thù của Trang chủ */
-        .hero-section {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .hero-banner {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #075985 100%);
+            border-radius: 1rem;
             color: white;
-            text-align: center;
-            padding: 5rem 2rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-lg);
+            padding: 4rem 2rem;
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.3);
         }
-        
-        .hero-section h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-
-        .hero-section p {
-            font-size: 1.125rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .btn-hero {
-            display: inline-flex;
-            max-width: 250px;
-            font-size: 1rem;
-            padding: 0.875rem 2rem;
-        }
-
-        .search-box {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .search-input {
-            padding-left: 2.75rem;
-        }
-
-        .service-list-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .service-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .service-table th {
-            text-align: left;
-            padding: 1rem;
-            background: var(--bg-body);
-            font-weight: 600;
-            color: var(--text-primary);
-            border-bottom: 2px solid var(--border);
-        }
-
-        .service-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        .service-table tr:hover {
-            background: var(--bg-input);
-        }
-
-        .price-tag {
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
         .info-card {
-            background: var(--bg-card);
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--primary);
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
         }
-
-        .info-card h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
+        .info-card:hover { transform: translateY(-3px); }
     </style>
 </head>
-<body>
-    <!-- Thanh điều hướng đầu trang -->
-    <nav class="navbar">
-        <a href="#" class="navbar-brand">
-            <span style="font-size: 1.5rem; margin-right: 0.25rem;">🦷</span> DenCli
-        </a>
-        <div class="navbar-links">
-            <a href="#" class="active">Trang chủ</a>
-            
-            <% if (currentUser != null) { %>
-                <!-- Giao diện hiển thị cho bệnh nhân đã đăng nhập -->
-                <a href="${pageContext.request.contextPath}/book.jsp">Đặt lịch khám</a>
-                <div class="user-badge">
-                    👤 <%= currentUser.getFullName() %>
-                </div>
-                <a href="${pageContext.request.contextPath}/logout.jsp" style="color: var(--danger);">Đăng xuất</a>
-            <% } else { %>
-                <!-- Giao diện hiển thị cho khách vãng lai (Guest) -->
-                <a href="${pageContext.request.contextPath}/login.jsp">Đăng nhập</a>
-                <a href="${pageContext.request.contextPath}/register.jsp" style="background: var(--primary); color: white; border-radius: var(--radius-sm);">Đăng ký</a>
-            <% } %>
-        </div>
-    </nav>
+<body class="d-flex flex-column min-vh-100">
 
-    <div class="page-content" style="max-width: 1000px; margin: 0 auto;">
-        
+    <!-- Header dùng chung -->
+    <jsp:include page="/WEB-INF/views/common/header.jsp" />
+
+    <main class="container py-4 flex-grow-1" style="max-width: 1080px;">
+
         <!-- Khu vực Hero chào mừng -->
-        <div class="hero-section">
-            <h1>NHA KHOA CÔNG NGHỆ CAO DENCLI</h1>
-            <p>Kiến tạo nụ cười rạng rỡ - Đồng hành cùng sức khỏe răng miệng của gia đình bạn</p>
-            
-            <% if (currentUser != null) { %>
-                <a href="${pageContext.request.contextPath}/book.jsp" class="btn btn-success btn-hero">Đặt lịch khám ngay</a>
-            <% } else { %>
-                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-success btn-hero">Đăng nhập để đặt lịch</a>
-            <% } %>
+        <div class="hero-banner text-center mb-5">
+            <h1 class="display-5 fw-bold mb-3">🦷 NHA KHOA CÔNG NGHỆ CAO DENCLI</h1>
+            <p class="lead mb-4 opacity-90 mx-auto" style="max-width: 680px;">
+                Kiến tạo nụ cười rạng rỡ - Đồng hành cùng sức khỏe răng miệng toàn diện cho cả gia đình bạn với công nghệ điều trị tiên tiến chuẩn quốc tế.
+            </p>
+
+            <div>
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <c:choose>
+                            <c:when test="${sessionScope.user.roleId == 1}">
+                                <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-warning btn-lg fw-bold px-4 shadow">
+                                    ⚙️ Vào Bảng điều khiển Quản trị
+                                </a>
+                            </c:when>
+                            <c:when test="${sessionScope.user.roleId == 2}">
+                                <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-info text-white btn-lg fw-bold px-4 shadow">
+                                    🩺 Vào Buồng khám Bác sĩ
+                                </a>
+                            </c:when>
+                            <c:when test="${sessionScope.user.roleId == 4}">
+                                <a href="${pageContext.request.contextPath}/staff/reception" class="btn btn-light text-primary btn-lg fw-bold px-4 shadow">
+                                    💁 Vào Bàn Tiếp đón & Check-in
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-warning btn-lg fw-bold px-5 shadow">
+                                    📅 Đặt lịch khám ngay
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-light text-primary btn-lg fw-bold px-4 shadow me-2">
+                            Đăng nhập
+                        </a>
+                        <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-warning btn-lg fw-bold px-4 shadow">
+                            Đặt lịch khám
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
 
-        <!-- Thông tin hoạt động của phòng khám -->
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>🕒 Giờ mở cửa</h3>
-                <p>Thứ Hai - Chủ Nhật: 08:00 sáng - 18:00 chiều (Không nghỉ trưa)</p>
+        <!-- Thông tin hoạt động phòng khám -->
+        <div class="row g-3 mb-5">
+            <div class="col-md-4">
+                <div class="card info-card bg-white p-4 h-100 text-center">
+                    <div class="fs-1 mb-2">🕒</div>
+                    <h5 class="fw-bold text-dark mb-1">Giờ mở cửa</h5>
+                    <p class="text-muted small mb-0">Thứ Hai - Chủ Nhật: 08:00 - 18:00 (Không nghỉ trưa, tiếp đón liên tục)</p>
+                </div>
             </div>
-            <div class="info-card">
-                <h3>📍 Địa chỉ liên hệ</h3>
-                <p>123 Nguyễn Trãi, Hải Châu, Đà Nẵng</p>
+            <div class="col-md-4">
+                <div class="card info-card bg-white p-4 h-100 text-center">
+                    <div class="fs-1 mb-2">📍</div>
+                    <h5 class="fw-bold text-dark mb-1">Địa chỉ phòng khám</h5>
+                    <p class="text-muted small mb-0">123 Nguyễn Văn Linh, Quận Hải Châu, TP. Đà Nẵng</p>
+                </div>
             </div>
-            <div class="info-card">
-                <h3>📞 Hotline khẩn cấp</h3>
-                <p style="font-weight: 700; color: var(--primary);">1900 6088 (Hỗ trợ 24/7)</p>
+            <div class="col-md-4">
+                <div class="card info-card bg-white p-4 h-100 text-center">
+                    <div class="fs-1 mb-2">📞</div>
+                    <h5 class="fw-bold text-dark mb-1">Hotline tư vấn 24/7</h5>
+                    <p class="text-primary fw-bold fs-5 mb-0">1900 6868</p>
+                </div>
             </div>
         </div>
 
-        <!-- Danh mục dịch vụ và bảng giá khám bệnh -->
-        <div class="service-list-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 700;">Danh mục Dịch vụ & Bảng giá công khai</h2>
-                
-                <!-- Thanh tìm kiếm dịch vụ nhanh -->
-                <div class="search-box" style="margin-bottom: 0; min-width: 250px;">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" onkeyup="filterServices()" class="form-control search-input" placeholder="Tìm kiếm dịch vụ...">
+        <!-- Danh mục dịch vụ và bảng giá niêm yết -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                <div>
+                    <h4 class="fw-bold text-primary mb-1">📋 Danh mục Dịch vụ & Bảng giá Công khai</h4>
+                    <p class="text-muted small mb-0">Bảng giá niêm yết minh bạch theo quy chuẩn của Bộ Y tế.</p>
+                </div>
+                <!-- Tìm kiếm dịch vụ -->
+                <div class="input-group" style="max-width: 280px;">
+                    <span class="input-group-text bg-white border-end-0">🔍</span>
+                    <input type="text" id="serviceSearch" class="form-control border-start-0" placeholder="Tìm tên dịch vụ..." onkeyup="filterServices()">
                 </div>
             </div>
 
-            <table class="service-table" id="serviceTable">
-                <thead>
-                    <tr>
-                        <th style="width: 40%;">Tên dịch vụ</th>
-                        <th style="width: 45%;">Mô tả dịch vụ</th>
-                        <th style="width: 15%; text-align: right;">Đơn giá</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (services != null && !services.isEmpty()) { %>
-                        <% for (Service svc : services) { %>
-                            <tr class="service-item">
-                                <td class="service-name" style="font-weight: 600;"><%= svc.getServiceName() %></td>
-                                <td style="color: var(--text-secondary); font-size: 0.875rem;"><%= svc.getDescription() != null ? svc.getDescription() : "Không có mô tả" %></td>
-                                <td class="price-tag" style="text-align: right;"><%= String.format("%,.0fđ", svc.getPrice()) %></td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="servicesTable">
+                    <thead class="table-light">
                         <tr>
-                            <td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 2rem;">Hiện phòng khám đang cập nhật danh mục dịch vụ.</td>
+                            <th scope="col" style="width: 35%;">Tên dịch vụ nha khoa</th>
+                            <th scope="col" style="width: 45%;">Mô tả chi tiết</th>
+                            <th scope="col" style="width: 20%; text-align: right;">Đơn giá niêm yết</th>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <c:choose>
+                            <c:when test="${empty serviceDAO.allServices}">
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">Đang cập nhật danh mục dịch vụ...</td>
+                                </tr>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach items="${serviceDAO.allServices}" var="s">
+                                    <tr class="service-row">
+                                        <td class="fw-bold text-dark service-name">
+                                            <c:out value="${s.serviceName}" />
+                                        </td>
+                                        <td class="small text-muted">
+                                            <c:out value="${not empty s.description ? s.description : 'Dịch vụ nha khoa chuẩn quốc tế'}" />
+                                        </td>
+                                        <td class="text-end fw-bold text-primary">
+                                            <fmt:formatNumber value="${s.price}" pattern="#,##0" /> VNĐ
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+
+    </main>
+
+    <!-- Footer dùng chung -->
+    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
     <script>
-        // Hàm lọc tìm kiếm dịch vụ theo từ khóa nhập vào ô input
         function filterServices() {
-            var input = document.getElementById("searchInput");
-            var filter = input.value.toLowerCase().trim(); // Chuyển chữ thường và cắt khoảng trắng
-            var table = document.getElementById("serviceTable");
-            var rows = table.getElementsByClassName("service-item"); // Lấy danh sách dòng dịch vụ
+            var input = document.getElementById('serviceSearch');
+            var filter = input.value.toLowerCase().trim();
+            var rows = document.querySelectorAll('#servicesTable .service-row');
 
-            // Lặp qua từng dòng để ẩn/hiển thị dựa trên tên dịch vụ
-            for (var i = 0; i < rows.length; i++) {
-                var nameCol = rows[i].getElementsByClassName("service-name")[0];
-                
+            rows.forEach(function(row) {
+                var nameCol = row.querySelector('.service-name');
                 if (nameCol) {
-                    var txtValue = nameCol.textContent || nameCol.innerText;
-                    
-                    if (txtValue.toLowerCase().indexOf(filter) > -1) { // Sử dụng hàm indexOf tìm kiếm chuỗi
-                        rows[i].style.display = ""; // Hiển thị dòng
-                    } else {
-                        rows[i].style.display = "none"; // Ẩn dòng
-                    }
+                    var txt = nameCol.textContent.toLowerCase();
+                    row.style.display = txt.indexOf(filter) > -1 ? '' : 'none';
                 }
-            }
+            });
         }
     </script>
 </body>

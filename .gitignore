@@ -1,0 +1,6 @@
+target/
+DenCli/target/
+DenCli/cookies.txt
+mattpocock-skills/
+*.log
+.DS_Store

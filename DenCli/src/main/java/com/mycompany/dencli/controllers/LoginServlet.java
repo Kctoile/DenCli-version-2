@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"}) // Khai báo Servlet xử lý đường dẫn /login
+// @WebServlet đã bị vô hiệu hóa — URL /login nay được xử lý bởi com.devjava.dencli.controller.LoginServlet
+// @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
     // ponytail: Lưu trữ số lần đăng nhập sai của từng tài khoản trong bộ nhớ để phòng chống dò mật khẩu

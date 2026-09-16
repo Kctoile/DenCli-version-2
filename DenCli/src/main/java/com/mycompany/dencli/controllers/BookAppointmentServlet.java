@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(name = "BookAppointmentServlet", urlPatterns = {"/api/appointments/book"}) // Ánh xạ Servlet tới url đặt lịch
+// @WebServlet đã bị vô hiệu hóa — URL /api/appointments/book nay được xử lý bởi com.devjava.dencli.controller.BookAppointmentServlet
+// @WebServlet(name = "BookAppointmentServlet", urlPatterns = {"/api/appointments/book"})
 public class BookAppointmentServlet extends HttpServlet {
 
     /**

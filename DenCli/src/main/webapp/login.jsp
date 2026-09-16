@@ -1,9 +1,10 @@
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%-- 
- * Purpose: Login page for patients and clinic staff (UC-04).
+ * Purpose: Login page for patients and clinic staff (UC-04: Dang nhap va dang xuat).
  * Created Date: 12/08/2026
- * Last Updated Date: 12/08/2026
+ * Last Updated Date: 16/09/2026
  --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -17,7 +18,7 @@
     <div class="page-wrapper">
         <div class="card">
             <div class="logo-section">
-                <!-- SVG Icon thay thế cho Emoji giúp giao diện đồng bộ chuyên nghiệp -->
+                <!-- SVG Icon chuyên nghiệp -->
                 <div class="logo-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#ffffff" viewBox="0 0 256 256">
                         <path d="M216,72a40,40,0,0,0-40-40,8,8,0,0,0-7,4.3L153.2,70.5a16.1,16.1,0,0,1-22.1,6.5,8,8,0,0,0-10.2,10.2,16.1,16.1,0,0,1,6.5,22.1l-34.2,15.8a8,8,0,0,0-4.3,7,40,40,0,0,0,40,40,8,8,0,0,0,7-4.3l15.8-34.2a16.1,16.1,0,0,1,22.1-6.5,8,8,0,0,0,10.2-10.2,16.1,16.1,0,0,1-6.5-22.1l34.2-15.8A8,8,0,0,0,216,72Z" opacity="0.2"></path>
@@ -28,7 +29,19 @@
                 <p>Đăng nhập để đặt lịch và quản lý hồ sơ khám</p>
             </div>
 
-            <!-- Thông báo lỗi hoặc thành công -->
+            <!-- Thông báo lỗi hoặc thành công dùng thẻ JSTL chuẩn (0 scriptlet) -->
+            <c:if test="${not empty sessionScope.errorMessage}">
+                <div class="alert alert-error" style="display: block;">
+                    <c:out value="${sessionScope.errorMessage}" />
+                </div>
+                <c:remove var="errorMessage" scope="session" />
+            </c:if>
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-error" style="display: block;">
+                    <c:out value="${errorMessage}" />
+                </div>
+            </c:if>
+
             <div id="alertSuccess" class="alert alert-success"></div>
             <div id="alertError" class="alert alert-error"></div>
 
@@ -55,7 +68,7 @@
     <script>
         // Hàm gửi dữ liệu đăng nhập không đồng bộ qua API /login
         function handleLogin(event) {
-            event.preventDefault(); // Chặn hành vi load lại trang mặc định của form
+            event.preventDefault();
 
             var alertSuccess = document.getElementById('alertSuccess');
             var alertError = document.getElementById('alertError');
@@ -66,20 +79,18 @@
             btn.disabled = true;
             btn.textContent = 'Đang xác thực...';
 
-            // Tạo payload JSON gửi đi
             var payload = {
                 email_or_phone: document.getElementById('emailOrPhone').value.trim(),
                 password: document.getElementById('password').value
             };
 
-            // Gọi API bằng fetch gửi yêu cầu POST dạng JSON
             fetch('${pageContext.request.contextPath}/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload) // Convert dữ liệu thành chuỗi JSON
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload)
             })
             .then(function(response) {
-                return response.json(); // Phân tích kết quả JSON trả về
+                return response.json();
             })
             .then(function(data) {
                 btn.disabled = false;
@@ -89,10 +100,21 @@
                     alertSuccess.textContent = data.message;
                     alertSuccess.style.display = 'block';
 
-                    // Chuyển hướng sang trang đặt lịch khám (book.jsp) sau 1.5 giây
+                    var targetUrl = (data.data && data.data.target_url) ? data.data.target_url : '';
+                    var role = (data.data && data.data.role) ? data.data.role : 'CUSTOMER';
                     setTimeout(function() {
-                        window.location.href = '${pageContext.request.contextPath}/book.jsp';
-                    }, 1500);
+                        if (targetUrl && targetUrl.length > 0) {
+                            window.location.href = targetUrl;
+                        } else if (role === 'ADMIN') {
+                            window.location.href = '${pageContext.request.contextPath}/admin/dashboard';
+                        } else if (role === 'DOCTOR') {
+                            window.location.href = '${pageContext.request.contextPath}/doctor/examination';
+                        } else if (role === 'STAFF') {
+                            window.location.href = '${pageContext.request.contextPath}/staff/reception';
+                        } else {
+                            window.location.href = '${pageContext.request.contextPath}/customer/book';
+                        }
+                    }, 800);
 
                 } else {
                     alertError.textContent = data.message;

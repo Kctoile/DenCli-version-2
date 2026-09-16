@@ -18,6 +18,10 @@ public class AppointmentDAO {
 
     /**
      * Hàm kiểm tra trùng lịch khám của bác sĩ tại một ngày và giờ cụ thể.
+     * @param doctorId
+     * @param date
+     * @param time
+     * @return 
      */
     public boolean checkDuplicateSlot(int doctorId, java.sql.Date date, java.sql.Time time) {
         String sql = "SELECT 1 FROM appointments WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? AND status <> 'Cancelled'";
