@@ -55,74 +55,76 @@ public class AppointmentDAO {
     public boolean insertAppointment(Appointment app, List<Integer> serviceIds) {
         String sqlApp = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, status, notes, room) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String sqlService = "INSERT INTO appointment_services (appointment_id, service_id) VALUES (?, ?)";
-        try (Connection conn = DBContext.getConnection()) { // Lấy kết nối CSDL từ DBContext
-            try {
-
-                conn.setAutoCommit(false); // Vô hiệu hóa tính năng tự động commit của JDBC để bắt đầu Transaction
-
-                // Khởi tạo PreparedStatement cho việc chèn lịch hẹn và yêu cầu trả về khóa chính tự sinh
-                try (PreparedStatement psApp = conn.prepareStatement(sqlApp, Statement.RETURN_GENERATED_KEYS)) { // Gọi hàm RETURN_GENERATED_KEYS từ thư viện JDBC
-
-            psApp.setInt(1, app.getPatientId());
-            psApp.setInt(2, app.getDoctorId());
-            psApp.setDate(3, app.getAppointmentDate());
-            psApp.setTime(4, app.getAppointmentTime());
-            psApp.setString(5, app.getStatus());
-            psApp.setString(6, app.getNotes());
-            psApp.setString(7, app.getRoom());
-
-            int affectedRows = psApp.executeUpdate(); // Chạy lệnh INSERT lịch hẹn của JDBC
-
-            if (affectedRows == 0) {
-                throw new SQLException("Tạo lịch hẹn thất bại, không có dòng nào được thêm.");
-            }
-
-            int appId = -1;
-
-            try (ResultSet generatedKeys = psApp.getGeneratedKeys()) { // Lấy danh sách khóa chính được sinh ra của JDBC
-                if (generatedKeys.next()) {
-                    appId = generatedKeys.getInt(1); // Lấy mã appointment_id vừa tự sinh ra
-                }
-            }
-
-            if (appId == -1) {
-                throw new SQLException("Tạo lịch hẹn thất bại, không lấy được mã appointment_id.");
-            }
-
-            app.setAppointmentId(appId);
-
-            // Nếu bệnh nhân có chọn dịch vụ cụ thể đi kèm
-                    if (serviceIds != null && !serviceIds.isEmpty()) {
-                        try (PreparedStatement psService = conn.prepareStatement(sqlService)) { // Tạo câu lệnh PreparedStatement cho bảng trung gian
-
-                            for (int serviceId : serviceIds) { // Vòng lặp duyệt qua các ID dịch vụ để chuẩn bị chèn
-                                psService.setInt(1, appId);
-                                psService.setInt(2, serviceId);
-
-                                psService.addBatch(); // Sử dụng tính năng addBatch của JDBC để tối ưu hóa hiệu năng chèn mảng
-                            }
-
-                            psService.executeBatch(); // Thực thi chạy nhiều lệnh chèn cùng lúc bằng executeBatch của JDBC
-                        }
-                    }
-
-                    conn.commit(); // Commit toàn bộ Transaction nếu không xảy ra bất cứ lỗi nào qua JDBC
-                    return true;
-                }
-
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Failed to insert appointment", e);
-
-                try {
-                    conn.rollback(); // Rollback khôi phục lại dữ liệu nếu xảy ra lỗi trong quá trình chạy qua JDBC
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.WARNING, "Failed to rollback appointment transaction", ex);
-                }
-            }
+        try (Connection conn = DBContext.getConnection()) {
+            return insertAppointmentTransaction(conn, app, serviceIds, sqlApp, sqlService);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to open appointment transaction", e);
         }
 
         return false;
+    }
+
+    private boolean insertAppointmentTransaction(Connection conn, Appointment app, List<Integer> serviceIds,
+            String sqlApp, String sqlService) {
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psApp = conn.prepareStatement(sqlApp, Statement.RETURN_GENERATED_KEYS)) {
+                psApp.setInt(1, app.getPatientId());
+                psApp.setInt(2, app.getDoctorId());
+                psApp.setDate(3, app.getAppointmentDate());
+                psApp.setTime(4, app.getAppointmentTime());
+                psApp.setString(5, app.getStatus());
+                psApp.setString(6, app.getNotes());
+                psApp.setString(7, app.getRoom());
+
+                if (psApp.executeUpdate() == 0) {
+                    throw new SQLException("Tạo lịch hẹn thất bại, không có dòng nào được thêm.");
+                }
+
+                int appId = getGeneratedAppointmentId(psApp);
+                app.setAppointmentId(appId);
+                insertAppointmentServices(conn, sqlService, appId, serviceIds);
+                conn.commit();
+                return true;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Failed to insert appointment", e);
+            rollbackAppointmentTransaction(conn);
+            return false;
+        }
+    }
+
+    private int getGeneratedAppointmentId(PreparedStatement statement) throws SQLException {
+        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+        }
+        throw new SQLException("Tạo lịch hẹn thất bại, không lấy được mã appointment_id.");
+    }
+
+    private void insertAppointmentServices(Connection conn, String sqlService, int appointmentId,
+            List<Integer> serviceIds) throws SQLException {
+        if (serviceIds == null || serviceIds.isEmpty()) {
+            return;
+        }
+
+        try (PreparedStatement psService = conn.prepareStatement(sqlService)) {
+            for (int serviceId : serviceIds) {
+                psService.setInt(1, appointmentId);
+                psService.setInt(2, serviceId);
+                psService.addBatch();
+            }
+            psService.executeBatch();
+        }
+    }
+
+    private void rollbackAppointmentTransaction(Connection conn) {
+        try {
+            conn.rollback();
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Failed to rollback appointment transaction", e);
+        }
     }
 }

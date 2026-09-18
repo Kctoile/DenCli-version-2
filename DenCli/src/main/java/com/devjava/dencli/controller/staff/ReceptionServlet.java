@@ -30,6 +30,8 @@ public class ReceptionServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
+    private static final String JSON_CONTENT_TYPE = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
+    private static final String INVALID_APPOINTMENT_ACTION_MESSAGE = "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.";
 
     /**
      * GET /staff/reception: Lấy danh sách lịch hẹn toàn hệ thống phục vụ tiếp đón và check-in.
@@ -70,7 +72,7 @@ public class ReceptionServlet extends HttpServlet {
         if (currentUser == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             if (isJson) {
-                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+                response.setContentType(JSON_CONTENT_TYPE);
                 Map<String, Object> err = new HashMap<>();
                 err.put("success", false);
                 err.put("message", "Vui lòng đăng nhập.");
@@ -150,7 +152,7 @@ public class ReceptionServlet extends HttpServlet {
 
         if (success) {
             if (isJson) {
-                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+                response.setContentType(JSON_CONTENT_TYPE);
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("success", true);
                 resData.put("message", msg);
@@ -160,7 +162,7 @@ public class ReceptionServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/staff/reception");
             }
         } else {
-            handleError(response, isJson, request, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+            handleError(response, isJson, request, INVALID_APPOINTMENT_ACTION_MESSAGE);
         }
     }
 
@@ -168,7 +170,7 @@ public class ReceptionServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

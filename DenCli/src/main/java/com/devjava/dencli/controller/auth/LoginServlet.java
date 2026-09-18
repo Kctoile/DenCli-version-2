@@ -45,26 +45,30 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        boolean isJson = isJsonRequest(request);
+        try {
+            boolean isJson = isJsonRequest(request);
 
-        String[] creds = parseCredentials(request);
-        String emailOrPhone = creds[0];
-        String password = creds[1];
+            String[] creds = parseCredentials(request);
+            String emailOrPhone = creds[0];
+            String password = creds[1];
 
-        // Validate cơ bản
-        if (emailOrPhone == null || emailOrPhone.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            handleFailure(request, response, isJson, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
-            return;
-        }
+            // Validate cơ bản
+            if (emailOrPhone == null || emailOrPhone.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+                handleFailure(request, response, isJson, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
+                return;
+            }
 
-        // Gọi Tầng Service (No Fat Servlet)
-        UserService userService = ServiceFactory.getUserService();
-        User user = userService.login(emailOrPhone.trim(), password.trim());
+            // Gọi Tầng Service (No Fat Servlet)
+            UserService userService = ServiceFactory.getUserService();
+            User user = userService.login(emailOrPhone.trim(), password.trim());
 
-        if (user != null) {
-            handleSuccess(request, response, user, isJson);
-        } else {
-            handleFailure(request, response, isJson, "Email/Số điện thoại hoặc mật khẩu không chính xác.");
+            if (user != null) {
+                handleSuccess(request, response, user, isJson);
+            } else {
+                handleFailure(request, response, isJson, "Email/Số điện thoại hoặc mật khẩu không chính xác.");
+            }
+        } catch (IOException e) {
+            throw new ServletException("Failed to process login request.", e);
         }
     }
 

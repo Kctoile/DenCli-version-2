@@ -34,6 +34,7 @@ public class BookAppointmentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson GSON = new Gson();
+    private static final String INVALID_FORMAT_ERROR_CODE = "ERR_INVALID_FORMAT";
 
     /**
      * Tiếp nhận yêu cầu POST để đặt lịch hẹn khám bệnh trực tuyến.
@@ -46,21 +47,25 @@ public class BookAppointmentServlet extends HttpServlet {
         response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        User currentUser = getCurrentCustomer(request, response);
-        if (currentUser == null) {
-            return;
-        }
+        try {
+            User currentUser = getCurrentCustomer(request, response);
+            if (currentUser == null) {
+                return;
+            }
 
-        BookingRequestDTO bookingDTO = parseRequest(request, response);
-        if (bookingDTO == null) {
-            return;
-        }
+            BookingRequestDTO bookingDTO = parseRequest(request, response);
+            if (bookingDTO == null) {
+                return;
+            }
 
-        if (!validateBookingData(bookingDTO, response)) {
-            return;
-        }
+            if (!validateBookingData(bookingDTO, response)) {
+                return;
+            }
 
-        processBooking(bookingDTO, currentUser.getUserId(), response);
+            processBooking(bookingDTO, currentUser.getUserId(), response);
+        } catch (IOException e) {
+            throw new ServletException("Failed to process appointment booking request.", e);
+        }
     }
 
     private User getCurrentCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -113,7 +118,7 @@ public class BookAppointmentServlet extends HttpServlet {
                 dto.setDoctorId(Integer.parseInt(docIdStr.trim()));
             } catch (NumberFormatException e) {
                 sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                        "Mã bác sĩ không hợp lệ.", "ERR_INVALID_FORMAT");
+                        "Mã bác sĩ không hợp lệ.", INVALID_FORMAT_ERROR_CODE);
                 return null;
             }
         }
@@ -129,7 +134,7 @@ public class BookAppointmentServlet extends HttpServlet {
                     sList.add(Integer.parseInt(s.trim()));
                 } catch (NumberFormatException e) {
                     sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                            "Mã dịch vụ không hợp lệ.", "ERR_INVALID_FORMAT");
+                            "Mã dịch vụ không hợp lệ.", INVALID_FORMAT_ERROR_CODE);
                     return null;
                 }
             }
@@ -152,7 +157,7 @@ public class BookAppointmentServlet extends HttpServlet {
 
         if (parsedDate == null || parsedTime == null) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
-                    "Định dạng ngày hoặc giờ khám không hợp lệ.", "ERR_INVALID_FORMAT");
+                    "Định dạng ngày hoặc giờ khám không hợp lệ.", INVALID_FORMAT_ERROR_CODE);
             return false;
         }
         return true;

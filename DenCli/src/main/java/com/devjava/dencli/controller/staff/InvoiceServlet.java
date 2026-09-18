@@ -26,6 +26,7 @@ public class InvoiceServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
+    private static final String JSON_CONTENT_TYPE = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
 
     /**
      * GET /staff/invoice: Tính toán và hiển thị chi tiết hóa đơn viện phí cho một cuộc hẹn.
@@ -54,7 +55,7 @@ public class InvoiceServlet extends HttpServlet {
 
         boolean isJson = Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
         if (isJson) {
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_CONTENT_TYPE);
             response.getWriter().print(gson.toJson(invoice));
         } else {
             request.setAttribute("invoice", invoice);
@@ -109,7 +110,7 @@ public class InvoiceServlet extends HttpServlet {
 
         if (success) {
             if (isJson) {
-                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+                response.setContentType(JSON_CONTENT_TYPE);
                 Map<String, Object> resData = new HashMap<>();
                 resData.put("success", true);
                 resData.put("message", "Thanh toán viện phí thành công! Cuộc hẹn đã chuyển trạng thái Hoàn tất.");
@@ -128,7 +129,7 @@ public class InvoiceServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
             err.put("message", message);

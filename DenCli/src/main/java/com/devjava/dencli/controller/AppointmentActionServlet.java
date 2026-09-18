@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 public class AppointmentActionServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String INVALID_ACTION_MESSAGE = "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -31,32 +32,36 @@ public class AppointmentActionServlet extends HttpServlet {
         response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        // 1. Kiểm tra xác thực phiên đăng nhập
-        HttpSession session = request.getSession(false);
-        User currentUser = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
-
-        if (currentUser == null) {
-            sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, false, "Yêu cầu đăng nhập trước khi thực hiện.");
-            return;
-        }
-
-        String action = request.getParameter("action");
-        String appIdStr = request.getParameter("appointment_id");
-
-        if (action == null || appIdStr == null) {
-            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thiếu tham số hành động hoặc mã lịch hẹn.");
-            return;
-        }
-
-        int appointmentId;
         try {
-            appointmentId = Integer.parseInt(appIdStr.trim());
-        } catch (NumberFormatException e) {
-            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Mã lịch hẹn không hợp lệ.");
-            return;
-        }
+            // 1. Kiểm tra xác thực phiên đăng nhập
+            HttpSession session = request.getSession(false);
+            User currentUser = (session != null) ? (User) session.getAttribute(Constants.SESSION_USER) : null;
 
-        executeAction(request, response, currentUser, action.toLowerCase(), appointmentId);
+            if (currentUser == null) {
+                sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, false, "Yêu cầu đăng nhập trước khi thực hiện.");
+                return;
+            }
+
+            String action = request.getParameter("action");
+            String appIdStr = request.getParameter("appointment_id");
+
+            if (action == null || appIdStr == null) {
+                sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thiếu tham số hành động hoặc mã lịch hẹn.");
+                return;
+            }
+
+            int appointmentId;
+            try {
+                appointmentId = Integer.parseInt(appIdStr.trim());
+            } catch (NumberFormatException e) {
+                sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Mã lịch hẹn không hợp lệ.");
+                return;
+            }
+
+            executeAction(request, response, currentUser, action.toLowerCase(), appointmentId);
+        } catch (IOException e) {
+            throw new ServletException("Failed to write appointment action response.", e);
+        }
     }
 
     private void executeAction(HttpServletRequest request, HttpServletResponse response,
@@ -92,7 +97,7 @@ public class AppointmentActionServlet extends HttpServlet {
         if (success) {
             sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Tiếp đón và phân phòng khám thành công!");
         } else {
-            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, INVALID_ACTION_MESSAGE);
         }
     }
 
@@ -106,7 +111,7 @@ public class AppointmentActionServlet extends HttpServlet {
         if (success) {
             sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Đã cập nhật hoàn thành ca khám!");
         } else {
-            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, INVALID_ACTION_MESSAGE);
         }
     }
 
@@ -116,7 +121,7 @@ public class AppointmentActionServlet extends HttpServlet {
         if (success) {
             sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Đã hủy lịch hẹn thành công!");
         } else {
-            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Thao tác thất bại hoặc lịch hẹn không ở trạng thái hợp lệ.");
+            sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, INVALID_ACTION_MESSAGE);
         }
     }
 
