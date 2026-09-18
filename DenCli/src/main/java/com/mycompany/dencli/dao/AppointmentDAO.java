@@ -13,8 +13,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppointmentDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(AppointmentDAO.class.getName());
 
     /**
      * Hàm kiểm tra trùng lịch khám của bác sĩ tại một ngày và giờ cụ thể.
@@ -107,16 +111,16 @@ public class AppointmentDAO {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Failed to insert appointment", e);
 
                 try {
                     conn.rollback(); // Rollback khôi phục lại dữ liệu nếu xảy ra lỗi trong quá trình chạy qua JDBC
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Failed to rollback appointment transaction", ex);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Failed to open appointment transaction", e);
         }
 
         return false;
