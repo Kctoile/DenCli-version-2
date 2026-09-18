@@ -137,7 +137,21 @@ public class DBContext {
 
 ---
 
-## 6. BƯỚC 5: TÍCH HỢP APACHE TOMCAT VÀO IDE
+## 6. BƯỚC 5: CẤU HÌNH KẾT NỐI DATABASE
+
+Không lưu mật khẩu SQL Server trong source code. Trước khi chạy ứng dụng, đặt các biến môi trường sau (host, port và database có thể bỏ qua nếu dùng giá trị mặc định):
+
+```powershell
+$env:DENCLI_DB_HOST = "localhost"
+$env:DENCLI_DB_PORT = "1433"
+$env:DENCLI_DB_NAME = "Dental"
+$env:DENCLI_DB_USER = "sa"
+$env:DENCLI_DB_PASSWORD = "<mat-khau-cua-ban>"
+```
+
+Ứng dụng cũng chấp nhận Java system properties cùng tên. System property được ưu tiên hơn biến môi trường.
+
+## 7. BƯỚC 6: TÍCH HỢP APACHE TOMCAT VÀO IDE
 
 1. **Tải Apache Tomcat:** Tải bản phân phối Tomcat 10.1.x (định dạng tệp zip/tar.gz) và giải nén vào ổ đĩa làm việc của bạn (ví dụ: `C:\apache-tomcat-10.1.x`).
 2. **Cấu hình trên IntelliJ IDEA:**

@@ -45,14 +45,14 @@ public class AppointmentServiceTest {
         request.setAppointmentTime("09:00");
         request.setServiceIds(List.of(1, 2));
 
-        // Mock DAO trả về true (đã có lịch trùng)
-        when(appointmentDAO.checkDuplicateSlot(eq(2), any(Date.class), any(Time.class))).thenReturn(true);
+        // DAO transaction mới là nơi quyết định xung đột slot một cách nguyên tử.
+        when(appointmentDAO.insertAppointmentWithServices(any(Appointment.class), anyList())).thenReturn(-1);
 
         int resultId = appointmentService.bookAppointment(request, 10);
 
-        // Kết quả phải trả về -1 (từ chối đặt lịch)
+        // Kết quả phải trả về -1 khi DAO từ chối slot trong transaction.
         assertEquals(-1, resultId);
-        verify(appointmentDAO, never()).insertAppointmentWithServices(any(Appointment.class), anyList());
+        verify(appointmentDAO).insertAppointmentWithServices(any(Appointment.class), anyList());
     }
 
     /**
@@ -66,8 +66,7 @@ public class AppointmentServiceTest {
         request.setAppointmentTime("09:00");
         request.setServiceIds(List.of(1));
 
-        // Mock DAO trả về false (không trùng lịch) và sinh mã ID = 99
-        when(appointmentDAO.checkDuplicateSlot(eq(2), any(Date.class), any(Time.class))).thenReturn(false);
+        // DAO transaction xác nhận slot còn trống và sinh mã ID = 99.
         when(appointmentDAO.insertAppointmentWithServices(any(Appointment.class), anyList())).thenReturn(99);
 
         int resultId = appointmentService.bookAppointment(request, 10);
@@ -80,6 +79,9 @@ public class AppointmentServiceTest {
      */
     @Test
     public void testCheckInAppointmentSuccess() {
+        Appointment appointment = new Appointment();
+        appointment.setStatus(Constants.APPOINTMENT_CONFIRMED);
+        when(appointmentDAO.getAppointmentById(15)).thenReturn(appointment);
         when(appointmentDAO.updateAppointmentRoom(15, "Phòng 201")).thenReturn(true);
         when(appointmentDAO.updateAppointmentStatus(15, Constants.APPOINTMENT_CHECKED_IN)).thenReturn(true);
 
@@ -108,5 +110,16 @@ public class AppointmentServiceTest {
         // Bệnh nhân ID 8 cố tình hủy lịch của bệnh nhân ID 5 -> Thất bại
         boolean cancelOther = appointmentService.cancelAppointment(100, 8, Constants.ROLE_CUSTOMER_ID);
         assertFalse(cancelOther);
+    }
+
+    @Test
+    public void testCompletedAppointmentCannotBeCancelled() {
+        Appointment app = new Appointment();
+        app.setPatientId(5);
+        app.setStatus(Constants.APPOINTMENT_COMPLETED);
+        when(appointmentDAO.getAppointmentById(101)).thenReturn(app);
+
+        assertFalse(appointmentService.cancelAppointment(101, 5, Constants.ROLE_CUSTOMER_ID));
+        verify(appointmentDAO, never()).updateAppointmentStatus(anyInt(), eq(Constants.APPOINTMENT_CANCELLED));
     }
 }

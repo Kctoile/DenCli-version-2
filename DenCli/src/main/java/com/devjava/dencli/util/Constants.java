@@ -11,11 +11,19 @@ public final class Constants {
     }
 
     // --- CẤU HÌNH CƠ SỞ DỮ LIỆU ---
-    public static final String DB_HOST = "localhost";
-    public static final String DB_PORT = "1433";
-    public static final String DB_NAME = "Dental";
-    public static final String DB_USER = "sa";
-    public static final String DB_PASSWORD = "123";
+    public static final String DB_HOST = getConfig("DENCLI_DB_HOST", "localhost");
+    public static final String DB_PORT = getConfig("DENCLI_DB_PORT", "1433");
+    public static final String DB_NAME = getConfig("DENCLI_DB_NAME", "Dental");
+    public static final String DB_USER = getConfig("DENCLI_DB_USER", "sa");
+    public static final String DB_PASSWORD = getConfig("DENCLI_DB_PASSWORD", "");
+
+    private static String getConfig(String key, String defaultValue) {
+        String value = System.getProperty(key);
+        if (value == null || value.isBlank()) {
+            value = System.getenv(key);
+        }
+        return value == null || value.isBlank() ? defaultValue : value;
+    }
 
     // --- VAI TRÒ NGƯỜI DÙNG (ROLES) ---
     public static final int ROLE_ADMIN_ID = 1;
