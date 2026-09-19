@@ -10,10 +10,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 public final class DBConnection {
 
     private static final String DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
 
     // Khởi tạo constructor private để ngăn chặn khởi tạo đối tượng từ bên ngoài
     private DBConnection() {
@@ -26,6 +28,11 @@ public final class DBConnection {
      * @throws SQLException khi kết nối thất bại
      */
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
+        if (Constants.DB_PASSWORD.isBlank()) {
+            throw new SQLException("DENCLI_DB_PASSWORD is not configured for SQL Server user "
+                    + Constants.DB_USER + ".");
+        }
+
         // Nạp Driver của Microsoft SQL Server vào bộ nhớ máy ảo Java
         Class.forName(DRIVER_CLASS);
 
@@ -38,7 +45,14 @@ public final class DBConnection {
         );
 
         // Gọi phương thức getConnection từ thư viện DriverManager của JDBC để tạo kết nối
-        return DriverManager.getConnection(url, Constants.DB_USER, Constants.DB_PASSWORD);
+        try {
+            return DriverManager.getConnection(url, Constants.DB_USER, Constants.DB_PASSWORD);
+        } catch (SQLException e) {
+            LOGGER.severe("SQL Server connection failed for " + Constants.DB_HOST + ":"
+                    + Constants.DB_PORT + "/" + Constants.DB_NAME + " as " + Constants.DB_USER
+                    + ": " + e.getMessage());
+            throw e;
+        }
     }
 
     /**

@@ -14,8 +14,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDAOImpl implements UserDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(UserDAOImpl.class.getName());
 
     /**
      * Phương thức kiểm tra email đã tồn tại trong bảng users bằng cách đếm bản ghi.
@@ -138,8 +142,8 @@ public class UserDAOImpl implements UserDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            // Ghi nhận lỗi khi tìm kiếm tài khoản
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Login lookup failed for identifier: " + emailOrPhone, e);
+            throw new IllegalStateException("Unable to query the user account.", e);
         }
 
         return null;

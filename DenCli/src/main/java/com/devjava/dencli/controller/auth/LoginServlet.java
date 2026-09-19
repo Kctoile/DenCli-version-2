@@ -45,9 +45,8 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        boolean isJson = isJsonRequest(request);
         try {
-            boolean isJson = isJsonRequest(request);
-
             String[] creds = parseCredentials(request);
             String emailOrPhone = creds[0];
             String password = creds[1];
@@ -69,6 +68,10 @@ public class LoginServlet extends HttpServlet {
             }
         } catch (IOException e) {
             throw new ServletException("Failed to process login request.", e);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            handleUnavailable(request, response, isJson);
+            
         }
     }
 
@@ -150,6 +153,22 @@ public class LoginServlet extends HttpServlet {
             errData.put("message", message);
             errData.put("error_code", "ERR_INVALID_CREDENTIALS");
             response.getWriter().print(gson.toJson(errData));
+        } else {
+            request.setAttribute("errorMessage", message);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+        }
+    }
+
+    private void handleUnavailable(HttpServletRequest request, HttpServletResponse response, boolean isJson)
+            throws ServletException, IOException {
+        String message = "Hệ thống xác thực đang tạm thời không khả dụng.";
+        if (isJson) {
+            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.getWriter().print(gson.toJson(Map.of(
+                    "success", false,
+                    "message", message,
+                    "error_code", "ERR_AUTH_SERVICE_UNAVAILABLE")));
         } else {
             request.setAttribute("errorMessage", message);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
