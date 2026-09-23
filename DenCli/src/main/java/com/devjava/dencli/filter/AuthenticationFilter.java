@@ -105,17 +105,19 @@ public class AuthenticationFilter implements Filter {
             return true;
         }
 
-        // Các đường dẫn phục vụ đăng nhập, đăng ký và đăng xuất
+        // Các đường dẫn phục vụ đăng nhập, đăng ký, đăng xuất và quên mật khẩu
         if (path.equals("/login") || path.equals("/login.jsp")
                 || path.equals("/register") || path.equals("/register.jsp")
+                || path.equals("/forgot-password") || path.equals("/forgot-password.jsp")
                 || path.equals("/logout") || path.equals("/logout.jsp")) {
             return true;
         }
 
-        // Các tài nguyên tĩnh (CSS, JS, Hình ảnh, Fonts, Thư viện bên ngoài) và phân hệ xác thực công khai
+        // Các tài nguyên tĩnh, xác thực công khai, callback thanh toán và websocket
         if (path.startsWith("/assets/") || path.startsWith("/css/")
                 || path.startsWith("/js/") || path.startsWith("/images/")
-                || path.startsWith("/vendor/") || path.startsWith("/auth/")) {
+                || path.startsWith("/vendor/") || path.startsWith("/auth/")
+                || path.startsWith("/payment/vnpay-return") || path.startsWith("/ws/")) {
             return true;
         }
 

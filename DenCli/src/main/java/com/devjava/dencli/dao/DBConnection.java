@@ -21,8 +21,36 @@ public final class DBConnection {
     private DBConnection() {
     }
 
+    private static volatile com.zaxxer.hikari.HikariDataSource dataSource;
+
+    private static com.zaxxer.hikari.HikariDataSource getDataSource() {
+        if (dataSource == null) {
+            synchronized (DBConnection.class) {
+                if (dataSource == null) {
+                    com.zaxxer.hikari.HikariConfig config = new com.zaxxer.hikari.HikariConfig();
+                    String url = String.format(
+                        "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
+                        Constants.DB_HOST,
+                        Constants.DB_PORT,
+                        Constants.DB_NAME
+                    );
+                    config.setJdbcUrl(url);
+                    config.setUsername(Constants.DB_USER);
+                    config.setPassword(Constants.DB_PASSWORD);
+                    config.setMaximumPoolSize(10);
+                    config.setMinimumIdle(2);
+                    config.setIdleTimeout(30000);
+                    config.setConnectionTimeout(5000);
+                    config.setPoolName("DenCliHikariPool");
+                    dataSource = new com.zaxxer.hikari.HikariDataSource(config);
+                }
+            }
+        }
+        return dataSource;
+    }
+
     /**
-     * Phương thức mở và trả về một kết nối cơ sở dữ liệu mới tới SQL Server thông qua DriverManager.
+     * Phương thức mở và trả về một kết nối cơ sở dữ liệu từ Connection Pool (hoặc DriverManager dự phòng).
      * @return Đối tượng java.sql.Connection đang mở
      * @throws ClassNotFoundException khi không tìm thấy driver SQL Server
      * @throws SQLException khi kết nối thất bại
@@ -33,25 +61,18 @@ public final class DBConnection {
                     + Constants.DB_USER + ".");
         }
 
-        // Nạp Driver của Microsoft SQL Server vào bộ nhớ máy ảo Java
-        Class.forName(DRIVER_CLASS);
-
-        // Xây dựng chuỗi URL kết nối với tham số bỏ qua kiểm tra chứng chỉ SSL cục bộ
-        String url = String.format(
-            "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
-            Constants.DB_HOST,
-            Constants.DB_PORT,
-            Constants.DB_NAME
-        );
-
-        // Gọi phương thức getConnection từ thư viện DriverManager của JDBC để tạo kết nối
         try {
+            return getDataSource().getConnection();
+        } catch (Exception poolEx) {
+            LOGGER.warning("HikariCP pool unavailable, fallback to DriverManager: " + poolEx.getMessage());
+            Class.forName(DRIVER_CLASS);
+            String url = String.format(
+                "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
+                Constants.DB_HOST,
+                Constants.DB_PORT,
+                Constants.DB_NAME
+            );
             return DriverManager.getConnection(url, Constants.DB_USER, Constants.DB_PASSWORD);
-        } catch (SQLException e) {
-            LOGGER.severe("SQL Server connection failed for " + Constants.DB_HOST + ":"
-                    + Constants.DB_PORT + "/" + Constants.DB_NAME + " as " + Constants.DB_USER
-                    + ": " + e.getMessage());
-            throw e;
         }
     }
 

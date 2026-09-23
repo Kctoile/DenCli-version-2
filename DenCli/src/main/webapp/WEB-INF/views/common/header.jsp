@@ -1,39 +1,156 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<!-- Header dùng chung cho toàn bộ hệ thống DenCli (Bootstrap 5) -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
-    <div class="container-fluid px-3 px-md-4">
-        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/index.jsp">
-            <span class="fs-4">🦷</span>
-            <span>DenCli</span>
+<!-- Header dùng chung cho toàn bộ hệ thống DenCli (Bootstrap 5 & Impeccable Design) -->
+<meta name="csrf-token" content="${csrfToken}">
+<script>window.CSRF_TOKEN = "${csrfToken}";</script>
+<style>
+:root {
+    --dencli-primary: #0EA5E9;
+    --dencli-navy: #1E3A5F;
+    --dencli-coral: #FF6B6B;
+    --dencli-coral-hover: #fa5252;
+    --dencli-bg-light: #F8FAFC;
+}
+.dencli-navbar {
+    background: linear-gradient(135deg, #1E3A5F 0%, #0F2744 100%);
+    box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.15);
+    transition: all 0.3s ease;
+}
+.dencli-brand {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 1.45rem;
+    color: #ffffff !important;
+}
+.dencli-brand .brand-highlight {
+    color: #0EA5E9;
+}
+.dencli-nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+.dencli-nav-link:hover {
+    color: #38BDF8 !important;
+    background-color: rgba(14, 165, 233, 0.12);
+}
+.btn-cta-nav {
+    background-color: var(--dencli-coral);
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 9999px;
+    padding: 0.55rem 1.35rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+    transition: all 0.25s ease;
+}
+.btn-cta-nav:hover {
+    background-color: var(--dencli-coral-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.45);
+}
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark dencli-navbar sticky-top py-2 py-lg-3">
+    <div class="container px-3 px-md-4">
+        <!-- Logo DenCli Dental -->
+        <a class="navbar-brand dencli-brand d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/index.jsp">
+            <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle shadow-sm" style="width: 38px; height: 38px; font-size: 1.25rem;">
+                🦷
+            </span>
+            <span>Den<span class="brand-highlight">Cli</span> Dental</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+
+        <!-- Nút Toggler mobile -->
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDencliContent" aria-controls="navbarDencliContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <!-- Menu điều hướng -->
+        <div class="collapse navbar-collapse" id="navbarDencliContent">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
                 <li class="nav-item">
-                    <a class="nav-link text-white-50" href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a>
+                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#services">Dịch vụ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#doctors">Đội ngũ Bác sĩ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#pricing">Bảng giá</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#faq">FAQ</a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center gap-2">
+
+            <!-- Khối trạng thái đăng nhập & Nút CTA Đặt lịch -->
+            <div class="d-flex align-items-center flex-wrap gap-2 mt-3 mt-lg-0">
+                <!-- Nút CTA chính -->
+                <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-cta-nav d-inline-flex align-items-center gap-2">
+                    <span>📅</span>
+                    <span>Đặt Lịch Khám Ngay</span>
+                </a>
+
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
-                        <span class="badge bg-light text-primary px-3 py-2 fw-semibold d-flex align-items-center gap-1 shadow-sm">
-                            <c:choose>
-                                <c:when test="${sessionScope.user.roleId == 1}">⚙️ Admin:</c:when>
-                                <c:when test="${sessionScope.user.roleId == 2}">🩺 BS:</c:when>
-                                <c:when test="${sessionScope.user.roleId == 4}">💁 Lễ tân:</c:when>
-                                <c:otherwise>👤</c:otherwise>
-                            </c:choose>
-                            <c:out value="${sessionScope.user.fullName}" />
-                        </span>
-                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-light btn-sm px-3">Đăng xuất</a>
+                        <!-- Người dùng đã đăng nhập -->
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-light dropdown-toggle px-3 py-2 rounded-pill d-flex align-items-center gap-2 shadow-sm" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>
+                                    <c:choose>
+                                        <c:when test="${sessionScope.user.roleId == 1}">⚙️</c:when>
+                                        <c:when test="${sessionScope.user.roleId == 2}">🩺</c:when>
+                                        <c:when test="${sessionScope.user.roleId == 4}">💁</c:when>
+                                        <c:otherwise>👤</c:otherwise>
+                                    </c:choose>
+                                </span>
+                                <span class="fw-semibold text-truncate" style="max-width: 140px;">
+                                    <c:out value="${sessionScope.user.fullName}" />
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.roleId == 1}">
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/admin/dashboard">⚙️ Bảng Điều Khiển Admin</a></li>
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/admin/users">👥 Quản Lý Người Dùng</a></li>
+                                    </c:when>
+                                    <c:when test="${sessionScope.user.roleId == 2}">
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/doctor/examination">🩺 Buồng Khám Bác Sĩ</a></li>
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/doctor/prescription">💊 Kê Đơn Thuốc</a></li>
+                                    </c:when>
+                                    <c:when test="${sessionScope.user.roleId == 4}">
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/staff/reception">💁 Bàn Tiếp Đón & Check-in</a></li>
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/staff/invoice">🧾 Lập Hóa Đơn Thu Phí</a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/customer/profile">📋 Hồ Sơ & Lịch Sử Khám</a></li>
+                                    </c:otherwise>
+                                </c:choose>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger py-2" href="${pageContext.request.contextPath}/logout">
+                                        🚪 Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/login" class="btn btn-light btn-sm text-primary fw-semibold px-3">Đăng nhập</a>
-                        <a href="${pageContext.request.contextPath}/register" class="btn btn-outline-light btn-sm px-3">Đăng ký</a>
+                        <!-- Khách vãng lai -->
+                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline-light btn-sm px-3 py-2 rounded-pill fw-medium">
+                            Đăng nhập
+                        </a>
+                        <a href="${pageContext.request.contextPath}/register" class="btn btn-light btn-sm text-primary px-3 py-2 rounded-pill fw-medium shadow-sm">
+                            Đăng ký
+                        </a>
                     </c:otherwise>
                 </c:choose>
             </div>

@@ -69,4 +69,12 @@ public interface UserService {
      * @return true nếu đổi mật khẩu thành công, false nếu mật khẩu cũ không đúng
      */
     boolean changePassword(int userId, String oldPassword, String newPassword);
+
+    /**
+     * Phương thức đặt lại mật khẩu mới cho người dùng sau khi xác thực OTP thành công.
+     * @param email Email tài khoản cần đặt lại mật khẩu
+     * @param newPassword Mật khẩu mới
+     * @return true nếu cập nhật thành công, ngược lại false
+     */
+    boolean resetPassword(String email, String newPassword);
 }

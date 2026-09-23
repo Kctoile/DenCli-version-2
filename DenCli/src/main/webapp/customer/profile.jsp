@@ -48,6 +48,19 @@
                         <c:remove var="successMessage" scope="session" />
                     </c:if>
 
+                    <!-- Thông báo nhắc lịch hẹn sắp tới (Phase 3.4) -->
+                    <c:forEach items="${appointments}" var="app" begin="0" end="0">
+                        <c:if test="${app.status == 'Confirmed' || app.status == 'Pending'}">
+                            <div class="alert alert-info border-info d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert">
+                                <span class="fs-3">🔔</span>
+                                <div>
+                                    <h6 class="alert-heading fw-bold mb-1">Nhắc nhở lịch khám nha khoa sắp tới</h6>
+                                    <p class="mb-0 small">Bạn có cuộc hẹn <strong>#<c:out value="${app.appointmentId}" /></strong> vào ngày <strong><c:out value="${app.appointmentDate}" /></strong> lúc <strong><c:out value="${app.appointmentTime}" /></strong> (Trạng thái: <em><c:out value="${app.status}" /></em>). Vui lòng có mặt đúng giờ để được phục vụ chu đáo nhất.</p>
+                                </div>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+
                     <!-- Khối thông tin tài khoản -->
                     <div class="card card-custom bg-white p-4 mb-4">
                         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
@@ -61,6 +74,7 @@
                         </div>
 
                         <form action="${pageContext.request.contextPath}/customer/profile" method="POST">
+                            <input type="hidden" name="_csrf" value="${csrfToken}">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="profileFullName" class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
@@ -121,13 +135,14 @@
                                         <th scope="col">Phòng khám</th>
                                         <th scope="col">Trạng thái</th>
                                         <th scope="col">Ghi chú</th>
+                                        <th scope="col" class="text-end">Chi tiết</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:choose>
                                         <c:when test="${empty appointments}">
                                             <tr>
-                                                <td colspan="7" class="text-center py-4 text-muted">
+                                                <td colspan="8" class="text-center py-4 text-muted">
                                                     Bạn chưa có lịch hẹn khám nào. <a href="${pageContext.request.contextPath}/customer/book">Đặt lịch ngay!</a>
                                                 </td>
                                             </tr>
@@ -173,6 +188,18 @@
                                                         <c:choose>
                                                             <c:when test="${not empty app.notes}"><c:out value="${app.notes}" /></c:when>
                                                             <c:otherwise>—</c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <c:choose>
+                                                            <c:when test="${app.status == 'Completed' || app.status == 'Checked In'}">
+                                                                <a href="${pageContext.request.contextPath}/customer/invoice?appointment_id=${app.appointmentId}" class="btn btn-sm btn-outline-primary fw-semibold">
+                                                                    📄 Xem Hóa đơn & Thuốc
+                                                                </a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="text-muted small">—</span>
+                                                            </c:otherwise>
                                                         </c:choose>
                                                     </td>
                                                 </tr>

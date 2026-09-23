@@ -116,4 +116,12 @@ public interface AppointmentService {
      * @return Danh sách 12 tháng thống kê doanh thu
      */
     List<RevenueDTO> getMonthlyRevenueReport(int year);
+
+    /**
+     * Phương thức kiểm tra tính hợp lệ của việc chuyển đổi trạng thái lịch hẹn theo máy trạng thái (State Machine).
+     * @param currentStatus Trạng thái hiện tại
+     * @param targetStatus Trạng thái đích muốn chuyển sang
+     * @return true nếu chuyển đổi trạng thái hợp lệ
+     */
+    boolean isValidStatusTransition(String currentStatus, String targetStatus);
 }

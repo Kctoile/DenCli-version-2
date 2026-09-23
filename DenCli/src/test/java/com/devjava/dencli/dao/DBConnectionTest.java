@@ -31,4 +31,17 @@ public class DBConnectionTest {
             DBConnection.closeConnection(null);
         });
     }
+
+    /**
+     * Phương thức kiểm thử kết nối thực tế tới cơ sở dữ liệu SQL Server thành công.
+     */
+    @Test
+    public void testGetConnectionSuccess() {
+        assertDoesNotThrow(() -> {
+            try (java.sql.Connection conn = DBConnection.getConnection()) {
+                assertNotNull(conn);
+                assertFalse(conn.isClosed());
+            }
+        });
+    }
 }

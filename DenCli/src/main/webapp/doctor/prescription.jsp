@@ -58,6 +58,7 @@
                     </c:if>
 
                     <form id="prescriptionForm" action="${pageContext.request.contextPath}/doctor/prescription" method="POST">
+                        <input type="hidden" name="_csrf" value="${csrfToken}">
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="resultId" class="form-label fw-semibold">Mã hồ sơ bệnh án (Result ID) <span class="text-danger">*</span></label>

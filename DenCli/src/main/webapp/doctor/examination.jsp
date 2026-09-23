@@ -162,6 +162,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="${pageContext.request.contextPath}/doctor/examination" method="POST">
+                    <input type="hidden" name="_csrf" value="${csrfToken}">
                     <div class="modal-body p-4">
                         <div class="alert alert-info py-2 mb-3 small">
                             Đang xử lý kết quả ca khám cho: <strong>Lịch hẹn #<span id="modalAppIdText"></span></strong> (Mã BN: #<span id="modalPatientIdText"></span>)

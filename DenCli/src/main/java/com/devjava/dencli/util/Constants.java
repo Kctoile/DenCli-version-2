@@ -15,7 +15,7 @@ public final class Constants {
     public static final String DB_PORT = getConfig("DENCLI_DB_PORT", "1433");
     public static final String DB_NAME = getConfig("DENCLI_DB_NAME", "Dental");
     public static final String DB_USER = getConfig("DENCLI_DB_USER", "sa");
-    public static final String DB_PASSWORD = getConfig("DENCLI_DB_PASSWORD", "");
+    public static final String DB_PASSWORD = getConfig("DENCLI_DB_PASSWORD", "123");
 
     private static String getConfig(String key, String defaultValue) {
         String value = System.getProperty(key);

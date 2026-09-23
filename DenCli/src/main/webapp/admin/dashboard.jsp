@@ -88,6 +88,46 @@
                         </div>
                     </div>
 
+                    <!-- Hàng trạng thái lịch hẹn thực tế (Phase 4.3) -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-warning border-4">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Chờ xác nhận</div>
+                                    <div class="fs-4 fw-bold text-warning"><c:out value="${pendingAppointments}" /></div>
+                                </div>
+                                <span class="fs-2">⏳</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-info border-4">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Đã xác nhận</div>
+                                    <div class="fs-4 fw-bold text-info"><c:out value="${confirmedAppointments}" /></div>
+                                </div>
+                                <span class="fs-2">📅</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-success border-4">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Đã hoàn tất</div>
+                                    <div class="fs-4 fw-bold text-success"><c:out value="${completedAppointments}" /></div>
+                                </div>
+                                <span class="fs-2">✅</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-danger border-4">
+                                <div>
+                                    <div class="text-muted small fw-semibold">Đã hủy</div>
+                                    <div class="fs-4 fw-bold text-danger"><c:out value="${cancelledAppointments}" /></div>
+                                </div>
+                                <span class="fs-2">❌</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Khung Biểu đồ Doanh thu Chart.js -->
                     <div class="card card-custom bg-white p-4 mb-4">
                         <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">

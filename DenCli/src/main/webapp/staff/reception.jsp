@@ -245,7 +245,7 @@
 
             fetch('${pageContext.request.contextPath}/staff/reception', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN || '' },
                 body: JSON.stringify({ action: 'checkin', appointment_id: parseInt(appId), room: room })
             })
             .then(function(res) { return res.json(); })
@@ -270,7 +270,7 @@
 
             fetch('${pageContext.request.contextPath}/staff/reception', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN || '' },
                 body: JSON.stringify({ action: actionType, appointment_id: appId })
             })
             .then(function(res) { return res.json(); })

@@ -261,6 +261,29 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDAO.getMonthlyRevenueStatistics(validYear);
     }
 
+    @Override
+    public boolean isValidStatusTransition(String currentStatus, String targetStatus) {
+        if (currentStatus == null || targetStatus == null) {
+            return false;
+        }
+
+        if (Constants.APPOINTMENT_CONFIRMED.equalsIgnoreCase(targetStatus)) {
+            return Constants.APPOINTMENT_PENDING.equalsIgnoreCase(currentStatus);
+        }
+        if (Constants.APPOINTMENT_CHECKED_IN.equalsIgnoreCase(targetStatus)) {
+            return Constants.APPOINTMENT_CONFIRMED.equalsIgnoreCase(currentStatus);
+        }
+        if (Constants.APPOINTMENT_COMPLETED.equalsIgnoreCase(targetStatus)) {
+            return Constants.APPOINTMENT_CHECKED_IN.equalsIgnoreCase(currentStatus);
+        }
+        if (Constants.APPOINTMENT_CANCELLED.equalsIgnoreCase(targetStatus)) {
+            return Constants.APPOINTMENT_PENDING.equalsIgnoreCase(currentStatus)
+                    || Constants.APPOINTMENT_CONFIRMED.equalsIgnoreCase(currentStatus)
+                    || Constants.APPOINTMENT_CHECKED_IN.equalsIgnoreCase(currentStatus);
+        }
+        return false;
+    }
+
     private boolean updateStatusIfAllowed(int appointmentId, String targetStatus) {
         Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
         return canTransition(appointment, targetStatus)
@@ -271,22 +294,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointment == null || targetStatus == null) {
             return false;
         }
-
-        String currentStatus = appointment.getStatus();
-        if (Constants.APPOINTMENT_CONFIRMED.equals(targetStatus)) {
-            return Constants.APPOINTMENT_PENDING.equals(currentStatus);
-        }
-        if (Constants.APPOINTMENT_CHECKED_IN.equals(targetStatus)) {
-            return Constants.APPOINTMENT_CONFIRMED.equals(currentStatus);
-        }
-        if (Constants.APPOINTMENT_COMPLETED.equals(targetStatus)) {
-            return Constants.APPOINTMENT_CHECKED_IN.equals(currentStatus);
-        }
-        if (Constants.APPOINTMENT_CANCELLED.equals(targetStatus)) {
-            return Constants.APPOINTMENT_PENDING.equals(currentStatus)
-                    || Constants.APPOINTMENT_CONFIRMED.equals(currentStatus)
-                    || Constants.APPOINTMENT_CHECKED_IN.equals(currentStatus);
-        }
-        return false;
+        return isValidStatusTransition(appointment.getStatus(), targetStatus);
     }
 }

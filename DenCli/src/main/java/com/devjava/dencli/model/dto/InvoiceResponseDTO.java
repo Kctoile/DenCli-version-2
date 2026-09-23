@@ -100,6 +100,18 @@ public class InvoiceResponseDTO implements Serializable {
         return grandTotal;
     }
 
+    public BigDecimal getTotalAmount() {
+        return grandTotal;
+    }
+
+    public BigDecimal getTotalServiceFee() {
+        return servicesTotal;
+    }
+
+    public BigDecimal getTotalMedicineFee() {
+        return medicinesTotal;
+    }
+
     public void setGrandTotal(BigDecimal grandTotal) {
         this.grandTotal = grandTotal;
     }

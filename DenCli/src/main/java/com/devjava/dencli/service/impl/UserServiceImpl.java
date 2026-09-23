@@ -191,4 +191,19 @@ public class UserServiceImpl implements UserService {
 
         return userDAO.updatePassword(userId, hashedNewPassword);
     }
+
+    @Override
+    public boolean resetPassword(String email, String newPassword) {
+        if (email == null || email.isBlank() || newPassword == null || newPassword.trim().length() < 6) {
+            return false;
+        }
+
+        User user = userDAO.getUserByEmailOrPhone(email.trim());
+        if (user == null) {
+            return false;
+        }
+
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword.trim());
+        return userDAO.updatePassword(user.getUserId(), hashedNewPassword);
+    }
 }

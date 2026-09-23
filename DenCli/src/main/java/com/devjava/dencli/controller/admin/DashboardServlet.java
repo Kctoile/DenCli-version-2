@@ -40,6 +40,10 @@ public class DashboardServlet extends HttpServlet {
         int totalStaff = userService.countUsersByRole(Constants.ROLE_STAFF_ID);
         int totalCustomers = userService.countUsersByRole(Constants.ROLE_CUSTOMER_ID);
         int totalAppointments = appointmentService.countAllAppointments(null, null);
+        int pendingAppointments = appointmentService.countAllAppointments(Constants.APPOINTMENT_PENDING, null);
+        int confirmedAppointments = appointmentService.countAllAppointments(Constants.APPOINTMENT_CONFIRMED, null);
+        int completedAppointments = appointmentService.countAllAppointments(Constants.APPOINTMENT_COMPLETED, null);
+        int cancelledAppointments = appointmentService.countAllAppointments(Constants.APPOINTMENT_CANCELLED, null);
 
         int currentYear = LocalDate.now(ZoneId.of(Constants.DEFAULT_TIMEZONE)).getYear();
         List<RevenueDTO> monthlyRevenues = appointmentService.getMonthlyRevenueReport(currentYear);
@@ -49,6 +53,10 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("totalStaff", totalStaff);
         request.setAttribute("totalCustomers", totalCustomers);
         request.setAttribute("totalAppointments", totalAppointments);
+        request.setAttribute("pendingAppointments", pendingAppointments);
+        request.setAttribute("confirmedAppointments", confirmedAppointments);
+        request.setAttribute("completedAppointments", completedAppointments);
+        request.setAttribute("cancelledAppointments", cancelledAppointments);
         request.setAttribute("currentYear", currentYear);
         request.setAttribute("monthlyRevenues", monthlyRevenues);
 

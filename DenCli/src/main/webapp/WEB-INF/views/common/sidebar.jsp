@@ -19,6 +19,10 @@
                    class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/admin/users") ? " active bg-primary text-white" : " text-dark" %>">
                     <span>👥</span><span>Quản lý người dùng</span>
                 </a>
+                <a href="<%= cp %>/admin/settings"
+                   class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/admin/settings") ? " active bg-primary text-white" : " text-dark" %>">
+                    <span>⚙️</span><span>Cấu hình hệ thống</span>
+                </a>
                 <div class="text-uppercase text-muted px-3 pt-3 pb-2 fw-bold" style="font-size: 0.75rem;">Truy cập nhanh</div>
                 <a href="<%= cp %>/doctor/examination" class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 text-secondary">
                     <span>🩺</span> Buồng khám BS
@@ -67,5 +71,11 @@
                 </a>
             </c:otherwise>
         </c:choose>
+
+        <div class="text-uppercase text-muted px-3 pt-3 pb-2 fw-bold" style="font-size: 0.75rem;">Tài khoản</div>
+        <a href="<%= cp %>/change-password"
+           class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/change-password") ? " active bg-primary text-white" : " text-dark" %>">
+            <span>🔒</span><span>Đổi mật khẩu</span>
+        </a>
     </div>
 </div>

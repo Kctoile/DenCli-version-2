@@ -214,6 +214,7 @@
                             </button>
                             <c:if test="${invoice.status != 'Completed'}">
                                 <form action="${pageContext.request.contextPath}/staff/invoice" method="POST" class="d-inline" onsubmit="return confirm('Xác nhận đã thu đủ số tiền và hoàn tất ca khám?');">
+                                    <input type="hidden" name="_csrf" value="${csrfToken}">
                                     <input type="hidden" name="appointment_id" value="${appointmentId}">
                                     <button type="submit" class="btn btn-success fw-bold px-4">
                                         💰 Xác nhận Đã Thu Tiền
