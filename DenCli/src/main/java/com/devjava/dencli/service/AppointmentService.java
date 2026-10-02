@@ -124,4 +124,12 @@ public interface AppointmentService {
      * @return true nếu chuyển đổi trạng thái hợp lệ
      */
     boolean isValidStatusTransition(String currentStatus, String targetStatus);
+
+    /**
+     * Lấy danh sách các khung giờ đã có người đặt của bác sĩ trong ngày (định dạng YYYY-MM-DD).
+     * @param doctorId Mã bác sĩ
+     * @param dateStr Chuỗi ngày YYYY-MM-DD
+     * @return Danh sách chuỗi giờ "HH:mm" (ví dụ: ["09:00", "14:00"])
+     */
+    List<String> getBookedTimeSlots(int doctorId, String dateStr);
 }

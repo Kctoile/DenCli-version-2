@@ -120,6 +120,7 @@ public class LoginServlet extends HttpServlet {
         if (targetUrl != null) {
             session.removeAttribute("targetUrl");
         }
+        session.removeAttribute(Constants.SESSION_ERROR_MESSAGE);
 
         String dashboardUrl = resolveDashboardUrl(request.getContextPath(), user.getRoleId());
         String redirectUrl = (targetUrl != null && !targetUrl.isEmpty()) ? targetUrl : dashboardUrl;

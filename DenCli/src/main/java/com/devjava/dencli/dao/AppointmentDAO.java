@@ -110,4 +110,12 @@ public interface AppointmentDAO {
      * @return Danh sách 12 tháng với tổng doanh thu và số ca khám
      */
     List<RevenueDTO> getMonthlyRevenueStatistics(int year);
+
+    /**
+     * Lấy danh sách các khung giờ đã được đặt của bác sĩ trong ngày (khác Cancelled).
+     * @param doctorId Mã bác sĩ
+     * @param date Ngày hẹn khám
+     * @return Danh sách chuỗi giờ "HH:mm" (ví dụ: "09:00", "14:00")
+     */
+    List<String> getBookedTimeSlots(int doctorId, Date date);
 }

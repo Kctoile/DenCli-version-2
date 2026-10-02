@@ -38,6 +38,11 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
 
+        // Thiết lập No-Cache để trình duyệt không giữ lại trạng thái đã đăng nhập
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
         // Chuyển hướng người dùng về trang đăng nhập
         response.sendRedirect(request.getContextPath() + "/login.jsp");
     }

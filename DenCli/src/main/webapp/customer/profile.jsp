@@ -9,14 +9,12 @@
     <title>Hồ sơ cá nhân & Lịch sử khám | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DenCli Design System Theme -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -142,8 +140,15 @@
                                     <c:choose>
                                         <c:when test="${empty appointments}">
                                             <tr>
-                                                <td colspan="8" class="text-center py-4 text-muted">
-                                                    Bạn chưa có lịch hẹn khám nào. <a href="${pageContext.request.contextPath}/customer/book">Đặt lịch ngay!</a>
+                                                <td colspan="8" class="text-center py-5">
+                                                    <div class="empty-state-box">
+                                                        <div class="empty-state-icon">📅</div>
+                                                        <h6 class="fw-bold text-navy mb-1">Chưa có lịch hẹn khám nào</h6>
+                                                        <p class="text-muted small mb-3">Bạn chưa đăng ký lịch khám nha khoa nào tại DenCli.</p>
+                                                        <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-sm btn-primary px-3">
+                                                            + Đặt lịch khám ngay
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:when>

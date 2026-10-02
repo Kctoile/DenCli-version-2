@@ -9,14 +9,12 @@
     <title>Buồng khám Bác sĩ | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DenCli Design System Theme -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -84,8 +82,12 @@
                                     <c:choose>
                                         <c:when test="${empty appointments}">
                                             <tr>
-                                                <td colspan="8" class="text-center py-4 text-muted">
-                                                    Hiện chưa có ca khám nào được phân công cho bạn theo thời gian đã chọn.
+                                                <td colspan="8" class="text-center py-5">
+                                                    <div class="empty-state-box">
+                                                        <div class="empty-state-icon">🩺</div>
+                                                        <h6 class="fw-bold text-navy mb-1">Không có ca khám nào</h6>
+                                                        <p class="text-muted small mb-0">Hiện chưa có ca khám nào được phân công cho bạn theo thời gian đã chọn.</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:when>

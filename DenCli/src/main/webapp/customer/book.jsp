@@ -8,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Đặt lịch hẹn khám chữa răng trực tuyến tại Phòng khám Nha khoa DenCli. Chọn bác sĩ, dịch vụ và khung giờ nhanh chóng.">
     <title>Đăng Ký Đặt Lịch Khám | DenCli Dental Clinic</title>
-
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
 
     <style>
         :root {
@@ -28,7 +28,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--dencli-bg);
-            color: #334155;
+            color: #0F172A;
         }
 
         .booking-hero {
@@ -124,8 +124,9 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.85rem;
-            color: #64748B;
+            font-size: 0.875rem;
+            color: #334155;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -141,7 +142,7 @@
                 HỆ THỐNG ĐẶT LỊCH KHÁM THÔNG MINH
             </span>
             <h1 class="display-6 fw-bold mb-2">Đăng Ký Đặt Lịch Hẹn Khám Răng</h1>
-            <p class="opacity-75 mx-auto mb-0" style="max-width: 600px;">
+            <p class="mx-auto mb-0" style="max-width: 600px; color: #F0F9FF; font-weight: 500;">
                 Chủ động chọn bác sĩ chuyên khoa, thời gian phù hợp và dịch vụ mong muốn chỉ với vài thao tác đơn giản.
             </p>
         </div>
@@ -217,7 +218,7 @@
                     <div class="col-12">
                         <label class="form-label d-flex justify-content-between align-items-center">
                             <span>Dịch vụ nha khoa mong muốn</span>
-                            <span class="badge bg-light text-muted border fw-normal">Có thể chọn nhiều dịch vụ</span>
+                            <span class="badge bg-light border fw-semibold" style="color: #334155 !important;">Có thể chọn nhiều dịch vụ</span>
                         </label>
                         <div class="services-selection-box">
                             <div class="row g-2">
@@ -419,5 +420,11 @@
             }
         });
     </script>
+    <!-- Real-time slot synchronization via WebSocket -->
+    <script>
+        // Expose context path for appointment-realtime.js
+        window.APP_CONTEXT_PATH = '${pageContext.request.contextPath}';
+    </script>
+    <script src="${pageContext.request.contextPath}/assets/js/appointment-realtime.js"></script>
 </body>
 </html>

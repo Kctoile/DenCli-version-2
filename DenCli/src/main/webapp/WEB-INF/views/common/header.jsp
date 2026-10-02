@@ -84,9 +84,6 @@
                     <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#doctors">Đội ngũ Bác sĩ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#pricing">Bảng giá</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp#faq">FAQ</a>
                 </li>
             </ul>
@@ -96,7 +93,7 @@
                 <!-- Nút CTA chính -->
                 <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-cta-nav d-inline-flex align-items-center gap-2">
                     <span>📅</span>
-                    <span>Đặt Lịch Khám Ngay</span>
+                    <span>Đặt Lịch Tư Vấn Miễn Phí</span>
                 </a>
 
                 <c:choose>
@@ -142,6 +139,12 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <!-- Nút Đăng xuất trực tiếp trên thanh điều hướng -->
+                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-sm btn-outline-danger px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" title="Đăng xuất khỏi hệ thống" style="color: #FFFFFF; background-color: rgba(239, 68, 68, 0.25); border-color: #EF4444; font-weight: 600;">
+                            <span>🚪</span>
+                            <span class="d-none d-sm-inline">Đăng xuất</span>
+                        </a>
                     </c:when>
                     <c:otherwise>
                         <!-- Khách vãng lai -->
@@ -157,3 +160,30 @@
         </div>
     </div>
 </nav>
+
+<!-- Bootstrap 5 JS Bundle & Native Dropdown Fallback -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var userBtn = document.getElementById('userMenuDropdown');
+        if (userBtn) {
+            userBtn.addEventListener('click', function (e) {
+                var menu = this.nextElementSibling;
+                if (menu && menu.classList.contains('dropdown-menu')) {
+                    var isShown = menu.classList.contains('show');
+                    menu.classList.toggle('show', !isShown);
+                    userBtn.setAttribute('aria-expanded', String(!isShown));
+                    e.stopPropagation();
+                }
+            });
+            document.addEventListener('click', function (e) {
+                var menu = document.querySelector('#userMenuDropdown + .dropdown-menu.show');
+                if (menu && !menu.contains(e.target) && e.target !== userBtn) {
+                    menu.classList.remove('show');
+                    userBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+</script>
+

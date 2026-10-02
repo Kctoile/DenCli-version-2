@@ -9,16 +9,12 @@
     <title>Bảng điều khiển Quản trị | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DenCli Design System Theme -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -48,42 +44,57 @@
                     <!-- Hàng thẻ thống kê nhanh (KPI Cards) -->
                     <div class="row g-3 mb-4">
                         <div class="col-6 col-lg-2">
-                            <div class="card card-custom stat-card bg-white p-3 text-center border-start border-primary border-4">
-                                <div class="text-muted small fw-semibold text-uppercase">Lịch hẹn</div>
-                                <div class="fs-2 fw-bold text-primary my-1"><c:out value="${totalAppointments}" /></div>
-                                <div class="text-secondary small">Tổng ca đăng ký</div>
+                            <div class="kpi-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-semibold text-uppercase">Lịch hẹn</span>
+                                    <div class="kpi-icon-badge kpi-icon-primary">📅</div>
+                                </div>
+                                <div class="fs-2 fw-bold text-navy my-1"><c:out value="${totalAppointments}" /></div>
+                                <div class="text-muted small">Tổng ca đăng ký</div>
                             </div>
                         </div>
 
                         <div class="col-6 col-lg-2">
-                            <div class="card card-custom stat-card bg-white p-3 text-center border-start border-success border-4">
-                                <div class="text-muted small fw-semibold text-uppercase">Bệnh nhân</div>
+                            <div class="kpi-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-semibold text-uppercase">Bệnh nhân</span>
+                                    <div class="kpi-icon-badge kpi-icon-success">👥</div>
+                                </div>
                                 <div class="fs-2 fw-bold text-success my-1"><c:out value="${totalCustomers}" /></div>
-                                <div class="text-secondary small">Hồ sơ khách hàng</div>
+                                <div class="text-muted small">Hồ sơ khách hàng</div>
                             </div>
                         </div>
 
                         <div class="col-6 col-lg-2">
-                            <div class="card card-custom stat-card bg-white p-3 text-center border-start border-info border-4">
-                                <div class="text-muted small fw-semibold text-uppercase">Bác sĩ</div>
+                            <div class="kpi-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-semibold text-uppercase">Bác sĩ</span>
+                                    <div class="kpi-icon-badge kpi-icon-info">🩺</div>
+                                </div>
                                 <div class="fs-2 fw-bold text-info my-1"><c:out value="${totalDoctors}" /></div>
-                                <div class="text-secondary small">Đội ngũ nha sĩ</div>
+                                <div class="text-muted small">Đội ngũ nha sĩ</div>
                             </div>
                         </div>
 
                         <div class="col-6 col-lg-3">
-                            <div class="card card-custom stat-card bg-white p-3 text-center border-start border-warning border-4">
-                                <div class="text-muted small fw-semibold text-uppercase">Nhân viên Lễ tân</div>
+                            <div class="kpi-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-semibold text-uppercase">Nhân viên Lễ tân</span>
+                                    <div class="kpi-icon-badge kpi-icon-warning">💁</div>
+                                </div>
                                 <div class="fs-2 fw-bold text-warning my-1"><c:out value="${totalStaff}" /></div>
-                                <div class="text-secondary small">Tiếp đón & Điều phối</div>
+                                <div class="text-muted small">Tiếp đón &amp; Điều phối</div>
                             </div>
                         </div>
 
                         <div class="col-6 col-lg-3">
-                            <div class="card card-custom stat-card bg-white p-3 text-center border-start border-dark border-4">
-                                <div class="text-muted small fw-semibold text-uppercase">Tổng Tài khoản</div>
-                                <div class="fs-2 fw-bold text-dark my-1"><c:out value="${totalUsers}" /></div>
-                                <div class="text-secondary small">Người dùng hệ thống</div>
+                            <div class="kpi-card">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small fw-semibold text-uppercase">Tổng Tài khoản</span>
+                                    <div class="kpi-icon-badge kpi-icon-navy">🏢</div>
+                                </div>
+                                <div class="fs-2 fw-bold text-navy my-1"><c:out value="${totalUsers}" /></div>
+                                <div class="text-muted small">Người dùng hệ thống</div>
                             </div>
                         </div>
                     </div>
@@ -91,39 +102,39 @@
                     <!-- Hàng trạng thái lịch hẹn thực tế (Phase 4.3) -->
                     <div class="row g-3 mb-4">
                         <div class="col-6 col-md-3">
-                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-warning border-4">
+                            <div class="kpi-card flex-row align-items-center justify-content-between p-3">
                                 <div>
                                     <div class="text-muted small fw-semibold">Chờ xác nhận</div>
-                                    <div class="fs-4 fw-bold text-warning"><c:out value="${pendingAppointments}" /></div>
+                                    <div class="fs-3 fw-bold text-warning"><c:out value="${pendingAppointments}" /></div>
                                 </div>
-                                <span class="fs-2">⏳</span>
+                                <div class="kpi-icon-badge kpi-icon-warning fs-4">⏳</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-info border-4">
+                            <div class="kpi-card flex-row align-items-center justify-content-between p-3">
                                 <div>
                                     <div class="text-muted small fw-semibold">Đã xác nhận</div>
-                                    <div class="fs-4 fw-bold text-info"><c:out value="${confirmedAppointments}" /></div>
+                                    <div class="fs-3 fw-bold text-info"><c:out value="${confirmedAppointments}" /></div>
                                 </div>
-                                <span class="fs-2">📅</span>
+                                <div class="kpi-icon-badge kpi-icon-info fs-4">📅</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-success border-4">
+                            <div class="kpi-card flex-row align-items-center justify-content-between p-3">
                                 <div>
                                     <div class="text-muted small fw-semibold">Đã hoàn tất</div>
-                                    <div class="fs-4 fw-bold text-success"><c:out value="${completedAppointments}" /></div>
+                                    <div class="fs-3 fw-bold text-success"><c:out value="${completedAppointments}" /></div>
                                 </div>
-                                <span class="fs-2">✅</span>
+                                <div class="kpi-icon-badge kpi-icon-success fs-4">✅</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="card card-custom bg-white p-3 d-flex flex-row align-items-center justify-content-between border-start border-danger border-4">
+                            <div class="kpi-card flex-row align-items-center justify-content-between p-3">
                                 <div>
                                     <div class="text-muted small fw-semibold">Đã hủy</div>
-                                    <div class="fs-4 fw-bold text-danger"><c:out value="${cancelledAppointments}" /></div>
+                                    <div class="fs-3 fw-bold text-danger"><c:out value="${cancelledAppointments}" /></div>
                                 </div>
-                                <span class="fs-2">❌</span>
+                                <div class="kpi-icon-badge kpi-icon-danger fs-4">❌</div>
                             </div>
                         </div>
                     </div>

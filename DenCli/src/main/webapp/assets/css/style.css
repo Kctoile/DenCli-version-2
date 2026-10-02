@@ -1,0 +1,584 @@
+/* ==========================================================================
+   DenCli Dental Clinic - Modern European Orthodontic Experience
+   Tech Stack: HTML5 + CSS3 + Vanilla ES6 JS + Motion Engine
+   Palette: Sky Blue (#0EA5E9), Deep Navy (#1E3A5F), Coral CTA (#FF6B6B), White (#FFFFFF)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors per Specification */
+    --dencli-primary: #0EA5E9;
+    --dencli-primary-dark: #0284C7;
+    --dencli-primary-light: #E0F2FE;
+    --dencli-navy: #1E3A5F;
+    --dencli-navy-dark: #0F2744;
+    --dencli-coral: #FF6B6B;
+    --dencli-coral-hover: #FA5252;
+    --dencli-teal: #0BB8B8;
+    --dencli-success: #10B981;
+    --dencli-warning: #F59E0B;
+    --dencli-danger: #EF4444;
+
+    /* Neutrals */
+    --dencli-bg: #FFFFFF;
+    --dencli-bg-soft: #F8FAFC;
+    --dencli-card-bg: #FFFFFF;
+    --dencli-text-main: #0F172A;
+    --dencli-text-muted: #334155;          /* High contrast Slate-700 (9.5:1 ratio vs white, replaced light gray #64748B) */
+    --dencli-text-subtle: #475569;         /* High contrast Slate-600 (7.0:1 ratio, replaced light gray #94A3B8) */
+    --dencli-border: #CBD5E1;
+    --dencli-border-focus: #38BDF8;
+
+    /* Shadows & Spring Transitions */
+    --dencli-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --dencli-shadow-md: 0 6px 18px -2px rgba(14, 165, 233, 0.12);
+    --dencli-shadow-lg: 0 16px 36px -6px rgba(30, 58, 95, 0.14);
+    --dencli-shadow-coral: 0 10px 25px -3px rgba(255, 107, 107, 0.42);
+    
+    /* Framer Motion Spring Timing Function */
+    --dencli-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --dencli-radius-sm: 8px;
+    --dencli-radius-md: 12px;
+    --dencli-radius-lg: 16px;
+    --dencli-radius-xl: 24px;
+    --dencli-radius-pill: 9999px;
+}
+
+/* ==========================================================================
+   GLOBAL BASE
+   ========================================================================== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--dencli-bg);
+    color: var(--dencli-text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    transition: all 0.22s var(--dencli-spring);
+}
+
+.text-muted {
+    color: var(--dencli-text-muted) !important;
+    font-weight: 500;
+}
+
+.text-subtle {
+    color: var(--dencli-text-subtle) !important;
+}
+
+.text-secondary {
+    color: var(--dencli-text-muted) !important;
+}
+
+/* ==========================================================================
+   FRAMER MOTION REPLICAS (0.6s FADE UP & SCROLL REVEAL)
+   ========================================================================== */
+@keyframes heroFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.motion-fade-up {
+    opacity: 0;
+    animation: heroFadeUp 0.6s var(--dencli-spring) forwards;
+}
+
+.motion-delay-1 { animation-delay: 0.1s; }
+.motion-delay-2 { animation-delay: 0.25s; }
+.motion-delay-3 { animation-delay: 0.4s; }
+.motion-delay-4 { animation-delay: 0.55s; }
+
+/* Cards Fade on Scroll */
+.fade-on-scroll {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s var(--dencli-spring), transform 0.65s var(--dencli-spring);
+    will-change: opacity, transform;
+}
+
+.fade-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   TACTILE BUTTONS & CTAS
+   ========================================================================== */
+.btn-cta-primary {
+    background-color: var(--dencli-coral);
+    color: #ffffff !important;
+    font-weight: 700;
+    padding: 0.85rem 2.2rem;
+    border-radius: var(--dencli-radius-pill);
+    box-shadow: var(--dencli-shadow-coral);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.22s var(--dencli-spring);
+}
+
+.btn-cta-primary:hover {
+    background-color: var(--dencli-coral-hover);
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -3px rgba(255, 107, 107, 0.5);
+}
+
+.btn-cta-primary:active {
+    transform: scale(0.98) translateY(1px);
+}
+
+.btn-cta-secondary {
+    background-color: #FFFFFF;
+    color: var(--dencli-navy) !important;
+    font-weight: 600;
+    padding: 0.85rem 1.85rem;
+    border-radius: var(--dencli-radius-pill);
+    border: 1px solid var(--dencli-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.22s var(--dencli-spring);
+}
+
+.btn-cta-secondary:hover {
+    background-color: var(--dencli-bg-soft);
+    color: var(--dencli-primary-dark) !important;
+    border-color: var(--dencli-primary);
+    transform: translateY(-2px);
+}
+
+.btn-cta-secondary:active {
+    transform: scale(0.98) translateY(1px);
+}
+
+/* ==========================================================================
+   HERO SECTION (SPLIT HERO)
+   ========================================================================== */
+.hero-section {
+    background: radial-gradient(100% 120% at 85% 10%, #E0F2FE 0%, #F0F9FF 35%, #FFFFFF 100%);
+    padding: 5rem 0 4.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--dencli-primary-light);
+    color: var(--dencli-primary-dark);
+    padding: 0.45rem 1.15rem;
+    border-radius: var(--dencli-radius-pill);
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: var(--dencli-shadow-sm);
+}
+
+.hero-title {
+    font-size: 3.35rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--dencli-navy);
+    letter-spacing: -0.03em;
+}
+
+.hero-title span {
+    color: var(--dencli-primary);
+    background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.18rem;
+    color: var(--dencli-text-muted);
+    line-height: 1.65;
+}
+
+/* Hero Office Photo Frame */
+.hero-photo-wrapper {
+    position: relative;
+    border-radius: var(--dencli-radius-xl);
+    overflow: visible;
+}
+
+.hero-photo-img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    border-radius: var(--dencli-radius-xl);
+    box-shadow: var(--dencli-shadow-lg);
+    border: 4px solid #FFFFFF;
+}
+
+.floating-stat-box {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border: 1px solid #BAE6FD;
+    border-radius: var(--dencli-radius-md);
+    padding: 1.1rem 1.4rem;
+    box-shadow: 0 12px 30px -4px rgba(14, 165, 233, 0.22);
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    z-index: 10;
+}
+
+.floating-badge-top {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border: 1px solid #BAE6FD;
+    border-radius: var(--dencli-radius-pill);
+    padding: 0.6rem 1.25rem;
+    box-shadow: 0 10px 25px -4px rgba(30, 58, 95, 0.15);
+    position: absolute;
+    top: 20px;
+    right: -15px;
+    z-index: 10;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--dencli-navy);
+}
+
+/* ==========================================================================
+   TRUST BAND (4 STATS)
+   ========================================================================== */
+.trust-band {
+    background: linear-gradient(135deg, var(--dencli-navy) 0%, var(--dencli-navy-dark) 100%);
+    color: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    padding: 2.75rem 1.5rem;
+    box-shadow: var(--dencli-shadow-lg);
+    margin-top: -2.5rem;
+    position: relative;
+    z-index: 15;
+}
+
+.stat-number {
+    font-size: 2.65rem;
+    font-weight: 800;
+    color: #38BDF8;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: #E0F2FE;
+    margin-top: 0.45rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   3-COLUMN SERVICES GRID
+   ========================================================================== */
+.service-card {
+    background: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    border: 1px solid var(--dencli-border);
+    padding: 2.25rem;
+    height: 100%;
+    transition: all 0.3s var(--dencli-spring);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--dencli-shadow-sm);
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 45px -10px rgba(14, 165, 233, 0.2);
+    border-color: #BAE6FD;
+}
+
+.service-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 1.15rem;
+    background: var(--dencli-primary-light);
+    color: var(--dencli-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1.35rem;
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.15);
+}
+
+.service-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--dencli-primary-dark);
+}
+
+.service-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--dencli-radius-pill);
+    background: var(--dencli-primary-light);
+    color: var(--dencli-primary-dark);
+}
+
+/* ==========================================================================
+   BEFORE / AFTER SLIDER & CASES
+   ========================================================================== */
+.before-after-card {
+    background: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    border: 1px solid var(--dencli-border);
+    overflow: hidden;
+    box-shadow: var(--dencli-shadow-sm);
+    transition: all 0.3s var(--dencli-spring);
+}
+
+.before-after-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--dencli-shadow-md);
+}
+
+.case-badge-type {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--dencli-radius-pill);
+}
+
+.case-split-box {
+    border-radius: var(--dencli-radius-md);
+    background: #F8FAFC;
+    border: 1px solid var(--dencli-border);
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   3-STEP HOW IT WORKS
+   ========================================================================== */
+.step-card {
+    background: #FFFFFF;
+    border: 1px solid var(--dencli-border);
+    border-radius: var(--dencli-radius-lg);
+    padding: 2.25rem 1.75rem;
+    height: 100%;
+    box-shadow: var(--dencli-shadow-sm);
+    transition: all 0.3s var(--dencli-spring);
+    text-align: center;
+}
+
+.step-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--dencli-shadow-md);
+    border-color: #BAE6FD;
+}
+
+.step-circle {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--dencli-primary) 0%, var(--dencli-primary-dark) 100%);
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 10px 24px -2px rgba(14, 165, 233, 0.45);
+}
+
+/* ==========================================================================
+   TESTIMONIAL CARDS
+   ========================================================================== */
+.testimonial-card {
+    background: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    border: 1px solid var(--dencli-border);
+    padding: 2.25rem;
+    height: 100%;
+    box-shadow: var(--dencli-shadow-sm);
+    transition: all 0.3s var(--dencli-spring);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--dencli-shadow-md);
+    border-color: #BAE6FD;
+}
+
+.testimonial-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--dencli-primary-light);
+    color: var(--dencli-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+}
+
+/* ==========================================================================
+   INSURANCE & FINANCING SECTION
+   ========================================================================== */
+.finance-card {
+    background: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    border: 1px solid var(--dencli-border);
+    padding: 2.5rem;
+    box-shadow: var(--dencli-shadow-sm);
+    transition: all 0.3s var(--dencli-spring);
+}
+
+.finance-card:hover {
+    box-shadow: var(--dencli-shadow-md);
+    border-color: #BAE6FD;
+}
+
+/* ==========================================================================
+   DOCTORS CARDS
+   ========================================================================== */
+.doctor-card {
+    background: #FFFFFF;
+    border-radius: var(--dencli-radius-lg);
+    border: 1px solid var(--dencli-border);
+    overflow: hidden;
+    box-shadow: var(--dencli-shadow-sm);
+    transition: all 0.3s var(--dencli-spring);
+    text-align: center;
+    padding: 2.5rem 2rem;
+}
+
+.doctor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--dencli-shadow-lg);
+    border-color: #BAE6FD;
+}
+
+.doctor-avatar {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: var(--dencli-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.25rem;
+    margin: 0 auto 1.25rem;
+    border: 4px solid #FFFFFF;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+}
+
+/* ==========================================================================
+   CTA BANNER SECTION
+   ========================================================================== */
+.cta-banner {
+    background: linear-gradient(135deg, var(--dencli-navy) 0%, var(--dencli-navy-dark) 100%);
+    border-radius: var(--dencli-radius-xl);
+    padding: 4rem 2rem;
+    color: #FFFFFF;
+    box-shadow: var(--dencli-shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-banner h2,
+.cta-banner h1,
+.cta-banner h3 {
+    color: #FFFFFF !important;
+}
+
+.cta-banner p {
+    color: #E0F2FE !important;
+    opacity: 1 !important;
+}
+
+.cta-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   MOBILE STICKY "BOOK NOW" BAR
+   ========================================================================== */
+.mobile-sticky-cta {
+    z-index: 1080;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--dencli-border);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (MOBILE STACKED HERO)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    .trust-band {
+        margin-top: 0;
+    }
+    .hero-photo-img {
+        height: 360px;
+    }
+    .floating-stat-box {
+        bottom: -15px;
+        left: 0;
+    }
+    .floating-badge-top {
+        right: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-section {
+        padding: 3.5rem 0 3rem;
+    }
+    .hero-title {
+        font-size: 2.1rem;
+    }
+    .hero-subtitle {
+        font-size: 1.05rem;
+    }
+    .hero-photo-img {
+        height: 280px;
+    }
+    .stat-number {
+        font-size: 2.1rem;
+    }
+    .cta-banner {
+        padding: 2.5rem 1.25rem;
+    }
+}

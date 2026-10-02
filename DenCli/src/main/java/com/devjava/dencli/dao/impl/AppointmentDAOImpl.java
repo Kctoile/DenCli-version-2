@@ -540,4 +540,36 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         return app;
     }
+
+    /**
+     * Lấy danh sách các khung giờ đã được đặt của bác sĩ trong ngày cụ thể (trạng thái khác Cancelled).
+     */
+    @Override
+    public List<String> getBookedTimeSlots(int doctorId, Date date) {
+        List<String> slots = new ArrayList<>();
+        String sql = "SELECT appointment_time FROM appointments "
+                   + "WHERE doctor_id = ? AND appointment_date = ? AND status <> 'Cancelled'";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, doctorId);
+            ps.setDate(2, date);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Time time = rs.getTime("appointment_time");
+                    if (time != null) {
+                        String timeStr = time.toString();
+                        if (timeStr.length() >= 5) {
+                            slots.add(timeStr.substring(0, 5));
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return slots;
+    }
 }

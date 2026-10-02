@@ -14,11 +14,11 @@
                 <p class="text-secondary small mb-3 leading-relaxed">
                     Hệ thống Nha khoa Công nghệ cao DenCli tự hào mang đến các dịch vụ chăm sóc răng miệng tiêu chuẩn Châu Âu. Đồng hành kiến tạo nụ cười tự tin và rạng rỡ cho hàng vạn gia đình Việt Nam.
                 </p>
-                <div class="d-flex gap-2">
-                    <span class="badge bg-secondary-subtle text-light border border-secondary px-3 py-2 rounded-pill small">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge border px-3 py-2 rounded-pill small" style="background-color: rgba(14, 165, 233, 0.18); color: #E0F2FE; border-color: rgba(56, 189, 248, 0.45) !important; font-weight: 600;">
                         🛡️ Chuẩn ISO 9001:2015
                     </span>
-                    <span class="badge bg-secondary-subtle text-light border border-secondary px-3 py-2 rounded-pill small">
+                    <span class="badge border px-3 py-2 rounded-pill small" style="background-color: rgba(14, 165, 233, 0.18); color: #E0F2FE; border-color: rgba(56, 189, 248, 0.45) !important; font-weight: 600;">
                         ✨ 100% Thiết Bị Châu Âu
                     </span>
                 </div>
@@ -55,7 +55,7 @@
                 <ul class="list-unstyled text-secondary small mb-0 d-flex flex-column gap-2">
                     <li class="d-flex align-items-start gap-2">
                         <span class="text-info">📍</span>
-                        <span>123 Nguyễn Văn Linh, P. Vĩnh Trung, Q. Hải Châu, TP. Đà Nẵng</span>
+                        <span>45 Phố Huế, P. Nguyễn Du, Q. Hai Bà Trưng, Hà Nội</span>
                     </li>
                     <li class="d-flex align-items-center gap-2">
                         <span class="text-info">📞</span>
@@ -80,7 +80,7 @@
                 <span>•</span>
                 <a href="${pageContext.request.contextPath}/index.jsp#faq" class="text-secondary text-decoration-none">Điều khoản dịch vụ</a>
                 <span>•</span>
-                <a href="${pageContext.request.contextPath}/index.jsp#pricing" class="text-secondary text-decoration-none">Biểu phí niêm yết</a>
+                <a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none">Biểu phí niêm yết</a>
             </div>
         </div>
     </div>

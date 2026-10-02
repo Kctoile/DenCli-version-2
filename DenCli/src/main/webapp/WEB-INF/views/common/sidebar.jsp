@@ -77,5 +77,9 @@
            class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/change-password") ? " active bg-primary text-white" : " text-dark" %>">
             <span>🔒</span><span>Đổi mật khẩu</span>
         </a>
+        <a href="<%= cp %>/logout"
+           class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2 text-danger fw-semibold">
+            <span>🚪</span><span>Đăng xuất</span>
+        </a>
     </div>
 </div>

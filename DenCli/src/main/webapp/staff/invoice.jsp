@@ -9,6 +9,8 @@
     <title>Hóa đơn viện phí khám chữa bệnh | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DenCli Design System Theme -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +52,7 @@
                                 <h3 class="fw-bold text-primary mb-0">NHA KHOA DENCLI</h3>
                             </div>
                             <p class="text-muted small mb-1">Hệ thống Nha khoa Công nghệ cao & Thẩm mỹ chuẩn quốc tế</p>
-                            <p class="text-muted small mb-0">Hotline: 1900 6868 | Email: contact@dencli.vn | 123 Nguyễn Văn Linh, Đà Nẵng</p>
+                            <p class="text-muted small mb-0">Hotline: 1900 6868 | Email: contact@dencli.vn | 45 Phố Huế, Q. Hai Bà Trưng, Hà Nội</p>
                         </div>
                         <div class="text-end">
                             <h4 class="fw-bold text-dark mb-1">HÓA ĐƠN VIỆN PHÍ</h4>

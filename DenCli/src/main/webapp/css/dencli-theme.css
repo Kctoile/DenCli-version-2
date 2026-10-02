@@ -1,0 +1,876 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DenCli Dental Clinic - Modern European Healthcare Design System
+   Design Read: Dental clinic web platform for patients & clinical staff.
+   Trust-first clinical excellence, European medical technology aesthetic.
+   Unified Theme for all 18 JSP Pages (Admin, Doctor, Staff, Customer, Auth, Home)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════
+   1. DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+    /* Brand Colors */
+    --den-primary: #0EA5E9;
+    --den-primary-dark: #0284C7;
+    --den-primary-light: #E0F2FE;
+    --den-primary-subtle: #F0F9FF;
+    --den-navy: #1E3A5F;
+    --den-navy-dark: #0F2744;
+    --den-coral: #FF6B6B;
+    --den-coral-hover: #FA5252;
+    --den-coral-light: #FFF1F2;
+
+    /* Semantic Feedback */
+    --den-success: #10B981;
+    --den-success-text: #065F46;   /* High contrast emerald (8.5:1 ratio vs #ECFDF5) */
+    --den-success-bg: #ECFDF5;
+    --den-success-border: #A7F3D0;
+    --den-warning: #F59E0B;
+    --den-warning-text: #78350F;   /* High contrast amber (10.0:1 ratio vs #FFFBEB) */
+    --den-warning-bg: #FFFBEB;
+    --den-warning-border: #FDE68A;
+    --den-danger: #EF4444;
+    --den-danger-text: #991B1B;    /* High contrast crimson (9.2:1 ratio vs #FEF2F2) */
+    --den-danger-bg: #FEF2F2;
+    --den-danger-border: #FECACA;
+    --den-info: #0284C7;
+    --den-info-text: #0C4A6E;      /* High contrast oceanic navy (10.5:1 ratio vs #EFF6FF) */
+    --den-info-bg: #EFF6FF;
+    --den-info-border: #BFDBFE;
+
+    /* Surfaces & Neutrals */
+    --den-bg: #F8FAFC;
+    --den-surface: #FFFFFF;
+    --den-surface-subtle: #F1F5F9;
+    --den-text: #0F172A;
+    --den-text-secondary: #1E293B;
+    --den-muted: #334155;          /* High-contrast Slate-700 (9.5:1 ratio vs white, replaced light gray #64748B) */
+    --den-subtle: #475569;         /* High-contrast Slate-600 (7.0:1 ratio, replaced light gray #94A3B8) */
+    --den-border: #CBD5E1;         /* Crisp boundary border */
+    --den-border-subtle: #E2E8F0;
+    --den-border-focus: #38BDF8;
+
+    /* Bootstrap 5 Theme Variables Override */
+    --bs-body-color: #0F172A;
+    --bs-secondary-color: #334155;
+
+    /* Typography & Radius */
+    --den-font: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --den-radius-sm: 8px;
+    --den-radius-md: 12px;
+    --den-radius-lg: 16px;
+    --den-radius-xl: 24px;
+    --den-radius-pill: 9999px;
+
+    /* Elevated Shadows & Tactile */
+    --den-shadow-xs: 0 1px 2px rgba(15, 39, 68, 0.04);
+    --den-shadow-sm: 0 2px 6px -1px rgba(15, 39, 68, 0.06);
+    --den-shadow-md: 0 6px 18px -2px rgba(15, 39, 68, 0.08);
+    --den-shadow-lg: 0 16px 32px -4px rgba(15, 39, 68, 0.1);
+    --den-shadow-coral: 0 8px 24px -2px rgba(255, 107, 107, 0.35);
+    --den-transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ═══════════════════════════════════════════
+   2. GLOBAL FOUNDATIONS
+   ═══════════════════════════════════════════ */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--den-font);
+    background-color: var(--den-bg);
+    color: var(--den-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+    background-color: var(--den-primary-light);
+    color: var(--den-primary-dark);
+}
+
+/* ═══════════════════════════════════════════
+   3. TYPOGRAPHY HIERARCHY & HIGH CONTRAST TEXT
+   ═══════════════════════════════════════════ */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--den-navy-dark);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Ensure dark-background containers always have bright white headings and clear contrast */
+.cta-banner h1, .cta-banner h2, .cta-banner h3, .cta-banner h4,
+.booking-hero h1, .booking-hero h2, .booking-hero h3,
+.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
+footer h1, footer h2, footer h3, footer h4, footer h5, footer h6 {
+    color: #FFFFFF !important;
+}
+
+.cta-banner p,
+.cta-banner .cta-subtitle {
+    color: #E0F2FE !important;
+    opacity: 1 !important;
+}
+
+footer .badge,
+.bg-dark .badge {
+    background-color: rgba(14, 165, 233, 0.18) !important;
+    color: #E0F2FE !important;
+    border: 1px solid rgba(56, 189, 248, 0.45) !important;
+}
+
+.text-navy {
+    color: var(--den-navy) !important;
+}
+
+.text-primary {
+    color: var(--den-primary-dark) !important;
+}
+
+.text-coral {
+    color: var(--den-coral) !important;
+}
+
+/* Clear high-contrast text overrides - replacing washed-out light gray */
+.text-muted,
+.form-text,
+small.text-muted,
+.small.text-muted {
+    color: var(--den-muted) !important; /* #334155 - sharp and easily readable */
+    font-weight: 500;
+}
+
+.text-secondary {
+    color: var(--den-text-secondary) !important; /* #1E293B */
+    font-weight: 500;
+}
+
+.text-subtle {
+    color: var(--den-subtle) !important;
+}
+
+/* Contextual high contrast for dark regions (Footer, dark hero banners, trust band) */
+.bg-dark .text-muted,
+.bg-dark .text-secondary,
+footer .text-muted,
+footer .text-secondary,
+.trust-band .text-muted,
+.trust-band .text-secondary,
+.cta-banner .text-muted,
+.cta-banner .text-secondary {
+    color: #CBD5E1 !important; /* High contrast Slate-300: 10:1 contrast ratio against dark backgrounds */
+}
+
+footer a.text-secondary,
+footer a.text-muted {
+    color: #CBD5E1 !important;
+}
+
+footer a.text-secondary:hover,
+footer a.text-muted:hover {
+    color: #38BDF8 !important;
+}
+
+/* ═══════════════════════════════════════════
+   4. TACTILE BUTTONS & CTAS
+   ═══════════════════════════════════════════ */
+.btn {
+    font-family: var(--den-font);
+    font-weight: 600;
+    border-radius: var(--den-radius-sm);
+    padding: 0.6rem 1.25rem;
+    transition: var(--den-transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+}
+
+.btn:active {
+    transform: scale(0.98) translateY(1px);
+}
+
+.btn-primary {
+    background-color: var(--den-primary);
+    border-color: var(--den-primary);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+
+.btn-primary:hover {
+    background-color: var(--den-primary-dark);
+    border-color: var(--den-primary-dark);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+}
+
+.btn-cta-primary {
+    background-color: var(--den-coral);
+    border: none;
+    color: #FFFFFF !important;
+    font-weight: 700;
+    padding: 0.85rem 2rem;
+    border-radius: var(--den-radius-pill);
+    box-shadow: var(--den-shadow-coral);
+    transition: var(--den-transition);
+}
+
+.btn-cta-primary:hover {
+    background-color: var(--den-coral-hover);
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -2px rgba(255, 107, 107, 0.45);
+}
+
+.btn-cta-secondary {
+    background-color: #FFFFFF;
+    border: 1px solid var(--den-border);
+    color: var(--den-navy) !important;
+    font-weight: 600;
+    padding: 0.85rem 1.75rem;
+    border-radius: var(--den-radius-pill);
+    transition: var(--den-transition);
+}
+
+.btn-cta-secondary:hover {
+    background-color: var(--den-surface-subtle);
+    color: var(--den-primary-dark) !important;
+    border-color: var(--den-primary);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--den-primary-dark);
+    border-color: var(--den-primary);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--den-primary);
+    border-color: var(--den-primary);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════
+   5. CARDS & ELEVATED PANELS
+   ═══════════════════════════════════════════ */
+.card,
+.card-custom {
+    background-color: var(--den-surface);
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-md);
+    box-shadow: var(--den-shadow-sm);
+    transition: var(--den-transition);
+}
+
+.card-custom {
+    border: 1px solid var(--den-border) !important;
+    border-radius: var(--den-radius-md) !important;
+}
+
+.stat-card {
+    transition: var(--den-transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--den-shadow-md);
+    border-color: var(--den-border-focus);
+}
+
+/* ═══════════════════════════════════════════
+   5.1 KPI STAT CARDS & METRICS
+   ═══════════════════════════════════════════ */
+.kpi-card {
+    background: #FFFFFF;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--den-shadow-xs);
+    transition: var(--den-transition);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--den-shadow-md);
+    border-color: var(--den-border-focus);
+}
+
+.kpi-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--den-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.kpi-icon-primary {
+    background: var(--den-primary-light);
+    color: var(--den-primary-dark);
+}
+
+.kpi-icon-success {
+    background: var(--den-success-bg);
+    color: var(--den-success);
+}
+
+.kpi-icon-info {
+    background: var(--den-info-bg);
+    color: var(--den-info);
+}
+
+.kpi-icon-warning {
+    background: var(--den-warning-bg);
+    color: var(--den-warning);
+}
+
+.kpi-icon-danger {
+    background: var(--den-danger-bg);
+    color: var(--den-danger);
+}
+
+.kpi-icon-navy {
+    background: #E2E8F0;
+    color: var(--den-navy);
+}
+
+/* ═══════════════════════════════════════════
+   6. CLINICAL STATUS BADGES (High Scannability)
+   ═══════════════════════════════════════════ */
+.badge {
+    font-weight: 600;
+    padding: 0.4em 0.85em;
+    border-radius: var(--den-radius-pill);
+    letter-spacing: 0.01em;
+}
+
+/* Pill status tints */
+.badge-pending,
+.bg-warning-subtle {
+    background-color: var(--den-warning-bg) !important;
+    color: var(--den-warning) !important;
+    border: 1px solid var(--den-warning-border);
+}
+
+.badge-confirmed,
+.badge-checkedin,
+.bg-info-subtle {
+    background-color: var(--den-info-bg) !important;
+    color: var(--den-info) !important;
+    border: 1px solid var(--den-info-border);
+}
+
+.badge-completed,
+.bg-success-subtle {
+    background-color: var(--den-success-bg) !important;
+    color: var(--den-success) !important;
+    border: 1px solid var(--den-success-border);
+}
+
+.badge-cancelled,
+.bg-danger-subtle {
+    background-color: var(--den-danger-bg) !important;
+    color: var(--den-danger) !important;
+    border: 1px solid var(--den-danger-border);
+}
+
+.bg-primary-subtle {
+    background-color: var(--den-primary-subtle) !important;
+    color: var(--den-primary-dark) !important;
+    border: 1px solid var(--den-primary-light);
+}
+
+.badge-secondary,
+.bg-secondary {
+    background-color: #334155 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #1E293B !important;
+}
+
+.badge-light,
+.badge.bg-light {
+    background-color: var(--den-surface-subtle) !important;
+    color: var(--den-navy-dark) !important;
+    border: 1px solid var(--den-border) !important;
+    font-weight: 600;
+}
+
+.badge.bg-warning,
+.badge-warning {
+    background-color: #F59E0B !important;
+    color: #0F172A !important;
+    font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════
+   7. FORM CONTROLS & ERGONOMIC INPUTS
+   ═══════════════════════════════════════════ */
+.form-label {
+    font-weight: 600;
+    color: var(--den-navy-dark);
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+}
+
+.form-control,
+.form-select {
+    font-family: var(--den-font);
+    font-size: 0.95rem;
+    padding: 0.65rem 0.95rem;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-sm);
+    background-color: #FFFFFF;
+    color: var(--den-text);
+    transition: var(--den-transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--den-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+    background-color: #FFFFFF;
+}
+
+.form-control::placeholder {
+    color: var(--den-subtle);
+}
+
+/* ═══════════════════════════════════════════
+   8. DATA TABLES (Admin, Doctor, Staff)
+   ═══════════════════════════════════════════ */
+.table-responsive {
+    border-radius: var(--den-radius-md);
+    border: 1px solid var(--den-border);
+    background: #FFFFFF;
+    box-shadow: var(--den-shadow-xs);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    color: var(--den-text);
+    font-size: 0.925rem;
+}
+
+.table thead th {
+    background-color: var(--den-surface-subtle);
+    color: var(--den-navy-dark);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.85rem 1rem;
+    border-bottom: 2px solid var(--den-border);
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--den-border-subtle);
+}
+
+.table tbody tr:hover {
+    background-color: #F8FAFC;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ═══════════════════════════════════════════
+   8.1 EMPTY STATES (Clean clinical feedback)
+   ═══════════════════════════════════════════ */
+.empty-state-box {
+    padding: 2.75rem 1.5rem;
+    text-align: center;
+    max-width: 440px;
+    margin: 0 auto;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--den-radius-pill);
+    background: var(--den-surface-subtle);
+    border: 2px dashed var(--den-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    margin-bottom: 1rem;
+}
+
+/* ═══════════════════════════════════════════
+   9. SIDEBAR NAVIGATION
+   ═══════════════════════════════════════════ */
+.list-group-item {
+    font-weight: 500;
+    font-size: 0.925rem;
+    transition: var(--den-transition);
+    border: none !important;
+    border-radius: var(--den-radius-sm) !important;
+}
+
+.list-group-item:hover:not(.active) {
+    background-color: var(--den-primary-subtle) !important;
+    color: var(--den-primary-dark) !important;
+    transform: translateX(3px);
+}
+
+.list-group-item.active {
+    background: linear-gradient(135deg, var(--den-primary) 0%, var(--den-primary-dark) 100%) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.32);
+    position: relative;
+}
+
+.list-group-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 4px;
+    background-color: #FFFFFF;
+    border-radius: 0 4px 4px 0;
+}
+
+/* ═══════════════════════════════════════════
+   10. MODALS & ALERTS
+   ═══════════════════════════════════════════ */
+.modal-content {
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-lg);
+    box-shadow: var(--den-shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--den-border);
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--den-border);
+    padding: 1.25rem 1.5rem;
+}
+
+.alert {
+    border-radius: var(--den-radius-sm);
+    font-size: 0.925rem;
+    font-weight: 500;
+    border-width: 1px;
+    padding: 0.85rem 1.15rem;
+}
+
+.alert-success {
+    background-color: var(--den-success-bg) !important;
+    color: var(--den-success-text) !important;
+    border-color: var(--den-success-border) !important;
+}
+
+.alert-danger {
+    background-color: var(--den-danger-bg) !important;
+    color: var(--den-danger-text) !important;
+    border-color: var(--den-danger-border) !important;
+}
+
+.alert-warning {
+    background-color: var(--den-warning-bg) !important;
+    color: var(--den-warning-text) !important;
+    border-color: var(--den-warning-border) !important;
+}
+
+.alert-info {
+    background-color: var(--den-info-bg) !important;
+    color: var(--den-info-text) !important;
+    border-color: var(--den-info-border) !important;
+}
+
+.alert-secondary,
+.alert-light {
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
+    border-color: var(--den-border) !important;
+}
+
+/* ═══════════════════════════════════════════
+   11. CUSTOM SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: var(--den-radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--den-primary);
+}
+
+/* ═══════════════════════════════════════════
+   12. AUTHENTICATION PAGES (Login, Register, Forgot Password)
+   ═══════════════════════════════════════════ */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+    background: radial-gradient(100% 120% at 85% 10%, #E0F2FE 0%, #F0F9FF 35%, #F8FAFC 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-card {
+    background: #FFFFFF;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-lg);
+    box-shadow: var(--den-shadow-lg);
+    padding: 2.5rem 2.25rem;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 10;
+    transition: var(--den-transition);
+}
+
+.auth-logo-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--den-primary) 0%, var(--den-primary-dark) 100%);
+    border-radius: var(--den-radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    color: #FFFFFF;
+    box-shadow: 0 8px 20px -2px rgba(14, 165, 233, 0.35);
+}
+
+.auth-logo-section h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--den-navy-dark);
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+    font-size: 0.925rem;
+    color: var(--den-muted);
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--den-navy-dark);
+    margin-bottom: 0.45rem;
+}
+
+.form-group .form-control {
+    width: 100%;
+    display: block;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    border: 1.5px solid var(--den-border);
+    border-radius: var(--den-radius-sm);
+    background: #FFFFFF;
+    color: var(--den-text);
+    transition: var(--den-transition);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-group .form-control:focus {
+    border-color: var(--den-primary);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+}
+
+.form-group .form-control::placeholder {
+    color: var(--den-subtle);
+}
+
+/* Password field & eye visibility toggle */
+.password-field {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+.password-field .form-control {
+    padding-right: 3rem !important;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    transform: translateY(-50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    background: transparent;
+    border-radius: var(--den-radius-pill);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--den-subtle);
+    cursor: pointer;
+    transition: var(--den-transition);
+    padding: 0;
+}
+
+.password-toggle:hover {
+    background: var(--den-primary-subtle);
+    color: var(--den-primary-dark);
+}
+
+.password-toggle .icon-eye-off {
+    display: none;
+}
+
+.password-toggle.is-visible .icon-eye {
+    display: none;
+}
+
+.password-toggle.is-visible .icon-eye-off {
+    display: block;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Alert styles */
+.alert-custom {
+    padding: 0.85rem 1rem;
+    border-radius: var(--den-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    display: none;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.alert-custom.alert-error {
+    background-color: var(--den-danger-bg);
+    color: var(--den-danger-text);
+    border: 1px solid var(--den-danger-border);
+}
+
+.alert-custom.alert-success {
+    background-color: var(--den-success-bg);
+    color: var(--den-success-text);
+    border: 1px solid var(--den-success-border);
+}
+
+.btn-google-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1.5px solid var(--den-border);
+    color: var(--den-text-secondary);
+    font-weight: 600;
+    font-size: 0.925rem;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: var(--den-radius-sm);
+    transition: var(--den-transition);
+}
+
+.btn-google-login:hover {
+    background: var(--den-surface-subtle);
+    border-color: #94A3B8;
+    color: var(--den-navy-dark);
+    transform: translateY(-1px);
+}
+
+.btn-cta-primary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--den-border-subtle);
+    font-size: 0.9rem;
+    color: var(--den-muted);
+}
+
+.auth-footer a {
+    color: var(--den-primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    color: var(--den-primary);
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 2rem 1.25rem;
+    }
+}

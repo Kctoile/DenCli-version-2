@@ -15,8 +15,11 @@ import com.devjava.dencli.model.dto.RevenueDTO;
 import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.util.Constants;
 import com.devjava.dencli.util.DateUtil;
+import com.devjava.dencli.websocket.AppointmentCalendarEndpoint;
+import com.devjava.dencli.websocket.AppointmentWebSocket;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Collections;
 import java.util.List;
 
 public class AppointmentServiceImpl implements AppointmentService {
@@ -66,7 +69,25 @@ public class AppointmentServiceImpl implements AppointmentService {
         app.setNotes(request.getNotes());
 
         // Gọi hàm của tầng DAO để thêm mới lịch hẹn và danh sách dịch vụ đi kèm trong một Transaction
-        return appointmentDAO.insertAppointmentWithServices(app, request.getServiceIds());
+        int appointmentId = appointmentDAO.insertAppointmentWithServices(app, request.getServiceIds());
+
+        if (appointmentId > 0) {
+            // Real-time synchronization broadcast via WebSocket
+            try {
+                AppointmentCalendarEndpoint.broadcastSlotBooked(
+                    request.getDoctorId(),
+                    request.getAppointmentDate(),
+                    request.getAppointmentTime()
+                );
+                // Also notify reception desk
+                AppointmentWebSocket.broadcast("{\"event\":\"NEW_APPOINTMENT\",\"appointmentId\":" + appointmentId + "}");
+            } catch (Exception e) {
+                // Non-blocking: DB transaction is already safely committed
+                e.printStackTrace();
+            }
+        }
+
+        return appointmentId;
     }
 
     /**
@@ -295,5 +316,20 @@ public class AppointmentServiceImpl implements AppointmentService {
             return false;
         }
         return isValidStatusTransition(appointment.getStatus(), targetStatus);
+    }
+
+    /**
+     * Lấy danh sách các khung giờ đã có người đặt của bác sĩ trong ngày (định dạng YYYY-MM-DD).
+     */
+    @Override
+    public List<String> getBookedTimeSlots(int doctorId, String dateStr) {
+        if (doctorId <= 0 || dateStr == null || dateStr.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        Date date = DateUtil.parseDate(dateStr);
+        if (date == null) {
+            return Collections.emptyList();
+        }
+        return appointmentDAO.getBookedTimeSlots(doctorId, date);
     }
 }

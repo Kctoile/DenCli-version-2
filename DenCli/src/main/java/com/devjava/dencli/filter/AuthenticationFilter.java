@@ -117,7 +117,8 @@ public class AuthenticationFilter implements Filter {
         if (path.startsWith("/assets/") || path.startsWith("/css/")
                 || path.startsWith("/js/") || path.startsWith("/images/")
                 || path.startsWith("/vendor/") || path.startsWith("/auth/")
-                || path.startsWith("/payment/vnpay-return") || path.startsWith("/ws/")) {
+                || path.startsWith("/payment/vnpay-return") || path.startsWith("/ws/")
+                || path.startsWith("/api/appointments/booked-slots")) {
             return true;
         }
 
