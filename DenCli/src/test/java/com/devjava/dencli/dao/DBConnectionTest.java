@@ -5,6 +5,7 @@
 package com.devjava.dencli.dao;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DBConnectionTest {
@@ -34,8 +35,11 @@ public class DBConnectionTest {
 
     /**
      * Phương thức kiểm thử kết nối thực tế tới cơ sở dữ liệu SQL Server thành công.
+     * Bỏ qua tự động trong môi trường CI/CD (GitHub Actions) do không có SQL Server.
+     * ponytail: @DisabledIfEnvironmentVariable — zero deps, JUnit 5 built-in
      */
     @Test
+    @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
     public void testGetConnectionSuccess() {
         assertDoesNotThrow(() -> {
             try (java.sql.Connection conn = DBConnection.getConnection()) {
