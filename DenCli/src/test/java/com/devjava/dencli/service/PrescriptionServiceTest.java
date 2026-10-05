@@ -4,18 +4,25 @@
  */
 package com.devjava.dencli.service;
 
+import java.math.BigDecimal;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.devjava.dencli.dao.MedicineDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.service.impl.PrescriptionServiceImpl;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class PrescriptionServiceTest {
 
@@ -39,16 +46,16 @@ public class PrescriptionServiceTest {
     @Test
     public void testCreatePrescriptionInvalidInput() {
         // Test null
-        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(null));
+        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(null, 2));
 
         // Test không có kết quả khám (result_id null)
         Prescription p1 = new Prescription();
-        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(p1));
+        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(p1, 2));
 
         // Test danh sách chi tiết thuốc rỗng
         Prescription p2 = new Prescription(1, 10, "Huong dan");
         p2.setDetails(Collections.emptyList());
-        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(p2));
+        assertFalse(prescriptionService.createPrescriptionWithStockDeduction(p2, 2));
     }
 
     /**

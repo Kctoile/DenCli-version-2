@@ -202,23 +202,9 @@ public class AppointmentServiceImpl implements AppointmentService {
      */
     @Override // Ghi đè phương thức checkInAppointment từ interface AppointmentService
     public boolean checkInAppointment(int appointmentId, String room) {
-        if (appointmentId <= 0) {
-            return false;
-        }
-
-        Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
-        if (!canTransition(appointment, Constants.APPOINTMENT_CHECKED_IN)) {
-            return false;
-        }
-
-        boolean roomUpdated = appointmentDAO.updateAppointmentRoom(appointmentId, room);
-
-        if (!roomUpdated) {
-            return false;
-        }
-
-        // Cập nhật trạng thái cuộc hẹn thành Checked In
-        return appointmentDAO.updateAppointmentStatus(appointmentId, Constants.APPOINTMENT_CHECKED_IN);
+        return appointmentId > 0 && room != null && !room.isBlank()
+                && appointmentDAO.checkInAppointmentIfCurrent(appointmentId, Constants.APPOINTMENT_CONFIRMED,
+                        room.trim(), Constants.APPOINTMENT_CHECKED_IN);
     }
 
     /**
@@ -230,24 +216,16 @@ public class AppointmentServiceImpl implements AppointmentService {
      */
     @Override // Ghi đè phương thức cancelAppointment từ interface AppointmentService
     public boolean cancelAppointment(int appointmentId, int userId, int roleId) {
-        Appointment app = appointmentDAO.getAppointmentById(appointmentId);
-
-        if (app == null) {
+        if (appointmentId <= 0 || userId <= 0) {
             return false;
         }
-
-        // Nếu là bệnh nhân, chỉ được phép hủy lịch hẹn do chính mình đặt
         if (roleId == Constants.ROLE_CUSTOMER_ID) {
-            if (app.getPatientId() == null || app.getPatientId() != userId) {
-                return false;
-            }
+            return appointmentDAO.cancelAppointmentForPatient(appointmentId, userId);
         }
-
-        if (!canTransition(app, Constants.APPOINTMENT_CANCELLED)) {
+        if (roleId != Constants.ROLE_ADMIN_ID && roleId != Constants.ROLE_STAFF_ID) {
             return false;
         }
-
-        return appointmentDAO.updateAppointmentStatus(appointmentId, Constants.APPOINTMENT_CANCELLED);
+        return updateStatusIfAllowed(appointmentId, Constants.APPOINTMENT_CANCELLED);
     }
 
     /**
@@ -268,6 +246,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override // Ghi đè phương thức completeAppointment từ interface AppointmentService
     public boolean completeAppointment(int appointmentId) {
         return updateStatusIfAllowed(appointmentId, Constants.APPOINTMENT_COMPLETED);
+    }
+
+    @Override
+    public boolean completeAppointmentForDoctor(int appointmentId, int doctorId) {
+        return appointmentId > 0 && doctorId > 0
+                && appointmentDAO.completeAppointmentForDoctorIfCurrent(appointmentId, doctorId,
+                        Constants.APPOINTMENT_CHECKED_IN, Constants.APPOINTMENT_COMPLETED);
     }
 
     /**
@@ -306,9 +291,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private boolean updateStatusIfAllowed(int appointmentId, String targetStatus) {
-        Appointment appointment = appointmentDAO.getAppointmentById(appointmentId);
-        return canTransition(appointment, targetStatus)
-                && appointmentDAO.updateAppointmentStatus(appointmentId, targetStatus);
+        if (appointmentId <= 0 || targetStatus == null) {
+            return false;
+        }
+        for (String currentStatus : List.of(Constants.APPOINTMENT_PENDING,
+                Constants.APPOINTMENT_CONFIRMED, Constants.APPOINTMENT_CHECKED_IN)) {
+            if (isValidStatusTransition(currentStatus, targetStatus)
+                    && appointmentDAO.updateAppointmentStatusIfCurrent(appointmentId, currentStatus, targetStatus)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean canTransition(Appointment appointment, String targetStatus) {

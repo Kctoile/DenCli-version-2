@@ -1,14 +1,19 @@
 package com.devjava.dencli.controller.customer;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.devjava.dencli.service.BillingService;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
+import com.devjava.dencli.util.VnPayUtil;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Servlet tiếp nhận callback kết quả giao dịch thanh toán từ VNPAY.
@@ -22,7 +27,19 @@ public class VnPayReturnServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String responseCode = request.getParameter("vnp_ResponseCode");
+        Map<String, String> fields = new HashMap<>();
+        request.getParameterMap().forEach((key, values) -> {
+            if (values != null && values.length > 0) {
+                fields.put(key, values[0]);
+            }
+        });
+        String secureHash = fields.get("vnp_SecureHash");
+        if (!VnPayUtil.verifySignature(fields, secureHash)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Chữ ký phản hồi VNPAY không hợp lệ.");
+            return;
+        }
+
+        String responseCode = fields.get("vnp_ResponseCode");
         String txnRef = request.getParameter("vnp_TxnRef");
 
         int appointmentId = 0;
@@ -48,8 +65,8 @@ public class VnPayReturnServlet extends HttpServlet {
                         "Thanh toán trực tuyến VNPAY thành công cho cuộc hẹn #" + appointmentId + "!");
             }
         } else {
-            request.getSession().setAttribute(Constants.SESSION_ERROR_MESSAGE,
-                    "Giao dịch VNPAY không thành công hoặc đã bị hủy (Mã phản hồi: " + responseCode + ").");
+                request.getSession().setAttribute(Constants.SESSION_ERROR_MESSAGE,
+                    "Giao dịch VNPAY không thành công hoặc đã bị hủy.");
         }
 
         response.sendRedirect(request.getContextPath() + "/customer/invoice?appointment_id=" + appointmentId);

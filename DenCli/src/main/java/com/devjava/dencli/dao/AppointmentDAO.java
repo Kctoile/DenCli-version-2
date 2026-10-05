@@ -4,11 +4,13 @@
  */
 package com.devjava.dencli.dao;
 
-import com.devjava.dencli.model.Appointment;
-import com.devjava.dencli.model.dto.RevenueDTO;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
+
+import com.devjava.dencli.model.Appointment;
+import com.devjava.dencli.model.dto.RevenueDTO;
 
 public interface AppointmentDAO {
 
@@ -44,6 +46,16 @@ public interface AppointmentDAO {
      * @return Danh sách lịch hẹn của bệnh nhân
      */
     List<Appointment> getAppointmentsByPatient(int patientId, int offset, int limit);
+
+    List<Appointment> getUpcomingRevisitsByPatient(int patientId, Date fromDate);
+
+    List<Appointment> getCompletedAppointmentsByPatient(int patientId);
+
+    List<Appointment> getCompletedAppointmentsForDoctorPatient(int doctorId, int patientId);
+
+    boolean isAppointmentAssignedToDoctor(int appointmentId, int doctorId, Connection conn);
+
+    boolean updateRevisitInfo(int appointmentId, int doctorId, Date revisitDate, String revisitNote, Connection conn);
 
     /**
      * Phương thức đếm tổng số lịch hẹn của một bệnh nhân.
@@ -95,6 +107,14 @@ public interface AppointmentDAO {
      * @return true nếu cập nhật thành công, ngược lại false
      */
     boolean updateAppointmentStatus(int appointmentId, String status);
+
+    boolean updateAppointmentStatusIfCurrent(int appointmentId, String currentStatus, String targetStatus);
+
+    boolean cancelAppointmentForPatient(int appointmentId, int patientId);
+
+    boolean checkInAppointmentIfCurrent(int appointmentId, String currentStatus, String room, String targetStatus);
+
+    boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus, String targetStatus);
 
     /**
      * Phương thức chỉ định phòng khám cho bệnh nhân khi thực hiện thủ tục tiếp đón (Check In).

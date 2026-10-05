@@ -4,10 +4,6 @@
  */
 package com.devjava.dencli.dao.impl;
 
-import com.devjava.dencli.dao.AppointmentDAO;
-import com.devjava.dencli.dao.DBConnection;
-import com.devjava.dencli.model.Appointment;
-import com.devjava.dencli.model.dto.RevenueDTO;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,6 +14,11 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.devjava.dencli.dao.AppointmentDAO;
+import com.devjava.dencli.dao.DBConnection;
+import com.devjava.dencli.model.Appointment;
+import com.devjava.dencli.model.dto.RevenueDTO;
 
 public class AppointmentDAOImpl implements AppointmentDAO {
 
@@ -215,6 +216,89 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         }
 
         return list;
+    }
+
+    @Override
+    public List<Appointment> getUpcomingRevisitsByPatient(int patientId, Date fromDate) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
+                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                   + "WHERE a.patient_id = ? AND a.revisit_date >= ? "
+                   + "ORDER BY a.revisit_date ASC, a.appointment_time ASC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setDate(2, fromDate);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Appointment> getCompletedAppointmentsByPatient(int patientId) {
+        return getCompletedAppointments("a.patient_id = ?", patientId, null);
+    }
+
+    @Override
+    public List<Appointment> getCompletedAppointmentsForDoctorPatient(int doctorId, int patientId) {
+        return getCompletedAppointments("a.patient_id = ? AND EXISTS (SELECT 1 FROM appointments access "
+                + "WHERE access.patient_id = a.patient_id AND access.doctor_id = ?)", patientId, doctorId);
+    }
+
+    private List<Appointment> getCompletedAppointments(String predicate, int patientId, Integer doctorId) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
+                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                   + "WHERE " + predicate + " AND a.status = 'Completed' "
+                   + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
+                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            if (doctorId != null) ps.setInt(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public boolean isAppointmentAssignedToDoctor(int appointmentId, int doctorId, Connection conn) {
+        String sql = "SELECT 1 FROM appointments WITH (UPDLOCK, HOLDLOCK) "
+                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            ps.setInt(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateRevisitInfo(int appointmentId, int doctorId, Date revisitDate, String revisitNote, Connection conn) {
+        String sql = "UPDATE appointments SET revisit_date = ?, revisit_note = ? "
+                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, revisitDate);
+            ps.setString(2, revisitNote);
+            ps.setInt(3, appointmentId);
+            ps.setInt(4, doctorId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -424,6 +508,66 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return false;
     }
 
+    @Override
+    public boolean updateAppointmentStatusIfCurrent(int appointmentId, String currentStatus, String targetStatus) {
+        String sql = "UPDATE appointments SET status = ? WHERE appointment_id = ? AND status = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, targetStatus);
+            ps.setInt(2, appointmentId);
+            ps.setString(3, currentStatus);
+            return ps.executeUpdate() == 1;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean cancelAppointmentForPatient(int appointmentId, int patientId) {
+        String sql = "UPDATE appointments SET status = 'Cancelled' "
+                   + "WHERE appointment_id = ? AND patient_id = ? "
+                   + "AND status IN ('Pending', 'Confirmed', 'Checked In')";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            ps.setInt(2, patientId);
+            return ps.executeUpdate() == 1;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkInAppointmentIfCurrent(int appointmentId, String currentStatus, String room, String targetStatus) {
+        String sql = "UPDATE appointments SET room = ?, status = ? WHERE appointment_id = ? AND status = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, room);
+            ps.setString(2, targetStatus);
+            ps.setInt(3, appointmentId);
+            ps.setString(4, currentStatus);
+            return ps.executeUpdate() == 1;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus, String targetStatus) {
+        String sql = "UPDATE appointments SET status = ? "
+                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, targetStatus);
+            ps.setInt(2, appointmentId);
+            ps.setInt(3, doctorId);
+            ps.setString(4, currentStatus);
+            return ps.executeUpdate() == 1;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * Phương thức cập nhật phòng khám cho lịch hẹn khi bệnh nhân làm thủ tục tiếp đón.
      * @param appointmentId Mã lịch hẹn
@@ -531,6 +675,11 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         app.setRoom(rs.getString("room"));
 
         try {
+            app.setRevisitDate(rs.getDate("revisit_date"));
+            app.setRevisitNote(rs.getString("revisit_note"));
+        } catch (SQLException ignored) { /* bang cu chua co cot revisit */ }
+
+        try {
             app.setPatientName(rs.getString("patient_name"));
             app.setPatientPhone(rs.getString("patient_phone"));
             app.setDoctorName(rs.getString("doctor_name"));
@@ -572,4 +721,5 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         }
         return slots;
     }
+
 }

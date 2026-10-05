@@ -148,6 +148,7 @@ public class BillingServiceImpl implements BillingService {
             return false;
         }
 
-        return appointmentDAO.updateAppointmentStatus(appointmentId, Constants.APPOINTMENT_COMPLETED);
+        return appointmentDAO.updateAppointmentStatusIfCurrent(appointmentId,
+            Constants.APPOINTMENT_CHECKED_IN, Constants.APPOINTMENT_COMPLETED);
     }
 }

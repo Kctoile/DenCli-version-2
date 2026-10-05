@@ -38,12 +38,11 @@ public final class EmailService {
      * Gửi email định dạng HTML tới người nhận.
      */
     public static boolean sendEmail(String toEmail, String subject, String htmlContent) {
-        LOGGER.info("[EmailService] Preparing email to " + toEmail + " | Subject: " + subject);
+        LOGGER.info("[EmailService] Preparing email delivery.");
 
         // ponytail: ghi log console nếu chưa có cấu hình SMTP để dev/test luôn thông suốt
         if (SMTP_HOST == null || SMTP_USER == null || SMTP_PASS == null) {
-            LOGGER.info("[EmailService DEV MODE] SMTP not configured. Simulating email delivery.");
-            LOGGER.info("[EmailService DEV MODE] Content:\n" + htmlContent);
+            LOGGER.info("[EmailService DEV MODE] SMTP not configured; delivery is simulated.");
             return true;
         }
 
@@ -70,7 +69,7 @@ public final class EmailService {
             Transport.send(message);
             return true;
         } catch (Exception e) {
-            LOGGER.warning("[EmailService] Failed to send email: " + e.getMessage());
+            LOGGER.warning("[EmailService] Email delivery failed.");
             return false;
         }
     }

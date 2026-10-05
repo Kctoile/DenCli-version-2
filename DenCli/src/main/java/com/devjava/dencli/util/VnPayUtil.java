@@ -2,6 +2,7 @@ package com.devjava.dencli.util;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -19,8 +21,8 @@ import javax.crypto.spec.SecretKeySpec;
 public final class VnPayUtil {
 
     public static final String VNP_PAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String VNP_TMN_CODE = getConfig("VNP_TMN_CODE", "DEMODENCLI");
-    public static final String VNP_HASH_SECRET = getConfig("VNP_HASH_SECRET", "9A7B3C5D1E2F4A8B0C3D5E7F9A1B2C3D");
+    public static final String VNP_TMN_CODE = getConfig("VNP_TMN_CODE", "");
+    public static final String VNP_HASH_SECRET = getConfig("VNP_HASH_SECRET", "");
 
     private VnPayUtil() {
     }
@@ -35,6 +37,9 @@ public final class VnPayUtil {
      * Tạo URL chuyển hướng tới cổng thanh toán VNPAY.
      */
     public static String createPaymentUrl(long amountVnd, String orderInfo, String returnUrl, String ipAddress, String txnRef) {
+        if (VNP_TMN_CODE.isBlank() || VNP_HASH_SECRET.isBlank()) {
+            throw new IllegalStateException("VNPAY credentials are not configured.");
+        }
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_OrderType = "other";
@@ -87,23 +92,29 @@ public final class VnPayUtil {
      * Xác thực chữ ký số phản hồi từ VNPAY.
      */
     public static boolean verifySignature(Map<String, String> fields, String secureHash) {
+        if (fields == null || secureHash == null || secureHash.isBlank() || VNP_HASH_SECRET.isBlank()) {
+            return false;
+        }
         List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
 
         StringBuilder hashData = new StringBuilder();
-        for (int i = 0; i < fieldNames.size(); i++) {
-            String fieldName = fieldNames.get(i);
+        for (String fieldName : fieldNames) {
+            if ("vnp_SecureHash".equals(fieldName) || "vnp_SecureHashType".equals(fieldName)) {
+                continue;
+            }
             String fieldValue = fields.get(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
-                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-                if (i < fieldNames.size() - 1) {
+                if (!hashData.isEmpty()) {
                     hashData.append('&');
                 }
+                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
             }
         }
 
         String expectedHash = hmacSHA512(VNP_HASH_SECRET, hashData.toString());
-        return expectedHash.equalsIgnoreCase(secureHash);
+        return MessageDigest.isEqual(expectedHash.toLowerCase().getBytes(StandardCharsets.US_ASCII),
+                secureHash.toLowerCase().getBytes(StandardCharsets.US_ASCII));
     }
 
     public static String hmacSHA512(String key, String data) {

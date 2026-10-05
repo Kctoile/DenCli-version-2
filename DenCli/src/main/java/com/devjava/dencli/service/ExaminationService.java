@@ -4,9 +4,11 @@
  */
 package com.devjava.dencli.service;
 
+import java.sql.Date;
+import java.util.List;
+
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.PrescribedService;
-import java.util.List;
 
 public interface ExaminationService {
 
@@ -17,7 +19,8 @@ public interface ExaminationService {
      * @param additionalServices Danh sách dịch vụ chỉ định thêm (có thể rỗng nếu không chỉ định)
      * @return Mã result_id vừa tạo, hoặc -1 nếu có lỗi
      */
-    int recordExamination(int appointmentId, String diagnosis, List<PrescribedService> additionalServices);
+    int recordExamination(int appointmentId, int doctorId, String diagnosis, List<PrescribedService> additionalServices,
+                          Date revisitDate, String revisitNote);
 
     /**
      * Phương thức lấy thông tin kết quả khám của một lịch hẹn.

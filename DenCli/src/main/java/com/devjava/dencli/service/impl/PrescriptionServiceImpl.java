@@ -4,19 +4,25 @@
  */
 package com.devjava.dencli.service.impl;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.MedicineDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.dao.impl.MedicineDAOImpl;
 import com.devjava.dencli.dao.impl.PrescriptionDAOImpl;
+
 import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.model.PrescriptionDetail;
 import com.devjava.dencli.service.PrescriptionService;
 import com.devjava.dencli.util.Constants;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 
 public class PrescriptionServiceImpl implements PrescriptionService {
 
@@ -36,14 +42,18 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     /**
-     * Phương thức thực hiện nghiệp vụ kê đơn thuốc và tự động trừ số lượng tồn kho trong một Transaction duy nhất.
-     * Tầng Service chủ động mở Connection, tắt autoCommit, truyền Connection cho DAO và commit/rollback trong try-catch-finally.
-     * @param prescription Đối tượng đơn thuốc chứa danh sách các chi tiết thuốc cần kê
-     * @return true nếu kê đơn và trừ tồn kho thành công cho toàn bộ thuốc, ngược lại false
+     * Phương thức thực hiện nghiệp vụ kê đơn thuốc và tự động trừ số lượng tồn
+     * kho trong một Transaction duy nhất. Tầng Service chủ động mở Connection,
+     * tắt autoCommit, truyền Connection cho DAO và commit/rollback trong
+     * try-catch-finally.
+     *
+     * @param prescription Đối tượng đơn thuốc chứa danh sách các chi tiết thuốc
+     * cần kê
+     * @return true nếu kê đơn và trừ tồn kho thành công cho toàn bộ thuốc,
+     * ngược lại false
      */
-    @Override // Ghi đè phương thức createPrescriptionWithStockDeduction từ interface PrescriptionService
-    public boolean createPrescriptionWithStockDeduction(Prescription prescription) {
-        if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0) {
+        public boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId) {
+        if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0 || doctorId <= 0) {
             return false;
         }
 
@@ -61,6 +71,11 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             // Bước 2: Vô hiệu hóa chế độ tự động commit để bắt đầu một Transaction thủ công
             conn.setAutoCommit(false);
 
+            if (!prescriptionDAO.isResultAssignedToDoctor(prescription.getResultId(), doctorId, conn)) {
+                conn.rollback();
+                return false;
+            }
+
             // Bước 3: Tạo bản ghi đơn thuốc vào bảng prescriptions thông qua PrescriptionDAO với Connection dùng chung
             int prescriptionId = prescriptionDAO.insertPrescription(prescription, conn);
 
@@ -76,9 +91,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
                 // Trừ số lượng tồn kho của thuốc trong bảng medicines (kiểm tra tồn kho đủ)
                 boolean stockDeducted = medicineDAO.deductStockQuantity(
-                    detail.getMedicineId(), 
-                    detail.getPrescribedQuantity(), 
-                    conn
+                        detail.getMedicineId(),
+                        detail.getPrescribedQuantity(),
+                        conn
                 );
 
                 if (!stockDeducted) {
@@ -134,6 +149,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức lấy đơn thuốc gắn liền với kết quả khám bệnh.
+     *
      * @param resultId Mã kết quả khám
      * @return Đối tượng Prescription
      */
@@ -148,6 +164,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức lấy toàn bộ danh mục thuốc trong kho.
+     *
      * @return Danh sách thuốc
      */
     @Override // Ghi đè phương thức getAllMedicines từ interface PrescriptionService
@@ -157,6 +174,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức tìm kiếm thuốc theo từ khóa có phân trang.
+     *
      * @param keyword Từ khóa tìm kiếm
      * @param page Trang
      * @param pageSize Số lượng bản ghi trên một trang
@@ -173,6 +191,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức đếm tổng số loại thuốc thỏa từ khóa tìm kiếm.
+     *
      * @param keyword Từ khóa
      * @return Tổng số loại thuốc
      */
@@ -183,13 +202,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức thêm mới một loại thuốc vào danh mục kho.
+     *
      * @param medicine Đối tượng thuốc
      * @return true nếu thêm thành công
      */
     @Override // Ghi đè phương thức addMedicine từ interface PrescriptionService
     public boolean addMedicine(Medicine medicine) {
-        if (medicine == null || medicine.getMedicineName() == null || medicine.getMedicineName().trim().isEmpty() ||
-            medicine.getPrice() == null || medicine.getStockQuantity() < 0) {
+        if (medicine == null || medicine.getMedicineName() == null || medicine.getMedicineName().trim().isEmpty()
+                || medicine.getPrice() == null || medicine.getStockQuantity() < 0) {
             return false;
         }
 
@@ -198,6 +218,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * Phương thức cập nhật thông tin thuốc trong kho.
+     *
      * @param medicine Đối tượng thuốc
      * @return true nếu cập nhật thành công
      */

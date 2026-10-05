@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "StaffReceptionServlet", urlPatterns = {"/staff/reception"})
+@WebServlet(name = "StaffReceptionServlet", urlPatterns = {"/staff/reception", "/staff/dashboard"})
 public class ReceptionServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

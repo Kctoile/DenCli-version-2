@@ -22,11 +22,14 @@ public class Appointment implements Serializable {
     private String status;
     private String notes;
     private String room;
+    private Date revisitDate;
+    private String revisitNote;
 
     // Các thuộc tính tiện ích phục vụ hiển thị trên giao diện View/JSP
     private String patientName;
     private String patientPhone;
     private String doctorName;
+    private ExaminationResult examinationResult;
     private List<Service> services = new ArrayList<>();
 
     public Appointment() {
@@ -111,6 +114,11 @@ public class Appointment implements Serializable {
         this.room = room;
     }
 
+    public Date getRevisitDate() { return revisitDate; }
+    public void setRevisitDate(Date revisitDate) { this.revisitDate = revisitDate; }
+    public String getRevisitNote() { return revisitNote; }
+    public void setRevisitNote(String revisitNote) { this.revisitNote = revisitNote; }
+
     public String getPatientName() {
         return patientName;
     }
@@ -133,6 +141,14 @@ public class Appointment implements Serializable {
 
     public void setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+    }
+
+    public ExaminationResult getExaminationResult() {
+        return examinationResult;
+    }
+
+    public void setExaminationResult(ExaminationResult examinationResult) {
+        this.examinationResult = examinationResult;
     }
 
     public List<Service> getServices() {

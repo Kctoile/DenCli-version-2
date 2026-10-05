@@ -4,6 +4,12 @@
  */
 package com.devjava.dencli.service.impl;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
 import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.ExaminationResultDAO;
@@ -13,10 +19,6 @@ import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.PrescribedService;
 import com.devjava.dencli.service.ExaminationService;
 import com.devjava.dencli.util.Constants;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
 
 public class ExaminationServiceImpl implements ExaminationService {
 
@@ -43,8 +45,10 @@ public class ExaminationServiceImpl implements ExaminationService {
      * @return Mã result_id nếu thành công, -1 nếu thất bại
      */
     @Override // Ghi đè phương thức recordExamination từ interface ExaminationService
-    public int recordExamination(int appointmentId, String diagnosis, List<PrescribedService> additionalServices) {
-        if (appointmentId <= 0 || diagnosis == null || diagnosis.trim().isEmpty()) {
+    public int recordExamination(int appointmentId, int doctorId, String diagnosis, List<PrescribedService> additionalServices,
+                                 Date revisitDate, String revisitNote) {
+        if (appointmentId <= 0 || doctorId <= 0 || diagnosis == null || diagnosis.trim().isEmpty()
+                || (revisitDate != null && revisitDate.before(Date.valueOf(java.time.LocalDate.now())))) {
             return -1;
         }
 
@@ -54,6 +58,11 @@ public class ExaminationServiceImpl implements ExaminationService {
             // Mở kết nối duy nhất từ tầng Service
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false); // Bắt đầu Transaction thủ công
+
+            if (!appointmentDAO.isAppointmentAssignedToDoctor(appointmentId, doctorId, conn)) {
+                conn.rollback();
+                return -1;
+            }
 
             // Chuẩn bị thực thể ExaminationResult
             ExaminationResult er = new ExaminationResult();
@@ -66,6 +75,11 @@ public class ExaminationServiceImpl implements ExaminationService {
 
             if (resultId <= 0) {
                 throw new SQLException("Không thể lưu bản ghi kết quả khám lâm sàng.");
+            }
+
+            if (revisitDate != null && !appointmentDAO.updateRevisitInfo(appointmentId, doctorId, revisitDate,
+                    revisitNote == null || revisitNote.isBlank() ? null : revisitNote.trim(), conn)) {
+                throw new SQLException("Không thể lưu lịch tái khám.");
             }
 
             // Nếu có các dịch vụ chỉ định thêm, tiến hành lưu vào bảng prescribed_services

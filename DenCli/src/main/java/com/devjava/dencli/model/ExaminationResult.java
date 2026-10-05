@@ -6,6 +6,10 @@ package com.devjava.dencli.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.devjava.dencli.model.dto.InvoiceResponseDTO;
 
 public class ExaminationResult implements Serializable {
 
@@ -19,6 +23,9 @@ public class ExaminationResult implements Serializable {
     // Các trường hỗ trợ hiển thị
     private String patientName;
     private String doctorName;
+    private List<PrescribedService> prescribedServices = new ArrayList<>();
+    private Prescription prescription;
+    private InvoiceResponseDTO invoice;
 
     public ExaminationResult() {
     }
@@ -79,5 +86,29 @@ public class ExaminationResult implements Serializable {
 
     public void setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+    }
+
+    public List<PrescribedService> getPrescribedServices() {
+        return prescribedServices;
+    }
+
+    public void setPrescribedServices(List<PrescribedService> prescribedServices) {
+        this.prescribedServices = prescribedServices;
+    }
+
+    public Prescription getPrescription() {
+        return prescription;
+    }
+
+    public void setPrescription(Prescription prescription) {
+        this.prescription = prescription;
+    }
+
+    public InvoiceResponseDTO getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(InvoiceResponseDTO invoice) {
+        this.invoice = invoice;
     }
 }

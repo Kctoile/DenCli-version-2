@@ -98,7 +98,8 @@ public class BillingServiceTest {
      */
     @Test
     public void testPayInvoiceSuccess() {
-        when(appointmentDAO.updateAppointmentStatus(20, Constants.APPOINTMENT_COMPLETED)).thenReturn(true);
+        when(appointmentDAO.updateAppointmentStatusIfCurrent(20, Constants.APPOINTMENT_CHECKED_IN,
+            Constants.APPOINTMENT_COMPLETED)).thenReturn(true);
 
         boolean paid = billingService.payInvoice(20);
 

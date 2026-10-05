@@ -79,15 +79,15 @@ public class AppointmentServiceTest {
      */
     @Test
     public void testCheckInAppointmentSuccess() {
-        Appointment appointment = new Appointment();
-        appointment.setStatus(Constants.APPOINTMENT_CONFIRMED);
-        when(appointmentDAO.getAppointmentById(15)).thenReturn(appointment);
-        when(appointmentDAO.updateAppointmentRoom(15, "Phòng 201")).thenReturn(true);
-        when(appointmentDAO.updateAppointmentStatus(15, Constants.APPOINTMENT_CHECKED_IN)).thenReturn(true);
+        when(appointmentDAO.checkInAppointmentIfCurrent(15, Constants.APPOINTMENT_CONFIRMED,
+            "Phòng 201", Constants.APPOINTMENT_CHECKED_IN)).thenReturn(true);
 
         boolean checkedIn = appointmentService.checkInAppointment(15, "Phòng 201");
 
         assertTrue(checkedIn);
+        verify(appointmentDAO).checkInAppointmentIfCurrent(15, Constants.APPOINTMENT_CONFIRMED,
+            "Phòng 201", Constants.APPOINTMENT_CHECKED_IN);
+        verify(appointmentDAO, never()).getAppointmentById(15);
     }
 
     /**
@@ -95,13 +95,7 @@ public class AppointmentServiceTest {
      */
     @Test
     public void testCancelAppointmentOwnership() {
-        Appointment app = new Appointment();
-        app.setAppointmentId(100);
-        app.setPatientId(5); // Thuộc về bệnh nhân ID 5
-        app.setStatus(Constants.APPOINTMENT_PENDING);
-
-        when(appointmentDAO.getAppointmentById(100)).thenReturn(app);
-        when(appointmentDAO.updateAppointmentStatus(100, Constants.APPOINTMENT_CANCELLED)).thenReturn(true);
+        when(appointmentDAO.cancelAppointmentForPatient(100, 5)).thenReturn(true);
 
         // Bệnh nhân ID 5 hủy lịch của chính mình -> Thành công
         boolean cancelOwn = appointmentService.cancelAppointment(100, 5, Constants.ROLE_CUSTOMER_ID);
@@ -110,16 +104,26 @@ public class AppointmentServiceTest {
         // Bệnh nhân ID 8 cố tình hủy lịch của bệnh nhân ID 5 -> Thất bại
         boolean cancelOther = appointmentService.cancelAppointment(100, 8, Constants.ROLE_CUSTOMER_ID);
         assertFalse(cancelOther);
+        verify(appointmentDAO).cancelAppointmentForPatient(100, 5);
+        verify(appointmentDAO).cancelAppointmentForPatient(100, 8);
     }
 
     @Test
     public void testCompletedAppointmentCannotBeCancelled() {
-        Appointment app = new Appointment();
-        app.setPatientId(5);
-        app.setStatus(Constants.APPOINTMENT_COMPLETED);
-        when(appointmentDAO.getAppointmentById(101)).thenReturn(app);
+        when(appointmentDAO.cancelAppointmentForPatient(101, 5)).thenReturn(false);
 
         assertFalse(appointmentService.cancelAppointment(101, 5, Constants.ROLE_CUSTOMER_ID));
-        verify(appointmentDAO, never()).updateAppointmentStatus(anyInt(), eq(Constants.APPOINTMENT_CANCELLED));
+        verify(appointmentDAO).cancelAppointmentForPatient(101, 5);
+        }
+
+        @Test
+        public void testConfirmUsesExpectedCurrentStatus() {
+        when(appointmentDAO.updateAppointmentStatusIfCurrent(102, Constants.APPOINTMENT_PENDING,
+            Constants.APPOINTMENT_CONFIRMED)).thenReturn(true);
+
+        assertTrue(appointmentService.confirmAppointment(102));
+        verify(appointmentDAO).updateAppointmentStatusIfCurrent(102, Constants.APPOINTMENT_PENDING,
+            Constants.APPOINTMENT_CONFIRMED);
+        verify(appointmentDAO, never()).getAppointmentById(102);
     }
 }

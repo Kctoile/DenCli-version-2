@@ -19,6 +19,8 @@ public interface PrescriptionDAO {
      */
     int insertPrescription(Prescription prescription, Connection conn);
 
+    boolean isResultAssignedToDoctor(int resultId, int doctorId, Connection conn);
+
     /**
      * Phương thức thêm một dòng chi tiết thuốc vào đơn thuốc, hỗ trợ truyền Connection cho Transaction.
      * @param detail Đối tượng chi tiết đơn thuốc

@@ -110,6 +110,8 @@ public interface AppointmentService {
      */
     boolean completeAppointment(int appointmentId);
 
+    boolean completeAppointmentForDoctor(int appointmentId, int doctorId);
+
     /**
      * Phương thức lấy báo cáo doanh thu và số lượng ca khám 12 tháng phục vụ vẽ biểu đồ Chart.js.
      * @param year Năm cần báo cáo

@@ -107,7 +107,9 @@ public class AppointmentActionServlet extends HttpServlet {
             return;
         }
         AppointmentService service = ServiceFactory.getAppointmentService();
-        boolean success = service.completeAppointment(appointmentId);
+        boolean success = currentUser.getRoleId() == Constants.ROLE_ADMIN_ID
+            ? service.completeAppointment(appointmentId)
+            : service.completeAppointmentForDoctor(appointmentId, currentUser.getUserId());
         if (success) {
             sendJsonResponse(response, HttpServletResponse.SC_OK, true, "Đã cập nhật hoàn thành ca khám!");
         } else {

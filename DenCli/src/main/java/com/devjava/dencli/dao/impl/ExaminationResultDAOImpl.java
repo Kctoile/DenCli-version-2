@@ -4,10 +4,6 @@
  */
 package com.devjava.dencli.dao.impl;
 
-import com.devjava.dencli.dao.DBConnection;
-import com.devjava.dencli.dao.ExaminationResultDAO;
-import com.devjava.dencli.model.ExaminationResult;
-import com.devjava.dencli.model.PrescribedService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +12,11 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.devjava.dencli.dao.DBConnection;
+import com.devjava.dencli.dao.ExaminationResultDAO;
+import com.devjava.dencli.model.ExaminationResult;
+import com.devjava.dencli.model.PrescribedService;
 
 public class ExaminationResultDAOImpl implements ExaminationResultDAO {
 
@@ -27,6 +28,9 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
      */
     @Override // Ghi đè phương thức insertExaminationResult từ interface ExaminationResultDAO
     public int insertExaminationResult(ExaminationResult result, Connection conn) {
+        if (result == null || result.getAppointmentId() == null || result.getAppointmentId() <= 0) {
+            return -1;
+        }
         String sql = "INSERT INTO examination_results (appointment_id, result_details, examination_date) VALUES (?, ?, ?)";
 
         if (conn != null) {

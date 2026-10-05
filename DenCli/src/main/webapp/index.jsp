@@ -602,7 +602,7 @@
         <div class="cta-banner text-center fade-on-scroll">
             <h2 class="display-6 fw-bold mb-3 text-white" style="color: #FFFFFF !important;">Sẵn Sàng Kiến Tạo Nụ Cười Rạng Rỡ &amp; Tự Tin?</h2>
             <p class="mx-auto mb-4" style="max-width: 640px; font-size: 1.15rem; color: #E0F2FE !important;">
-                Đặt hẹn ngay hôm nay để nhận gói chụp phim CT Cone Beam 3D và tư vấn phác đồ chỉnh nha cá nhân hóa hoàn toàn miễn phí cùng chuyên gia đầu ngành!
+                Đặt hẹn ngay hôm nay để nhận gói chụp phim CT Cone Beam 3D và tư vấn phác đồ chỉnh nha khoa cá nhân hóa hoàn toàn miễn phí cùng chuyên gia đầu ngành!
             </p>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="${ctx}/customer/book" class="btn btn-cta-primary btn-lg shadow-lg">

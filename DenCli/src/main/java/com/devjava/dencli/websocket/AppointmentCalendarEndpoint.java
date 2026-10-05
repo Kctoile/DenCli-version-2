@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -35,12 +36,13 @@ public class AppointmentCalendarEndpoint {
     public void onOpen(Session session, @PathParam("doctorId") String doctorId, @PathParam("date") String date) {
         this.topicKey = buildKey(doctorId, date);
         TOPIC_SESSIONS.computeIfAbsent(this.topicKey, k -> Collections.newSetFromMap(new ConcurrentHashMap<>())).add(session);
-        LOGGER.info("[WebSocket Calendar] Client " + session.getId() + " subscribed to: " + this.topicKey);
+        LOGGER.log(Level.INFO, "[WebSocket Calendar] Client {0} subscribed to: {1}",
+            new Object[]{safeLogValue(session.getId()), safeLogValue(this.topicKey)});
     }
 
     @OnClose
     public void onClose(Session session) {
-        if (this.topicKey != null) {
+        if (session != null && this.topicKey != null) {
             Set<Session> sessions = TOPIC_SESSIONS.get(this.topicKey);
             if (sessions != null) {
                 sessions.remove(session);
@@ -49,18 +51,21 @@ public class AppointmentCalendarEndpoint {
                 }
             }
         }
-        LOGGER.info("[WebSocket Calendar] Client disconnected: " + session.getId());
+        LOGGER.log(Level.INFO, "[WebSocket Calendar] Client disconnected: {0}",
+            new Object[]{session == null ? "unknown" : safeLogValue(session.getId())});
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOGGER.warning("[WebSocket Calendar] Error on " + (session != null ? session.getId() : "unknown") + ": " + throwable.getMessage());
+        LOGGER.log(Level.WARNING, "[WebSocket Calendar] Error on {0}: {1}",
+            new Object[]{session == null ? "unknown" : safeLogValue(session.getId()),
+                throwable == null ? "unknown" : safeLogValue(throwable.getMessage())});
         onClose(session);
     }
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        if ("ping".equalsIgnoreCase(message)) {
+        if (session != null && "ping".equalsIgnoreCase(message)) {
             try {
                 session.getBasicRemote().sendText("pong");
             } catch (IOException ignored) {}
@@ -93,7 +98,8 @@ public class AppointmentCalendarEndpoint {
                 try {
                     s.getBasicRemote().sendText(json);
                 } catch (IOException e) {
-                    LOGGER.warning("[WebSocket Calendar] Failed to send slot update to " + s.getId() + ": " + e.getMessage());
+                        LOGGER.log(Level.WARNING, "[WebSocket Calendar] Failed to send slot update to {0}: {1}",
+                            new Object[]{safeLogValue(s.getId()), safeLogValue(e.getMessage())});
                     try {
                         s.close();
                     } catch (IOException ignored) {}
@@ -104,6 +110,10 @@ public class AppointmentCalendarEndpoint {
 
     public static String buildKey(String doctorId, String date) {
         return (doctorId != null ? doctorId.trim() : "") + "_" + (date != null ? date.trim() : "");
+    }
+
+    private static String safeLogValue(String value) {
+        return value == null ? "" : value.replaceAll("[\\r\\n\\p{Cntrl}]", "?");
     }
 
     public static Map<String, Set<Session>> getTopicSessions() {

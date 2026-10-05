@@ -16,7 +16,7 @@ public interface PrescriptionService {
      * @param prescription Đối tượng đơn thuốc chứa danh sách các chi tiết thuốc
      * @return true nếu kê đơn và trừ kho thành công, false nếu thuốc không đủ tồn kho hoặc có lỗi
      */
-    boolean createPrescriptionWithStockDeduction(Prescription prescription);
+    boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId);
 
     /**
      * Phương thức lấy thông tin đơn thuốc theo mã kết quả khám.

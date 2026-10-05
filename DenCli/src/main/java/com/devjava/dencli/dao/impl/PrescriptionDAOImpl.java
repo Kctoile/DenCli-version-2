@@ -4,19 +4,48 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Prescription;
+
+import com.devjava.dencli.dao.DBConnection;
+import com.devjava.dencli.dao.PrescriptionDAO;
+import com.devjava.dencli.model.Prescription;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.PrescriptionDetail;
 import com.devjava.dencli.model.PrescriptionDetail;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PrescriptionDAOImpl implements PrescriptionDAO {
+
+    @Override
+    public boolean isResultAssignedToDoctor(int resultId, int doctorId, Connection conn) {
+        String sql = "SELECT 1 FROM examination_results er "
+                   + "JOIN appointments a WITH (UPDLOCK, HOLDLOCK) ON a.appointment_id = er.appointment_id "
+                   + "WHERE er.result_id = ? AND a.doctor_id = ? AND a.status = 'Checked In'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, resultId);
+            ps.setInt(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
      * Phương thức thêm mới một bản ghi đơn thuốc vào bảng prescriptions.
@@ -92,14 +121,13 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
     @Override // Ghi đè phương thức insertPrescriptionDetail từ interface PrescriptionDAO
     public boolean insertPrescriptionDetail(PrescriptionDetail detail, Connection conn) {
         String sql = "INSERT INTO prescription_details (prescription_id, medicine_id, prescribed_quantity, purchased_quantity, unit_price) "
-                   + "VALUES (?, ?, ?, ?, ?)";
+               + "SELECT ?, medicine_id, ?, ?, price FROM medicines WHERE medicine_id = ?";
 
         if (conn != null) {
             // Quản lý PreparedStatement trên Connection chung của Transaction
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, detail.getPrescriptionId());
-                ps.setInt(2, detail.getMedicineId());
-                ps.setInt(3, detail.getPrescribedQuantity());
+                ps.setInt(2, detail.getPrescribedQuantity());
 
                 if (detail.getPurchasedQuantity() != null) {
                     ps.setInt(4, detail.getPurchasedQuantity());
@@ -107,7 +135,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
                     ps.setInt(4, detail.getPrescribedQuantity());
                 }
 
-                ps.setBigDecimal(5, detail.getUnitPrice());
+                ps.setInt(5, detail.getMedicineId());
 
                 return ps.executeUpdate() > 0;
 
@@ -121,8 +149,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
                  PreparedStatement ps = localConn.prepareStatement(sql)) {
 
                 ps.setInt(1, detail.getPrescriptionId());
-                ps.setInt(2, detail.getMedicineId());
-                ps.setInt(3, detail.getPrescribedQuantity());
+                ps.setInt(2, detail.getPrescribedQuantity());
 
                 if (detail.getPurchasedQuantity() != null) {
                     ps.setInt(4, detail.getPurchasedQuantity());
@@ -130,7 +157,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
                     ps.setInt(4, detail.getPrescribedQuantity());
                 }
 
-                ps.setBigDecimal(5, detail.getUnitPrice());
+                ps.setInt(5, detail.getMedicineId());
 
                 return ps.executeUpdate() > 0;
 

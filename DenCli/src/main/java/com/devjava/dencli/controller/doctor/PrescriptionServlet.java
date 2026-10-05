@@ -5,9 +5,25 @@
  */
 package com.devjava.dencli.controller.doctor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.devjava.dencli.model.Medicine;
+
 import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.model.User;
 import com.devjava.dencli.service.PrescriptionService;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
@@ -15,15 +31,9 @@ import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "DoctorPrescriptionServlet", urlPatterns = {"/doctor/prescription"})
 public class PrescriptionServlet extends HttpServlet {
@@ -38,6 +48,11 @@ public class PrescriptionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        if (!isDoctor(request)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
         PrescriptionService prescriptionService = ServiceFactory.getPrescriptionService();
         List<Medicine> medicines = prescriptionService.getAllMedicines();
 
@@ -51,6 +66,12 @@ public class PrescriptionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        User doctor = getDoctor(request);
+        if (doctor == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
         request.setCharacterEncoding("UTF-8");
         String contentType = request.getContentType();
@@ -92,9 +113,6 @@ public class PrescriptionServlet extends HttpServlet {
                                 pd.setPrescribedQuantity(((Number) m.get("quantity")).intValue());
                             } else if (m.get("prescribed_quantity") != null) {
                                 pd.setPrescribedQuantity(((Number) m.get("prescribed_quantity")).intValue());
-                            }
-                            if (m.get("unit_price") != null) {
-                                pd.setUnitPrice(BigDecimal.valueOf(((Number) m.get("unit_price")).doubleValue()));
                             }
                             details.add(pd);
                         }
@@ -144,7 +162,7 @@ public class PrescriptionServlet extends HttpServlet {
 
         // Gọi Tầng Service thực hiện Transaction trừ tồn kho đa bảng
         PrescriptionService prescriptionService = ServiceFactory.getPrescriptionService();
-        boolean success = prescriptionService.createPrescriptionWithStockDeduction(prescription);
+        boolean success = prescriptionService.createPrescriptionWithStockDeduction(prescription, doctor.getUserId());
 
         if (success) {
             if (isJson) {
@@ -161,6 +179,16 @@ public class PrescriptionServlet extends HttpServlet {
         } else {
             handleError(response, isJson, request, "Kê đơn thuốc thất bại: Thuốc trong kho không đủ số lượng hoặc có lỗi.");
         }
+    }
+
+    private boolean isDoctor(HttpServletRequest request) {
+        return getDoctor(request) != null;
+    }
+
+    private User getDoctor(HttpServletRequest request) {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User user = session == null ? null : (User) session.getAttribute(Constants.SESSION_USER);
+        return user != null && user.getRoleId() == Constants.ROLE_DOCTOR_ID ? user : null;
     }
 
     private void handleError(HttpServletResponse response, boolean isJson, HttpServletRequest request, String message)

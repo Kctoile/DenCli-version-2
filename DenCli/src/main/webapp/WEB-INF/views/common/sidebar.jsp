@@ -65,6 +65,18 @@
                    class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/customer/book") ? " active bg-primary text-white" : " text-dark" %>">
                     <span>📅</span><span>Đặt lịch khám</span>
                 </a>
+                <a href="<%= cp %>/customer/appointments"
+                   class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/customer/appointments") ? " active bg-primary text-white" : " text-dark" %>">
+                    <span>🗓️</span><span>Lịch hẹn của tôi</span>
+                </a>
+                <a href="<%= cp %>/customer/revisitation"
+                   class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/customer/revisitation") ? " active bg-primary text-white" : " text-dark" %>">
+                    <span>🔁</span><span>Lịch tái khám</span>
+                </a>
+                <a href="<%= cp %>/customer/medical-records"
+                   class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/customer/medical-records") ? " active bg-primary text-white" : " text-dark" %>">
+                    <span>📋</span><span>Hồ sơ bệnh án</span>
+                </a>
                 <a href="<%= cp %>/customer/profile"
                    class="list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 mb-1 d-flex align-items-center gap-2<%= uri.contains("/customer/profile") ? " active bg-primary text-white" : " text-dark" %>">
                     <span>📋</span><span>Hồ sơ &amp; Lịch sử</span>

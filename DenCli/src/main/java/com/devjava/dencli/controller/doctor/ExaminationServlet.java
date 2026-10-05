@@ -5,6 +5,14 @@
  */
 package com.devjava.dencli.controller.doctor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.devjava.dencli.dao.impl.ServiceDAOImpl;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.PrescribedService;
@@ -15,22 +23,15 @@ import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
 import com.devjava.dencli.util.DateUtil;
 import com.google.gson.Gson;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-@WebServlet(name = "DoctorExaminationServlet", urlPatterns = {"/doctor/examination"})
+@WebServlet(name = "DoctorExaminationServlet", urlPatterns = {"/doctor/examination", "/doctor/dashboard"})
 public class ExaminationServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -70,12 +71,20 @@ public class ExaminationServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession(false);
+        User currentUser = session == null ? null : (User) session.getAttribute(Constants.SESSION_USER);
+        if (currentUser == null || currentUser.getRoleId() != Constants.ROLE_DOCTOR_ID) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         String contentType = request.getContentType();
         boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
                 || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
         int appointmentId = 0;
         String diagnosis = null;
+        String revisitDateStr = null;
+        String revisitNote = null;
         List<PrescribedService> additionalServices = new ArrayList<>();
 
         if (isJson) {
@@ -93,6 +102,9 @@ public class ExaminationServlet extends HttpServlet {
                     appointmentId = ((Number) appObj).intValue();
                 }
                 diagnosis = (String) reqMap.get("diagnosis");
+                Object rvObj = reqMap.get("revisit_date");
+                revisitDateStr = (rvObj != null) ? String.valueOf(rvObj) : null;
+                revisitNote = (String) reqMap.get("revisit_note");
                 List<?> svcs = (List<?>) reqMap.get("services");
                 if (svcs != null) {
                     for (Object s : svcs) {
@@ -101,9 +113,6 @@ public class ExaminationServlet extends HttpServlet {
                             PrescribedService ps = new PrescribedService();
                             if (m.get("service_id") != null) {
                                 ps.setServiceId(((Number) m.get("service_id")).intValue());
-                            }
-                            if (m.get("price") != null) {
-                                ps.setPrice(BigDecimal.valueOf(((Number) m.get("price")).doubleValue()));
                             }
                             additionalServices.add(ps);
                         }
@@ -120,6 +129,9 @@ public class ExaminationServlet extends HttpServlet {
                 }
             }
             diagnosis = request.getParameter("diagnosis");
+            revisitDateStr = request.getParameter("revisit_date");
+            revisitNote = request.getParameter("revisit_note");
+            if (revisitDateStr != null && revisitDateStr.trim().isEmpty()) revisitDateStr = null;
             String[] svcIds = request.getParameterValues("service_ids");
             if (svcIds != null) {
                 for (String sid : svcIds) {
@@ -140,10 +152,24 @@ public class ExaminationServlet extends HttpServlet {
             return;
         }
 
+        Date revisitDate = null;
+        if (revisitDateStr != null && !revisitDateStr.isBlank()) {
+            try {
+                revisitDate = Date.valueOf(revisitDateStr.trim());
+                if (revisitDate.before(Date.valueOf(java.time.LocalDate.now()))) {
+                    handleError(response, isJson, request, "Ngày tái khám không thể ở trong quá khứ.");
+                    return;
+                }
+            } catch (IllegalArgumentException e) {
+                handleError(response, isJson, request, "Ngày tái khám không hợp lệ.");
+                return;
+            }
+        }
+
         // Gọi Tầng Service (No Fat Servlet)
         ExaminationService examinationService = ServiceFactory.getExaminationService();
-        int resultId = examinationService.recordExamination(appointmentId, diagnosis.trim(), additionalServices);
-
+        int resultId = examinationService.recordExamination(appointmentId, currentUser.getUserId(), diagnosis.trim(),
+                additionalServices, revisitDate, revisitNote);
         if (resultId > 0) {
             if (isJson) {
                 response.setStatus(HttpServletResponse.SC_CREATED);
