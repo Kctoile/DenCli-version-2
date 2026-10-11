@@ -36,6 +36,7 @@ public class PrescriptionServlet extends HttpServlet {
     private static final Gson gson = new Gson();
     private static final String KEY_MEDICINE_ID = "medicine_id";
     private static final String KEY_QUANTITY = "quantity";
+    private static final String KEY_DOSAGE = "dosage";
 
     /**
      * GET /doctor/prescription: Lấy danh mục thuốc trong kho để bác sĩ chọn kê đơn.
@@ -74,83 +75,10 @@ public class PrescriptionServlet extends HttpServlet {
         boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
                 || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
-        int resultId = 0;
-        String instructions = null;
-        List<PrescriptionDetail> details = new ArrayList<>();
-
-        if (isJson) {
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = request.getReader()) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
-            Map<?, ?> reqMap = gson.fromJson(sb.toString(), Map.class);
-            if (reqMap != null) {
-                Object resObj = reqMap.get("result_id");
-                if (resObj != null) {
-                    resultId = ((Number) resObj).intValue();
-                }
-                instructions = (String) reqMap.get("instructions");
-                if (instructions == null) {
-                    instructions = (String) reqMap.get("notes");
-                }
-                List<?> items = (List<?>) reqMap.get("details");
-                if (items != null) {
-                    for (Object it : items) {
-                        if (it instanceof Map) {
-                            Map<?, ?> m = (Map<?, ?>) it;
-                            PrescriptionDetail pd = new PrescriptionDetail();
-                            if (m.get(KEY_MEDICINE_ID) != null) {
-                                pd.setMedicineId(((Number) m.get(KEY_MEDICINE_ID)).intValue());
-                            }
-                            if (m.get(KEY_QUANTITY) != null) {
-                                pd.setPrescribedQuantity(((Number) m.get(KEY_QUANTITY)).intValue());
-                            } else if (m.get("prescribed_quantity") != null) {
-                                pd.setPrescribedQuantity(((Number) m.get("prescribed_quantity")).intValue());
-                            }
-                            if (m.get("dosage") != null) {
-                                pd.setDosage(String.valueOf(m.get("dosage")).trim());
-                            }
-                            details.add(pd);
-                        }
-                    }
-                }
-            }
-        } else {
-            String resStr = request.getParameter("result_id");
-            if (resStr != null && !resStr.trim().isEmpty()) {
-                try {
-                    resultId = Integer.parseInt(resStr.trim());
-                } catch (NumberFormatException ignored) {
-                    // ResultId không hợp lệ sẽ được kiểm tra ở validate
-                }
-            }
-            instructions = request.getParameter("instructions");
-            if (instructions == null) {
-                instructions = request.getParameter("notes");
-            }
-            String[] medIds = request.getParameterValues(KEY_MEDICINE_ID);
-            String[] quantities = request.getParameterValues(KEY_QUANTITY);
-            String[] dosages = request.getParameterValues("dosage");
-
-            if (medIds != null && quantities != null) {
-                for (int i = 0; i < medIds.length; i++) {
-                    try {
-                        PrescriptionDetail pd = new PrescriptionDetail();
-                        pd.setMedicineId(Integer.parseInt(medIds[i].trim()));
-                        pd.setPrescribedQuantity(Integer.parseInt(quantities[i].trim()));
-                        if (dosages != null && i < dosages.length && dosages[i] != null && !dosages[i].trim().isEmpty()) {
-                            pd.setDosage(dosages[i].trim());
-                        }
-                        details.add(pd);
-                    } catch (NumberFormatException ignored) {
-                        // Bỏ qua chi tiết thuốc không hợp lệ
-                    }
-                }
-            }
-        }
+        ParsedRequest parsed = isJson ? parseJsonBody(request) : parseFormBody(request);
+        int resultId = parsed.resultId;
+        String instructions = parsed.instructions;
+        List<PrescriptionDetail> details = parsed.details;
 
         // Validate cơ bản
         if (resultId <= 0 || details.isEmpty()) {
@@ -184,6 +112,98 @@ public class PrescriptionServlet extends HttpServlet {
         } else {
             handleError(response, isJson, request, "Kê đơn thuốc thất bại: Thuốc trong kho không đủ số lượng hoặc có lỗi.");
         }
+    }
+
+    // ── Inner holder ─────────────────────────────────────────────────────────
+    private static class ParsedRequest {
+        int resultId;
+        String instructions;
+        List<PrescriptionDetail> details = new ArrayList<>();
+    }
+
+    // ── JSON body parser (S3776: extracted from doPost) ───────────────────────
+    private ParsedRequest parseJsonBody(HttpServletRequest request) throws IOException {
+        ParsedRequest out = new ParsedRequest();
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        Map<?, ?> reqMap = gson.fromJson(sb.toString(), Map.class);
+        if (reqMap == null) {
+            return out;
+        }
+        Object resObj = reqMap.get("result_id");
+        if (resObj != null) {
+            out.resultId = ((Number) resObj).intValue();
+        }
+        out.instructions = (String) reqMap.get("instructions");
+        if (out.instructions == null) {
+            out.instructions = (String) reqMap.get("notes");
+        }
+        List<?> items = (List<?>) reqMap.get("details");
+        if (items != null) {
+            for (Object it : items) {
+                if (it instanceof Map) {
+                    out.details.add(buildDetailFromMap((Map<?, ?>) it));
+                }
+            }
+        }
+        return out;
+    }
+
+    private PrescriptionDetail buildDetailFromMap(Map<?, ?> m) {
+        PrescriptionDetail pd = new PrescriptionDetail();
+        if (m.get(KEY_MEDICINE_ID) != null) {
+            pd.setMedicineId(((Number) m.get(KEY_MEDICINE_ID)).intValue());
+        }
+        if (m.get(KEY_QUANTITY) != null) {
+            pd.setPrescribedQuantity(((Number) m.get(KEY_QUANTITY)).intValue());
+        } else if (m.get("prescribed_quantity") != null) {
+            pd.setPrescribedQuantity(((Number) m.get("prescribed_quantity")).intValue());
+        }
+        if (m.get(KEY_DOSAGE) != null) {
+            pd.setDosage(String.valueOf(m.get(KEY_DOSAGE)).trim());
+        }
+        return pd;
+    }
+
+    // ── Form-data parser (S3776: extracted from doPost) ───────────────────────
+    private ParsedRequest parseFormBody(HttpServletRequest request) {
+        ParsedRequest out = new ParsedRequest();
+        String resStr = request.getParameter("result_id");
+        if (resStr != null && !resStr.trim().isEmpty()) {
+            try {
+                out.resultId = Integer.parseInt(resStr.trim());
+            } catch (NumberFormatException ignored) {
+                // ResultId không hợp lệ sẽ được kiểm tra ở validate
+            }
+        }
+        out.instructions = request.getParameter("instructions");
+        if (out.instructions == null) {
+            out.instructions = request.getParameter("notes");
+        }
+        String[] medIds = request.getParameterValues(KEY_MEDICINE_ID);
+        String[] quantities = request.getParameterValues(KEY_QUANTITY);
+        String[] dosages = request.getParameterValues(KEY_DOSAGE);
+        if (medIds != null && quantities != null) {
+            for (int i = 0; i < medIds.length; i++) {
+                try {
+                    PrescriptionDetail pd = new PrescriptionDetail();
+                    pd.setMedicineId(Integer.parseInt(medIds[i].trim()));
+                    pd.setPrescribedQuantity(Integer.parseInt(quantities[i].trim()));
+                    if (dosages != null && i < dosages.length && dosages[i] != null && !dosages[i].trim().isEmpty()) {
+                        pd.setDosage(dosages[i].trim());
+                    }
+                    out.details.add(pd);
+                } catch (NumberFormatException ignored) {
+                    // Bỏ qua chi tiết thuốc không hợp lệ
+                }
+            }
+        }
+        return out;
     }
 
     private boolean isDoctor(HttpServletRequest request) {
@@ -240,7 +260,7 @@ public class PrescriptionServlet extends HttpServlet {
         }
 
         if (!dosageLines.isEmpty()) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append("\n[Liều dùng chỉ định]:\n");
             } else {
                 sb.append("[Liều dùng chỉ định]:\n");
