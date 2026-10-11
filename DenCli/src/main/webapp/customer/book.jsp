@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -104,10 +104,10 @@
 
                     <!-- Dịch vụ nha khoa mong muốn -->
                     <div class="col-12">
-                        <label class="form-label d-flex justify-content-between align-items-center">
+                        <div class="form-label d-flex justify-content-between align-items-center">
                             <span>Dịch vụ nha khoa mong muốn</span>
                             <span class="badge bg-light border fw-semibold" style="color: #334155 !important;">Có thể chọn nhiều dịch vụ</span>
-                        </label>
+                        </div>
                         <div class="services-selection-box">
                             <div class="row g-2">
                                 <c:choose>

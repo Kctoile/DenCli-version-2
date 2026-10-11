@@ -9,6 +9,8 @@
     
     <properties>
         <sonar.organization>kctoile</sonar.organization>
+        <sonar.projectKey>Kctoile_DenCli-version-2</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

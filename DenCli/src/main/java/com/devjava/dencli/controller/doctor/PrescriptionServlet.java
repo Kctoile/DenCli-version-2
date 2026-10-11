@@ -190,20 +190,27 @@ public class PrescriptionServlet extends HttpServlet {
         String[] dosages = request.getParameterValues(KEY_DOSAGE);
         if (medIds != null && quantities != null) {
             for (int i = 0; i < medIds.length; i++) {
-                try {
-                    PrescriptionDetail pd = new PrescriptionDetail();
-                    pd.setMedicineId(Integer.parseInt(medIds[i].trim()));
-                    pd.setPrescribedQuantity(Integer.parseInt(quantities[i].trim()));
-                    if (dosages != null && i < dosages.length && dosages[i] != null && !dosages[i].trim().isEmpty()) {
-                        pd.setDosage(dosages[i].trim());
-                    }
-                    out.details.add(pd);
-                } catch (NumberFormatException ignored) {
-                    // Bỏ qua chi tiết thuốc không hợp lệ
-                }
+                PrescriptionDetail pd = buildFormDetail(medIds[i], quantities[i], dosages, i);
+                if (pd != null) out.details.add(pd);
             }
         }
         return out;
+    }
+
+    /** S3776: extracted inner-loop body to keep parseFormBody CC ≤ 15 */
+    private PrescriptionDetail buildFormDetail(String medId, String quantity, String[] dosages, int i) {
+        try {
+            PrescriptionDetail pd = new PrescriptionDetail();
+            pd.setMedicineId(Integer.parseInt(medId.trim()));
+            pd.setPrescribedQuantity(Integer.parseInt(quantity.trim()));
+            if (dosages != null && i < dosages.length && dosages[i] != null && !dosages[i].trim().isEmpty()) {
+                pd.setDosage(dosages[i].trim());
+            }
+            return pd;
+        } catch (NumberFormatException ignored) {
+            // Bỏ qua chi tiết thuốc không hợp lệ
+            return null;
+        }
     }
 
     private boolean isDoctor(HttpServletRequest request) {
