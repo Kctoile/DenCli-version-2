@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
@@ -15,10 +15,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Pure CSS Stylesheets -->
     <link rel="stylesheet" href="${ctx}/assets/css/style.css">
-    <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=4">
 </head>
 <body>
     <div class="page-wrapper">
@@ -105,7 +105,7 @@
                     <input type="text" id="address" name="address" class="form-control" placeholder="123 Nguyễn Văn Linh, Đà Nẵng">
                 </div>
 
-                <button type="submit" id="btnSubmit" class="btn-cta-primary" style="width: 100%; border-radius: var(--dencli-radius-sm); padding: 0.8rem 1rem; margin-top: 0.5rem;">
+                <button type="submit" id="btnSubmit" class="btn-cta-primary w-100 py-2 mt-2">
                     Đăng ký tài khoản
                 </button>
             </form>

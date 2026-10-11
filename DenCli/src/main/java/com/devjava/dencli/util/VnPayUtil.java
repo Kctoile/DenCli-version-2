@@ -40,30 +40,30 @@ public final class VnPayUtil {
         if (VNP_TMN_CODE.isBlank() || VNP_HASH_SECRET.isBlank()) {
             throw new IllegalStateException("VNPAY credentials are not configured.");
         }
-        String vnp_Version = "2.1.0";
-        String vnp_Command = "pay";
-        String vnp_OrderType = "other";
-        long vnp_Amount = amountVnd * 100; // VNPAY tính số tiền nhân với 100
+        String vnpVersion = "2.1.0";
+        String vnpCommand = "pay";
+        String vnpOrderType = "other";
+        long vnpAmount = amountVnd * 100; // VNPAY tính số tiền nhân với 100
 
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", VNP_TMN_CODE);
-        vnp_Params.put("vnp_Amount", String.valueOf(vnp_Amount));
-        vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", txnRef);
-        vnp_Params.put("vnp_OrderInfo", orderInfo);
-        vnp_Params.put("vnp_OrderType", vnp_OrderType);
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", returnUrl);
-        vnp_Params.put("vnp_IpAddr", ipAddress);
+        Map<String, String> vnpParams = new HashMap<>();
+        vnpParams.put("vnp_Version", vnpVersion);
+        vnpParams.put("vnp_Command", vnpCommand);
+        vnpParams.put("vnp_TmnCode", VNP_TMN_CODE);
+        vnpParams.put("vnp_Amount", String.valueOf(vnpAmount));
+        vnpParams.put("vnp_CurrCode", "VND");
+        vnpParams.put("vnp_TxnRef", txnRef);
+        vnpParams.put("vnp_OrderInfo", orderInfo);
+        vnpParams.put("vnp_OrderType", vnpOrderType);
+        vnpParams.put("vnp_Locale", "vn");
+        vnpParams.put("vnp_ReturnUrl", returnUrl);
+        vnpParams.put("vnp_IpAddr", ipAddress);
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnp_CreateDate = formatter.format(new Date());
-        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+        String vnpCreateDate = formatter.format(new Date());
+        vnpParams.put("vnp_CreateDate", vnpCreateDate);
 
         // Sắp xếp các tham số theo thứ tự bảng chữ cái A-Z
-        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
+        List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
         Collections.sort(fieldNames);
 
         StringBuilder hashData = new StringBuilder();
@@ -71,7 +71,7 @@ public final class VnPayUtil {
 
         for (int i = 0; i < fieldNames.size(); i++) {
             String fieldName = fieldNames.get(i);
-            String fieldValue = vnp_Params.get(fieldName);
+            String fieldValue = vnpParams.get(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
                 hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII)).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
@@ -82,8 +82,8 @@ public final class VnPayUtil {
             }
         }
 
-        String vnp_SecureHash = hmacSHA512(VNP_HASH_SECRET, hashData.toString());
-        query.append("&vnp_SecureHash=").append(vnp_SecureHash);
+        String vnpSecureHash = hmacSHA512(VNP_HASH_SECRET, hashData.toString());
+        query.append("&vnp_SecureHash=").append(vnpSecureHash);
 
         return VNP_PAY_URL + "?" + query.toString();
     }

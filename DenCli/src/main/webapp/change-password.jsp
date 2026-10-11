@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -7,15 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đổi mật khẩu | DenCli Dental</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -26,7 +22,7 @@
             <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
             <main class="col-12 col-md-9 col-lg-10 p-4">
-                <div class="card card-custom bg-white p-4 p-md-5 mx-auto" style="max-width: 580px;">
+                <div class="dencli-card p-4 p-md-5 mx-auto" style="max-width: 580px;">
                     <div class="text-center mb-4">
                         <div class="fs-1 text-primary mb-2">🔒</div>
                         <h4 class="fw-bold text-dark">Thay đổi mật khẩu tài khoản</h4>
@@ -49,7 +45,7 @@
                             <label for="confirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
                             <input type="password" id="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu mới" minlength="6" required>
                         </div>
-                        <button type="submit" id="btnSubmit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <button type="submit" id="btnSubmit" class="btn btn-den-primary w-100 py-2 fw-semibold rounded-pill">
                             Cập nhật mật khẩu
                         </button>
                     </form>

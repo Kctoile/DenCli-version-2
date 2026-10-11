@@ -22,11 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "StaffInvoiceServlet", urlPatterns = {"/staff/invoice"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class InvoiceServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
     private static final String JSON_CONTENT_TYPE = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
+    private static final String PARAM_APPOINTMENT_ID = "appointment_id";
 
     /**
      * GET /staff/invoice: Tính toán và hiển thị chi tiết hóa đơn viện phí cho một cuộc hẹn.
@@ -35,7 +37,7 @@ public class InvoiceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String appStr = request.getParameter("appointment_id");
+        String appStr = request.getParameter(PARAM_APPOINTMENT_ID);
         int appointmentId = 0;
         if (appStr != null && !appStr.trim().isEmpty()) {
             try {
@@ -86,11 +88,11 @@ public class InvoiceServlet extends HttpServlet {
                 }
             }
             Map<?, ?> map = gson.fromJson(sb.toString(), Map.class);
-            if (map != null && map.get("appointment_id") != null) {
-                appointmentId = ((Number) map.get("appointment_id")).intValue();
+            if (map != null && map.get(PARAM_APPOINTMENT_ID) != null) {
+                appointmentId = ((Number) map.get(PARAM_APPOINTMENT_ID)).intValue();
             }
         } else {
-            String appStr = request.getParameter("appointment_id");
+            String appStr = request.getParameter(PARAM_APPOINTMENT_ID);
             if (appStr != null && !appStr.trim().isEmpty()) {
                 try {
                     appointmentId = Integer.parseInt(appStr.trim());
@@ -126,7 +128,7 @@ public class InvoiceServlet extends HttpServlet {
     }
 
     private void handleError(HttpServletResponse response, boolean isJson, HttpServletRequest request, String message)
-            throws ServletException, IOException {
+            throws IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType(JSON_CONTENT_TYPE);

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-public class EncodingFilterTest {
+class EncodingFilterTest {
 
     private EncodingFilter encodingFilter;
     private HttpServletRequest request;
@@ -21,7 +21,7 @@ public class EncodingFilterTest {
     private FilterChain chain;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         encodingFilter = new EncodingFilter();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -32,7 +32,7 @@ public class EncodingFilterTest {
      * Kiểm thử EncodingFilter thiết lập mã hóa UTF-8 cho cả request và response, sau đó chuyển tiếp chuỗi filter.
      */
     @Test
-    public void testDoFilterSetsUtf8Encoding() throws IOException, ServletException {
+    void testDoFilterSetsUtf8Encoding() throws IOException, ServletException {
         encodingFilter.doFilter(request, response, chain);
 
         // Xác minh request và response đều được setCharacterEncoding("UTF-8")

@@ -6,6 +6,8 @@
  */
 package com.devjava.dencli.controller.auth;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.devjava.dencli.model.User;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.service.UserService;
@@ -23,10 +25,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "AuthLoginServlet", urlPatterns = {"/login"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class LoginServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(LoginServlet.class.getName());
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
+    private static final String LOGIN_JSP = "/login.jsp";
+    private static final String JSON_UTF8 = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
+    private static final String KEY_SUCCESS = "success";
+    private static final String KEY_MESSAGE = "message";
 
     /**
      * GET /login: Chuyển tiếp (forward) hiển thị trang đăng nhập login.jsp.
@@ -34,7 +43,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/login.jsp").forward(request, response);
+        request.getRequestDispatcher(LOGIN_JSP).forward(request, response);
     }
 
     /**
@@ -69,7 +78,7 @@ public class LoginServlet extends HttpServlet {
         } catch (IOException e) {
             throw new ServletException("Failed to process login request.", e);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             handleUnavailable(request, response, isJson);
             
         }
@@ -126,10 +135,10 @@ public class LoginServlet extends HttpServlet {
         String redirectUrl = (targetUrl != null && !targetUrl.isEmpty()) ? targetUrl : dashboardUrl;
 
         if (isJson) {
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_UTF8);
             Map<String, Object> resData = new HashMap<>();
-            resData.put("success", true);
-            resData.put("message", "Đăng nhập thành công!");
+            resData.put(KEY_SUCCESS, true);
+            resData.put(KEY_MESSAGE, "Đăng nhập thành công!");
             Map<String, Object> userData = new HashMap<>();
             userData.put("user_id", user.getUserId());
             userData.put("full_name", user.getFullName());
@@ -148,15 +157,15 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_UTF8);
             Map<String, Object> errData = new HashMap<>();
-            errData.put("success", false);
-            errData.put("message", message);
+            errData.put(KEY_SUCCESS, false);
+            errData.put(KEY_MESSAGE, message);
             errData.put("error_code", "ERR_INVALID_CREDENTIALS");
             response.getWriter().print(gson.toJson(errData));
         } else {
             request.setAttribute("errorMessage", message);
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            request.getRequestDispatcher(LOGIN_JSP).forward(request, response);
         }
     }
 
@@ -165,14 +174,14 @@ public class LoginServlet extends HttpServlet {
         String message = "Hệ thống xác thực đang tạm thời không khả dụng.";
         if (isJson) {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            response.setContentType(JSON_UTF8);
             response.getWriter().print(gson.toJson(Map.of(
-                    "success", false,
-                    "message", message,
+                    KEY_SUCCESS, false,
+                    KEY_MESSAGE, message,
                     "error_code", "ERR_AUTH_SERVICE_UNAVAILABLE")));
         } else {
             request.setAttribute("errorMessage", message);
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            request.getRequestDispatcher(LOGIN_JSP).forward(request, response);
         }
     }
 

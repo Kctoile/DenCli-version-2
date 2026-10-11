@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-public class RegisterServletTest {
+class RegisterServletTest {
 
     private RegisterServlet registerServlet;
     private HttpServletRequest request;
@@ -26,7 +26,7 @@ public class RegisterServletTest {
     private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         registerServlet = new RegisterServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -44,7 +44,7 @@ public class RegisterServletTest {
      * Kiểm thử GET /register chuyển tiếp tới /register.jsp.
      */
     @Test
-    public void testDoGetForwardsToRegisterJsp() throws Exception {
+    void testDoGetForwardsToRegisterJsp() throws Exception {
         registerServlet.doGet(request, response);
 
         verify(request).getRequestDispatcher("/register.jsp");
@@ -55,7 +55,7 @@ public class RegisterServletTest {
      * Kiểm thử POST /register đăng ký thành công và chuyển hướng về /login.jsp.
      */
     @Test
-    public void testDoPostRegisterSuccess() throws Exception {
+    void testDoPostRegisterSuccess() throws Exception {
         when(request.getParameter("full_name")).thenReturn("Nguyen Van Test");
         when(request.getParameter("phone")).thenReturn("0912345678");
         when(request.getParameter("email")).thenReturn("test@gmail.com");
@@ -72,7 +72,7 @@ public class RegisterServletTest {
      * Kiểm thử POST /register thất bại do thiếu trường bắt buộc.
      */
     @Test
-    public void testDoPostRegisterMissingFields() throws Exception {
+    void testDoPostRegisterMissingFields() throws Exception {
         when(request.getParameter("full_name")).thenReturn("");
         when(request.getParameter("phone")).thenReturn("");
         when(request.getParameter("password")).thenReturn("123");

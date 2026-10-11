@@ -9,6 +9,7 @@ import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,23 +24,23 @@ public class AppointmentWebSocket {
     @OnOpen
     public void onOpen(Session session) {
         SESSIONS.add(session);
-        LOGGER.info("[WebSocket] New client connected: " + session.getId() + " (Total active: " + SESSIONS.size() + ")");
+        LOGGER.log(Level.INFO, "[WebSocket] New client connected: {0} (Total active: {1})", new Object[]{session.getId(), SESSIONS.size()});
     }
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        LOGGER.info("[WebSocket] Received from " + session.getId() + ": " + message);
+        LOGGER.log(Level.INFO, "[WebSocket] Received from {0}: {1}", new Object[]{session.getId(), message});
     }
 
     @OnClose
     public void onClose(Session session) {
         SESSIONS.remove(session);
-        LOGGER.info("[WebSocket] Client disconnected: " + session.getId());
+        LOGGER.log(Level.INFO, "[WebSocket] Client disconnected: {0}", session.getId());
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOGGER.warning("[WebSocket] Error on " + (session != null ? session.getId() : "unknown") + ": " + throwable.getMessage());
+        LOGGER.log(Level.WARNING, () -> "[WebSocket] Error on " + (session != null ? session.getId() : "unknown") + ": " + throwable.getMessage());
     }
 
     /**

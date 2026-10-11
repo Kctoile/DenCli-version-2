@@ -15,6 +15,7 @@ public class Medicine implements Serializable {
     private String medicineName;
     private BigDecimal price;
     private int stockQuantity;
+    private String unit = "hộp";
 
     public Medicine() {
     }
@@ -23,10 +24,15 @@ public class Medicine implements Serializable {
      * Constructor khởi tạo đối tượng Medicine với đầy đủ các thuộc tính.
      */
     public Medicine(int medicineId, String medicineName, BigDecimal price, int stockQuantity) {
+        this(medicineId, medicineName, price, stockQuantity, "hộp");
+    }
+
+    public Medicine(int medicineId, String medicineName, BigDecimal price, int stockQuantity, String unit) {
         this.medicineId = medicineId;
         this.medicineName = medicineName;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.unit = unit != null ? unit : "hộp";
     }
 
     public int getMedicineId() {
@@ -59,5 +65,13 @@ public class Medicine implements Serializable {
 
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
+    }
+
+    public String getUnit() {
+        return (unit != null && !unit.trim().isEmpty()) ? unit : "hộp";
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

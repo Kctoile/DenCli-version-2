@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class LoginServletTest {
+class LoginServletTest {
 
     private LoginServlet loginServlet;
     private HttpServletRequest request;
@@ -32,7 +32,7 @@ public class LoginServletTest {
     private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         loginServlet = new LoginServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -50,7 +50,7 @@ public class LoginServletTest {
      * Kiểm thử GET /login chuyển tiếp tới /login.jsp.
      */
     @Test
-    public void testDoGetForwardsToLoginJsp() throws Exception {
+    void testDoGetForwardsToLoginJsp() throws Exception {
         loginServlet.doGet(request, response);
 
         verify(request).getRequestDispatcher("/login.jsp");
@@ -61,7 +61,7 @@ public class LoginServletTest {
      * Kiểm thử POST /login dạng Form thành công và điều hướng sang dashboard tương ứng.
      */
     @Test
-    public void testDoPostLoginFormSuccess() throws Exception {
+    void testDoPostLoginFormSuccess() throws Exception {
         when(request.getParameter("email_or_phone")).thenReturn("admin@dental.com");
         when(request.getParameter("password")).thenReturn("admin123");
 
@@ -73,8 +73,8 @@ public class LoginServletTest {
 
         loginServlet.doPost(request, response);
 
-        verify(session).setAttribute(eq(Constants.SESSION_USER), eq(mockAdmin));
-        verify(session).setAttribute(eq(Constants.SESSION_ROLE), eq(Constants.ROLE_ADMIN_NAME));
+        verify(session).setAttribute(Constants.SESSION_USER, mockAdmin);
+        verify(session).setAttribute(Constants.SESSION_ROLE, Constants.ROLE_ADMIN_NAME);
         verify(response).sendRedirect("/DenCli/admin/dashboard");
     }
 
@@ -82,7 +82,7 @@ public class LoginServletTest {
      * Kiểm thử POST /login thành công và ưu tiên điều hướng về targetUrl đã lưu trong session.
      */
     @Test
-    public void testDoPostLoginRedirectsToTargetUrl() throws Exception {
+    void testDoPostLoginRedirectsToTargetUrl() throws Exception {
         when(request.getParameter("email_or_phone")).thenReturn("doctor1@dental.com");
         when(request.getParameter("password")).thenReturn("123");
         when(session.getAttribute("targetUrl")).thenReturn("/DenCli/doctor/prescription");
@@ -103,7 +103,7 @@ public class LoginServletTest {
      * Kiểm thử POST /login dạng JSON thành công trả về dữ liệu người dùng.
      */
     @Test
-    public void testDoPostLoginJsonSuccess() throws Exception {
+    void testDoPostLoginJsonSuccess() throws Exception {
         when(request.getContentType()).thenReturn("application/json");
         BufferedReader reader = new BufferedReader(new StringReader("{\"email_or_phone\":\"patient@gmail.com\",\"password\":\"123456\"}"));
         when(request.getReader()).thenReturn(reader);
@@ -131,7 +131,7 @@ public class LoginServletTest {
      * Kiểm thử POST /login thất bại khi sai mật khẩu.
      */
     @Test
-    public void testDoPostLoginFailureInvalidCredentials() throws Exception {
+    void testDoPostLoginFailureInvalidCredentials() throws Exception {
         when(request.getParameter("email_or_phone")).thenReturn("patient@gmail.com");
         when(request.getParameter("password")).thenReturn("wrongpassword");
         when(userService.login("patient@gmail.com", "wrongpassword")).thenReturn(null);

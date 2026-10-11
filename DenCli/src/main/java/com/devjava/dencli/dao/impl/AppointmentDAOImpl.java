@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,9 +20,12 @@ import java.util.List;
 import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.model.Appointment;
+import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.dto.RevenueDTO;
 
 public class AppointmentDAOImpl implements AppointmentDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(AppointmentDAOImpl.class.getName());
 
     /**
      * Phương thức kiểm tra bác sĩ có bị trùng lịch vào cùng ngày và giờ hay không.
@@ -48,7 +53,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận ngoại lệ khi kiểm tra trùng lịch
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -123,8 +128,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             // Nếu có danh sách dịch vụ đi kèm, tiến hành chèn vào bảng trung gian
             if (serviceIds != null && !serviceIds.isEmpty() && generatedAppId > 0) {
                 try (PreparedStatement psService = conn.prepareStatement(sqlService)) {
+                    psService.setInt(1, generatedAppId);
                     for (int serviceId : serviceIds) { // Lặp qua danh sách ID dịch vụ
-                        psService.setInt(1, generatedAppId);
                         psService.setInt(2, serviceId);
 
                         psService.addBatch(); // Sử dụng cơ chế Batching của JDBC để tối ưu hiệu năng
@@ -139,7 +144,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In ngoại lệ khi thêm lịch hẹn thất bại
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return -1;
@@ -172,7 +177,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn cuộc hẹn theo ID
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -212,7 +217,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In ngoại lệ hệ thống
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;
@@ -233,38 +238,49 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 while (rs.next()) list.add(mapResultSetToAppointment(rs));
             }
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
     }
 
     @Override
     public List<Appointment> getCompletedAppointmentsByPatient(int patientId) {
-        return getCompletedAppointments("a.patient_id = ?", patientId, null);
-    }
-
-    @Override
-    public List<Appointment> getCompletedAppointmentsForDoctorPatient(int doctorId, int patientId) {
-        return getCompletedAppointments("a.patient_id = ? AND EXISTS (SELECT 1 FROM appointments access "
-                + "WHERE access.patient_id = a.patient_id AND access.doctor_id = ?)", patientId, doctorId);
-    }
-
-    private List<Appointment> getCompletedAppointments(String predicate, int patientId, Integer doctorId) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
                    + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
                    + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE " + predicate + " AND a.status = 'Completed' "
+                   + "WHERE a.patient_id = ? AND a.status = 'Completed' "
                    + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
                    + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);
-            if (doctorId != null) ps.setInt(2, doctorId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) list.add(mapResultSetToAppointment(rs));
             }
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Appointment> getCompletedAppointmentsForDoctorPatient(int doctorId, int patientId) {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
+                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                   + "WHERE a.patient_id = ? AND EXISTS (SELECT 1 FROM appointments access "
+                   + "WHERE access.patient_id = a.patient_id AND access.doctor_id = ?) AND a.status = 'Completed' "
+                   + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
+                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, patientId);
+            ps.setInt(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
     }
@@ -280,7 +296,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 return rs.next();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -296,7 +312,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             ps.setInt(4, doctorId);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -323,7 +339,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -340,10 +356,11 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     @Override // Ghi đè phương thức getAppointmentsByDoctor từ interface AppointmentDAO
     public List<Appointment> getAppointmentsByDoctor(int doctorId, Date date, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
+        String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name, er.result_id AS result_id "
                    + "FROM appointments a "
                    + "LEFT JOIN users p ON a.patient_id = p.user_id "
                    + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                   + "LEFT JOIN examination_results er ON a.appointment_id = er.appointment_id "
                    + "WHERE a.doctor_id = ? AND (? IS NULL OR a.appointment_date = ?) "
                    + "ORDER BY a.appointment_date ASC, a.appointment_time ASC "
                    + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -365,7 +382,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;
@@ -396,7 +413,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -441,7 +458,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;
@@ -476,7 +493,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -502,7 +519,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             return ps.executeUpdate() > 0;
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -517,7 +534,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             ps.setString(3, currentStatus);
             return ps.executeUpdate() == 1;
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -532,7 +549,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             ps.setInt(2, patientId);
             return ps.executeUpdate() == 1;
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -547,7 +564,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             ps.setString(4, currentStatus);
             return ps.executeUpdate() == 1;
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -563,7 +580,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             ps.setString(4, currentStatus);
             return ps.executeUpdate() == 1;
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -588,7 +605,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             return ps.executeUpdate() > 0;
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -641,7 +658,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return result;
@@ -687,6 +704,17 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             // Bỏ qua nếu truy vấn không kèm các cột kết nối JOIN
         }
 
+        try {
+            int resId = rs.getInt("result_id");
+            if (!rs.wasNull() && resId > 0) {
+                ExaminationResult er = new ExaminationResult();
+                er.setResultId(resId);
+                app.setExaminationResult(er);
+            }
+        } catch (SQLException ignored) {
+            // Bỏ qua nếu truy vấn không kèm cột result_id
+        }
+
         return app;
     }
 
@@ -717,7 +745,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 }
             }
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return slots;
     }

@@ -19,9 +19,14 @@ import java.io.IOException;
  * Servlet xử lý đổi mật khẩu cho người dùng đã đăng nhập (Admin, Bác sĩ, Nhân viên, Bệnh nhân).
  */
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/change-password"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ChangePasswordServlet extends HttpServlet {
 
-    private final UserService userService = ServiceFactory.getUserService();
+    private static final String PARAM_OLD_PASSWORD = "old_password";
+    private static final String PARAM_NEW_PASSWORD = "new_password";
+    private static final String PARAM_CONFIRM_PASSWORD = "confirm_password";
+
+    private final transient UserService userService = ServiceFactory.getUserService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,17 +61,17 @@ public class ChangePasswordServlet extends HttpServlet {
         if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
             try (BufferedReader reader = request.getReader()) {
                 JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                if (json.has("old_password")) oldPassword = json.get("old_password").getAsString();
-                if (json.has("new_password")) newPassword = json.get("new_password").getAsString();
-                if (json.has("confirm_password")) confirmPassword = json.get("confirm_password").getAsString();
+                if (json.has(PARAM_OLD_PASSWORD)) oldPassword = json.get(PARAM_OLD_PASSWORD).getAsString();
+                if (json.has(PARAM_NEW_PASSWORD)) newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
+                if (json.has(PARAM_CONFIRM_PASSWORD)) confirmPassword = json.get(PARAM_CONFIRM_PASSWORD).getAsString();
             } catch (Exception e) {
                 sendJsonResponse(response, false, "Dữ liệu JSON không hợp lệ.");
                 return;
             }
         } else {
-            oldPassword = request.getParameter("old_password");
-            newPassword = request.getParameter("new_password");
-            confirmPassword = request.getParameter("confirm_password");
+            oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
+            newPassword = request.getParameter(PARAM_NEW_PASSWORD);
+            confirmPassword = request.getParameter(PARAM_CONFIRM_PASSWORD);
             if (oldPassword == null) oldPassword = "";
             if (newPassword == null) newPassword = "";
             if (confirmPassword == null) confirmPassword = "";

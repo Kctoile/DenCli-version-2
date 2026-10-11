@@ -26,7 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "StaffReceptionServlet", urlPatterns = {"/staff/reception", "/staff/dashboard"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ReceptionServlet extends HttpServlet {
+    private static final String KEY_SUCCESS = "success";
+    private static final String KEY_MESSAGE = "message";
+    private static final String SUFFIX_SUCCESS = " thành công!";
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
@@ -74,8 +78,8 @@ public class ReceptionServlet extends HttpServlet {
             if (isJson) {
                 response.setContentType(JSON_CONTENT_TYPE);
                 Map<String, Object> err = new HashMap<>();
-                err.put("success", false);
-                err.put("message", "Vui lòng đăng nhập.");
+                err.put(KEY_SUCCESS, false);
+                err.put(KEY_MESSAGE, "Vui lòng đăng nhập.");
                 response.getWriter().print(gson.toJson(err));
             } else {
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
@@ -132,17 +136,17 @@ public class ReceptionServlet extends HttpServlet {
                     room = "Phòng 01";
                 }
                 success = appointmentService.checkInAppointment(appointmentId, room.trim());
-                msg = "Tiếp đón và phân bổ " + room.trim() + " thành công!";
+                msg = "Tiếp đón và phân bổ " + room.trim() + SUFFIX_SUCCESS;
                 break;
 
             case "confirm":
                 success = appointmentService.confirmAppointment(appointmentId);
-                msg = "Xác nhận lịch hẹn #" + appointmentId + " thành công!";
+                msg = "Xác nhận lịch hẹn #" + appointmentId + SUFFIX_SUCCESS;
                 break;
 
             case "cancel":
                 success = appointmentService.cancelAppointment(appointmentId, currentUser.getUserId(), currentUser.getRoleId());
-                msg = "Hủy lịch hẹn #" + appointmentId + " thành công!";
+                msg = "Hủy lịch hẹn #" + appointmentId + SUFFIX_SUCCESS;
                 break;
 
             default:
@@ -154,8 +158,8 @@ public class ReceptionServlet extends HttpServlet {
             if (isJson) {
                 response.setContentType(JSON_CONTENT_TYPE);
                 Map<String, Object> resData = new HashMap<>();
-                resData.put("success", true);
-                resData.put("message", msg);
+                resData.put(KEY_SUCCESS, true);
+                resData.put(KEY_MESSAGE, msg);
                 response.getWriter().print(gson.toJson(resData));
             } else {
                 request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE, msg);
@@ -172,8 +176,8 @@ public class ReceptionServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> err = new HashMap<>();
-            err.put("success", false);
-            err.put("message", message);
+            err.put(KEY_SUCCESS, false);
+            err.put(KEY_MESSAGE, message);
             response.getWriter().print(gson.toJson(err));
         } else {
             request.setAttribute("errorMessage", message);

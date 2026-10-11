@@ -28,6 +28,7 @@ public class CsrfFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        // ponytail: No custom initialization needed for CsrfFilter
     }
 
     @Override
@@ -92,5 +93,6 @@ public class CsrfFilter implements Filter {
 
     @Override
     public void destroy() {
+        // ponytail: No custom cleanup needed for CsrfFilter
     }
 }

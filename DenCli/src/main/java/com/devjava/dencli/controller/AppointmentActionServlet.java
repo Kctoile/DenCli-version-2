@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(name = "AppointmentActionServlet", urlPatterns = {"/api/appointments/action"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class AppointmentActionServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -50,10 +51,8 @@ public class AppointmentActionServlet extends HttpServlet {
                 return;
             }
 
-            int appointmentId;
-            try {
-                appointmentId = Integer.parseInt(appIdStr.trim());
-            } catch (NumberFormatException e) {
+            int appointmentId = parseAppointmentId(appIdStr);
+            if (appointmentId <= 0) {
                 sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, false, "Mã lịch hẹn không hợp lệ.");
                 return;
             }
@@ -61,6 +60,14 @@ public class AppointmentActionServlet extends HttpServlet {
             executeAction(request, response, currentUser, action.toLowerCase(), appointmentId);
         } catch (IOException e) {
             throw new ServletException("Failed to write appointment action response.", e);
+        }
+    }
+
+    private int parseAppointmentId(String appIdStr) {
+        try {
+            return Integer.parseInt(appIdStr.trim());
+        } catch (NumberFormatException e) {
+            return -1;
         }
     }
 

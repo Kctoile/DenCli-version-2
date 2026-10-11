@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-public class PasswordUtilTest {
+class PasswordUtilTest {
 
     /**
      * Phương thức kiểm thử việc băm mật khẩu và so khớp mật khẩu hợp lệ.
      */
     @Test
-    public void testHashAndCheckPasswordValid() {
+    void testHashAndCheckPasswordValid() {
         String rawPassword = "SecurePassword@123";
 
         // Thực hiện băm mật khẩu
@@ -34,7 +34,7 @@ public class PasswordUtilTest {
      * Phương thức kiểm thử việc kiểm tra mật khẩu sai phải trả về false.
      */
     @Test
-    public void testCheckPasswordInvalid() {
+    void testCheckPasswordInvalid() {
         String rawPassword = "CorrectPassword";
         String hashedPassword = PasswordUtil.hashPassword(rawPassword);
 
@@ -43,12 +43,12 @@ public class PasswordUtilTest {
     }
 
     @Test
-    public void testPlaintextPasswordIsRejected() {
+    void testPlaintextPasswordIsRejected() {
         assertFalse(PasswordUtil.checkPassword("123", "123"));
     }
 
     @Test
-    public void testHashedDevelopmentCredentialsRemainUsable() {
+    void testHashedDevelopmentCredentialsRemainUsable() {
         assertTrue(PasswordUtil.checkPassword("admin", "$2a$12$/Tlf/YV6kktwrrFQQiInfuwva5foA/E7XiVcbF4U2uCWkxQHQVtCK"));
         assertTrue(PasswordUtil.checkPassword("123", "$2a$12$w75zjnNPy2pnMxZvFI5waetgOgpVw1.DsJatHY2pHHSwWqsyA0OI6"));
     }
@@ -57,7 +57,7 @@ public class PasswordUtilTest {
      * Phương thức kiểm thử đầu vào rỗng hoặc null phải xử lý an toàn.
      */
     @Test
-    public void testNullOrEmptyInput() {
+    void testNullOrEmptyInput() {
         assertNull(PasswordUtil.hashPassword(null));
         assertNull(PasswordUtil.hashPassword("   "));
         assertFalse(PasswordUtil.checkPassword(null, "someHash"));

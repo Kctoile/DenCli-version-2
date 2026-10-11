@@ -35,20 +35,6 @@ public class Appointment implements Serializable {
     public Appointment() {
     }
 
-    /**
-     * Constructor khởi tạo đối tượng Appointment với các trường cơ bản từ bảng appointments.
-     */
-    public Appointment(int appointmentId, Integer patientId, Integer doctorId, 
-                       Date appointmentDate, Time appointmentTime, String status, String notes, String room) {
-        this.appointmentId = appointmentId;
-        this.patientId = patientId;
-        this.doctorId = doctorId;
-        this.appointmentDate = appointmentDate;
-        this.appointmentTime = appointmentTime;
-        this.status = status;
-        this.notes = notes;
-        this.room = room;
-    }
 
     public int getAppointmentId() {
         return appointmentId;

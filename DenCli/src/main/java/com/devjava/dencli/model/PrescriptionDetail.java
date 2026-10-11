@@ -19,6 +19,7 @@ public class PrescriptionDetail implements Serializable {
 
     // Thuộc tính tiện ích phục vụ hiển thị
     private String medicineName;
+    private String dosage;
 
     public PrescriptionDetail() {
     }
@@ -81,5 +82,21 @@ public class PrescriptionDetail implements Serializable {
 
     public void setMedicineName(String medicineName) {
         this.medicineName = medicineName;
+    }
+
+    public int getQuantity() {
+        return prescribedQuantity;
+    }
+
+    public BigDecimal getSubtotal() {
+        return unitPrice != null ? unitPrice.multiply(BigDecimal.valueOf(prescribedQuantity)) : BigDecimal.ZERO;
+    }
+
+    public String getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(String dosage) {
+        this.dosage = dosage;
     }
 }

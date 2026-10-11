@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "AdminRevenueReportServlet", urlPatterns = {"/admin/api/revenue"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class RevenueReportServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

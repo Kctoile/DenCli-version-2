@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kê đơn thuốc | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,13 +28,13 @@
 
             <!-- Nội dung chính -->
             <main class="col-12 col-md-9 col-lg-10 p-4">
-                <div class="card card-custom bg-white p-4 mx-auto" style="max-width: 960px;">
-                    <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center">
+                <div class="dencli-card p-4 mx-auto" style="max-width: 960px;">
+                    <div class="page-header-box">
                         <div>
-                            <h3 class="fw-bold text-primary mb-1">💊 Kê đơn thuốc điều trị</h3>
-                            <p class="text-muted mb-0">Chọn thuốc và số lượng, hệ thống sẽ tự động trừ tồn kho qua Transaction an toàn.</p>
+                            <h3 class="page-header-title">💊 Kê đơn thuốc điều trị</h3>
+                            <p class="page-header-subtitle">Chọn thuốc và số lượng, hệ thống sẽ tự động trừ tồn kho qua Transaction an toàn.</p>
                         </div>
-                        <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-outline-secondary btn-sm">
+                        <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
                             ← Quay lại Buồng khám
                         </a>
                     </div>
@@ -100,8 +100,8 @@
                                                 <select id="medicine-0" name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
                                                     <option value="" data-price="0">-- Chọn thuốc trong kho --</option>
                                                     <c:forEach items="${medicines}" var="m">
-                                                        <option value="${m.medicineId}" data-price="${m.price}" data-unit="${m.unit}" data-stock="${m.stockQuantity}">
-                                                            <c:out value="${m.medicineName}" /> (Kho: ${m.stockQuantity} ${m.unit} - <fmt:formatNumber value="${m.price}" pattern="#,##0" />đ)
+                                                        <option value="${m.medicineId}" data-price="${m.price}" data-unit="${empty m.unit ? 'hộp' : m.unit}" data-stock="${m.stockQuantity}">
+                                                            <c:out value="${m.medicineName}" /> (Kho: ${m.stockQuantity} ${empty m.unit ? 'hộp' : m.unit} - <fmt:formatNumber value="${m.price}" pattern="#,##0" />đ)
                                                         </option>
                                                     </c:forEach>
                                                 </select>
@@ -137,8 +137,8 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-outline-secondary px-4">Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary px-5 fw-semibold">Xác nhận Lưu Đơn Thuốc</button>
+                            <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-outline-secondary px-4 rounded-pill">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-den-primary px-5 py-2 fw-semibold rounded-pill">Xác nhận Lưu Đơn Thuốc</button>
                         </div>
                     </form>
                 </div>
@@ -154,8 +154,8 @@
                 <select id="medicine-template" name="medicine_id" class="form-select med-select" required onchange="updateRowCalculations(this)">
                     <option value="" data-price="0">-- Chọn thuốc trong kho --</option>
                     <c:forEach items="${medicines}" var="m">
-                        <option value="${m.medicineId}" data-price="${m.price}" data-unit="${m.unit}" data-stock="${m.stockQuantity}">
-                            <c:out value="${m.medicineName}" /> (Kho: ${m.stockQuantity} ${m.unit} - <fmt:formatNumber value="${m.price}" pattern="#,##0" />đ)
+                        <option value="${m.medicineId}" data-price="${m.price}" data-unit="${empty m.unit ? 'hộp' : m.unit}" data-stock="${m.stockQuantity}">
+                            <c:out value="${m.medicineName}" /> (Kho: ${m.stockQuantity} ${empty m.unit ? 'hộp' : m.unit} - <fmt:formatNumber value="${m.price}" pattern="#,##0" />đ)
                         </option>
                     </c:forEach>
                 </select>

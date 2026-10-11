@@ -4,10 +4,8 @@
  */
 package com.devjava.dencli.service.impl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,6 +23,8 @@ import com.devjava.dencli.service.PrescriptionService;
 import com.devjava.dencli.util.Constants;
 
 public class PrescriptionServiceImpl implements PrescriptionService {
+
+    private static final Logger LOGGER = Logger.getLogger(PrescriptionServiceImpl.class.getName());
 
     private final PrescriptionDAO prescriptionDAO;
     private final MedicineDAO medicineDAO;
@@ -52,7 +52,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
      * @return true nếu kê đơn và trừ tồn kho thành công cho toàn bộ thuốc,
      * ngược lại false
      */
-        public boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId) {
+    @Override
+    public boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId) {
         if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0 || doctorId <= 0) {
             return false;
         }
@@ -119,7 +120,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         } catch (Exception e) {
             // Ghi nhận ngoại lệ hệ thống
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             // Bước 6: Khôi phục lại trạng thái ban đầu nếu có bất kỳ lỗi nào xảy ra
             if (conn != null) {
@@ -127,7 +128,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                     conn.rollback();
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
 
@@ -141,7 +142,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                     conn.close(); // Đóng kết nối
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
         }

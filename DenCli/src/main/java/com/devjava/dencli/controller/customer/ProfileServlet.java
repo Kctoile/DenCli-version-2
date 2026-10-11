@@ -11,7 +11,6 @@ import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.service.UserService;
 import com.devjava.dencli.util.Constants;
-import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,11 +19,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/customer/profile"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ProfileServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

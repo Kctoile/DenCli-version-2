@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng điều khiển Quản trị | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,13 +31,13 @@
                 <div class="container-fluid p-0">
 
                     <!-- Tiêu đề Dashboard -->
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+                    <div class="page-header-box">
                         <div>
-                            <h3 class="fw-bold text-primary mb-1">📊 Bảng điều khiển Quản trị Phòng khám</h3>
-                            <p class="text-muted small mb-0">Thống kê chỉ số tăng trưởng người dùng, nhân sự và báo cáo doanh thu tài chính.</p>
+                            <h3 class="page-header-title">📊 Bảng điều khiển Quản trị Phòng khám</h3>
+                            <p class="page-header-subtitle">Thống kê chỉ số tăng trưởng người dùng, nhân sự và báo cáo doanh thu tài chính.</p>
                         </div>
                         <div class="d-flex gap-2 align-items-center">
-                            <span class="badge bg-primary px-3 py-2 fs-6">Năm báo cáo: <c:out value="${currentYear}" /></span>
+                            <span class="badge bg-primary px-3 py-2 fs-6 rounded-pill">Năm báo cáo: <c:out value="${currentYear}" /></span>
                         </div>
                     </div>
 
@@ -140,15 +140,15 @@
                     </div>
 
                     <!-- Khung Biểu đồ Doanh thu Chart.js -->
-                    <div class="card card-custom bg-white p-4 mb-4">
+                    <div class="dencli-card p-4 mb-4">
                         <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
                             <div>
                                 <h5 class="fw-bold text-dark mb-1">📈 Biểu đồ Doanh thu & Lượng khám 12 tháng</h5>
                                 <p class="text-muted small mb-0">Dữ liệu doanh thu thực thu từ dịch vụ nha khoa và thuốc điều trị.</p>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <label for="yearSelect" class="small fw-semibold text-muted">Chọn năm:</label>
-                                <select id="yearSelect" class="form-select form-select-sm" style="width: auto;" onchange="loadRevenueChart(this.value)">
+                                <label for="yearSelect" class="fw-semibold text-navy small mb-0">📅 Chọn năm:</label>
+                                <select id="yearSelect" class="form-select fw-semibold text-dark shadow-sm rounded-pill" style="min-width: 145px; width: auto; font-size: 0.95rem; padding-left: 1rem; padding-right: 2.25rem;" onchange="loadRevenueChart(this.value)">
                                     <option value="2025" ${currentYear == 2025 ? 'selected' : ''}>Năm 2025</option>
                                     <option value="2026" ${currentYear == 2026 || empty currentYear ? 'selected' : ''}>Năm 2026</option>
                                     <option value="2027" ${currentYear == 2027 ? 'selected' : ''}>Năm 2027</option>

@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.MedicineDAO;
 import com.devjava.dencli.model.Medicine;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class MedicineDAOImpl implements MedicineDAO {
 
+    private static final Logger LOGGER = Logger.getLogger(MedicineDAOImpl.class.getName());
+
     /**
      * Phương thức lấy toàn bộ danh sách thuốc hiện có trong kho sắp xếp theo tên thuốc.
      * @return Danh sách các loại thuốc
@@ -23,7 +27,7 @@ public class MedicineDAOImpl implements MedicineDAO {
     @Override // Ghi đè phương thức getAllMedicines từ interface MedicineDAO
     public List<Medicine> getAllMedicines() {
         List<Medicine> medicines = new ArrayList<>();
-        String sql = "SELECT * FROM medicines ORDER BY medicine_name ASC";
+        String sql = "SELECT medicine_id, medicine_name, price, stock_quantity FROM medicines ORDER BY medicine_name ASC";
 
         // Sử dụng try-with-resources để tự động giải phóng tài nguyên kết nối
         try (Connection conn = DBConnection.getConnection();
@@ -36,7 +40,7 @@ public class MedicineDAOImpl implements MedicineDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn danh sách thuốc
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return medicines;
@@ -49,7 +53,7 @@ public class MedicineDAOImpl implements MedicineDAO {
      */
     @Override // Ghi đè phương thức getMedicineById từ interface MedicineDAO
     public Medicine getMedicineById(int medicineId) {
-        String sql = "SELECT * FROM medicines WHERE medicine_id = ?";
+        String sql = "SELECT medicine_id, medicine_name, price, stock_quantity FROM medicines WHERE medicine_id = ?";
 
         // Sử dụng try-with-resources để tự động giải phóng kết nối
         try (Connection conn = DBConnection.getConnection();
@@ -64,7 +68,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -105,7 +109,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;
@@ -139,7 +143,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -165,7 +169,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             return ps.executeUpdate() > 0;
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -192,7 +196,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             return ps.executeUpdate() > 0;
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -220,7 +224,7 @@ public class MedicineDAOImpl implements MedicineDAO {
                 return ps.executeUpdate() > 0;
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
         } else {
@@ -235,7 +239,7 @@ public class MedicineDAOImpl implements MedicineDAO {
                 return ps.executeUpdate() > 0;
 
             } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
         }
@@ -259,7 +263,7 @@ public class MedicineDAOImpl implements MedicineDAO {
             return ps.executeUpdate() > 0;
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -278,6 +282,14 @@ public class MedicineDAOImpl implements MedicineDAO {
         med.setMedicineName(rs.getString("medicine_name"));
         med.setPrice(rs.getBigDecimal("price"));
         med.setStockQuantity(rs.getInt("stock_quantity"));
+        try {
+            String unit = rs.getString("unit");
+            if (unit != null && !unit.trim().isEmpty()) {
+                med.setUnit(unit.trim());
+            }
+        } catch (SQLException ignored) {
+            // column 'unit' might not exist in database schema, default 'hộp' in model is preserved
+        }
 
         return med;
     }

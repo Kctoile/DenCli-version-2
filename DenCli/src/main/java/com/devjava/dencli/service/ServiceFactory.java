@@ -12,11 +12,12 @@ import com.devjava.dencli.service.impl.UserServiceImpl;
 
 public final class ServiceFactory {
 
-    private static volatile UserService userService;
-    private static volatile AppointmentService appointmentService;
-    private static volatile PrescriptionService prescriptionService;
-    private static volatile ExaminationService examinationService;
-    private static volatile BillingService billingService;
+    // ponytail: synchronized methods over volatile compound objects (Sonar S3077)
+    private static UserService userService;
+    private static AppointmentService appointmentService;
+    private static PrescriptionService prescriptionService;
+    private static ExaminationService examinationService;
+    private static BillingService billingService;
 
     // Khởi tạo constructor private để ngăn tạo đối tượng từ bên ngoài
     private ServiceFactory() {
@@ -26,15 +27,10 @@ public final class ServiceFactory {
      * Phương thức lấy thể hiện duy nhất (Singleton) của UserService.
      * @return Đối tượng UserService
      */
-    public static UserService getUserService() {
+    public static synchronized UserService getUserService() {
         if (userService == null) {
-            synchronized (ServiceFactory.class) {
-                if (userService == null) {
-                    userService = new UserServiceImpl();
-                }
-            }
+            userService = new UserServiceImpl();
         }
-
         return userService;
     }
 
@@ -42,15 +38,10 @@ public final class ServiceFactory {
      * Phương thức lấy thể hiện duy nhất của AppointmentService.
      * @return Đối tượng AppointmentService
      */
-    public static AppointmentService getAppointmentService() {
+    public static synchronized AppointmentService getAppointmentService() {
         if (appointmentService == null) {
-            synchronized (ServiceFactory.class) {
-                if (appointmentService == null) {
-                    appointmentService = new AppointmentServiceImpl();
-                }
-            }
+            appointmentService = new AppointmentServiceImpl();
         }
-
         return appointmentService;
     }
 
@@ -58,15 +49,10 @@ public final class ServiceFactory {
      * Phương thức lấy thể hiện duy nhất của PrescriptionService.
      * @return Đối tượng PrescriptionService
      */
-    public static PrescriptionService getPrescriptionService() {
+    public static synchronized PrescriptionService getPrescriptionService() {
         if (prescriptionService == null) {
-            synchronized (ServiceFactory.class) {
-                if (prescriptionService == null) {
-                    prescriptionService = new PrescriptionServiceImpl();
-                }
-            }
+            prescriptionService = new PrescriptionServiceImpl();
         }
-
         return prescriptionService;
     }
 
@@ -74,15 +60,10 @@ public final class ServiceFactory {
      * Phương thức lấy thể hiện duy nhất của ExaminationService.
      * @return Đối tượng ExaminationService
      */
-    public static ExaminationService getExaminationService() {
+    public static synchronized ExaminationService getExaminationService() {
         if (examinationService == null) {
-            synchronized (ServiceFactory.class) {
-                if (examinationService == null) {
-                    examinationService = new ExaminationServiceImpl();
-                }
-            }
+            examinationService = new ExaminationServiceImpl();
         }
-
         return examinationService;
     }
 
@@ -90,15 +71,10 @@ public final class ServiceFactory {
      * Phương thức lấy thể hiện duy nhất của BillingService.
      * @return Đối tượng BillingService
      */
-    public static BillingService getBillingService() {
+    public static synchronized BillingService getBillingService() {
         if (billingService == null) {
-            synchronized (ServiceFactory.class) {
-                if (billingService == null) {
-                    billingService = new BillingServiceImpl();
-                }
-            }
+            billingService = new BillingServiceImpl();
         }
-
         return billingService;
     }
 
@@ -106,7 +82,7 @@ public final class ServiceFactory {
      * Phương thức thiết lập UserService giả lập hỗ trợ chạy Unit Test.
      * @param service Mock hoặc Custom UserService
      */
-    public static void setUserService(UserService service) {
+    public static synchronized void setUserService(UserService service) {
         userService = service;
     }
 
@@ -114,7 +90,7 @@ public final class ServiceFactory {
      * Phương thức thiết lập AppointmentService giả lập hỗ trợ chạy Unit Test.
      * @param service Mock hoặc Custom AppointmentService
      */
-    public static void setAppointmentService(AppointmentService service) {
+    public static synchronized void setAppointmentService(AppointmentService service) {
         appointmentService = service;
     }
 
@@ -122,7 +98,7 @@ public final class ServiceFactory {
      * Phương thức thiết lập PrescriptionService giả lập hỗ trợ chạy Unit Test.
      * @param service Mock hoặc Custom PrescriptionService
      */
-    public static void setPrescriptionService(PrescriptionService service) {
+    public static synchronized void setPrescriptionService(PrescriptionService service) {
         prescriptionService = service;
     }
 
@@ -130,7 +106,7 @@ public final class ServiceFactory {
      * Phương thức thiết lập ExaminationService giả lập hỗ trợ chạy Unit Test.
      * @param service Mock hoặc Custom ExaminationService
      */
-    public static void setExaminationService(ExaminationService service) {
+    public static synchronized void setExaminationService(ExaminationService service) {
         examinationService = service;
     }
 
@@ -138,7 +114,7 @@ public final class ServiceFactory {
      * Phương thức thiết lập BillingService giả lập hỗ trợ chạy Unit Test.
      * @param service Mock hoặc Custom BillingService
      */
-    public static void setBillingService(BillingService service) {
+    public static synchronized void setBillingService(BillingService service) {
         billingService = service;
     }
 }

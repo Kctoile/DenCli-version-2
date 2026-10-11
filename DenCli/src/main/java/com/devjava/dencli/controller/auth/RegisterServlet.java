@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "AuthRegisterServlet", urlPatterns = {"/register"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class RegisterServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

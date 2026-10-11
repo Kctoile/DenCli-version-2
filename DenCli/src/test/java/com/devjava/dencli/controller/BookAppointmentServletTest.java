@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BookAppointmentServletTest {
+class BookAppointmentServletTest {
 
     private BookAppointmentServlet servlet;
     private HttpServletRequest request;
@@ -29,7 +29,7 @@ public class BookAppointmentServletTest {
     private StringWriter responseBody;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         servlet = new BookAppointmentServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -45,7 +45,7 @@ public class BookAppointmentServletTest {
     }
 
     @Test
-    public void testUnauthenticatedRequestReturnsUnauthorized() throws Exception {
+    void testUnauthenticatedRequestReturnsUnauthorized() throws Exception {
         when(request.getSession(false)).thenReturn(null);
 
         servlet.doPost(request, response);
@@ -55,7 +55,7 @@ public class BookAppointmentServletTest {
     }
 
     @Test
-    public void testInvalidDoctorIdReturnsBadRequest() throws Exception {
+    void testInvalidDoctorIdReturnsBadRequest() throws Exception {
         givenCustomer();
         when(request.getParameter("doctor_id")).thenReturn("invalid");
 
@@ -66,7 +66,7 @@ public class BookAppointmentServletTest {
     }
 
     @Test
-    public void testValidFormBookingReturnsCreated() throws Exception {
+    void testValidFormBookingReturnsCreated() throws Exception {
         givenCustomer();
         when(request.getParameter("doctor_id")).thenReturn("2");
         when(request.getParameter("appointment_date")).thenReturn("2026-10-15");

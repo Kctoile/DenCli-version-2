@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.util.*;
 
 @WebServlet("/doctor/patient-history")
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class DoctorPatientHistoryServlet extends HttpServlet {
-    // ponytail: dung DAOImpl truc tiep, Gson khoi tao tai cho de khong them factory
-    private final ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
-    private final PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
-    private final AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-    private final Gson gson = new Gson();
+    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
+    private final transient PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
+    private final transient AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+    private static final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

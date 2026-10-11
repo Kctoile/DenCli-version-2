@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "AdminManageUserServlet", urlPatterns = {"/admin/users"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ManageUserServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

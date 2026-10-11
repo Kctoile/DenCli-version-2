@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AppointmentActionServletTest {
+class AppointmentActionServletTest {
 
     private AppointmentActionServlet servlet;
     private HttpServletRequest request;
@@ -26,7 +26,7 @@ public class AppointmentActionServletTest {
     private StringWriter responseBody;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         servlet = new AppointmentActionServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -40,7 +40,7 @@ public class AppointmentActionServletTest {
     }
 
     @Test
-    public void testUnauthenticatedRequestReturnsUnauthorized() throws Exception {
+    void testUnauthenticatedRequestReturnsUnauthorized() throws Exception {
         when(request.getSession(false)).thenReturn(null);
 
         servlet.doPost(request, response);
@@ -50,7 +50,7 @@ public class AppointmentActionServletTest {
     }
 
     @Test
-    public void testUnsupportedActionReturnsBadRequest() throws Exception {
+    void testUnsupportedActionReturnsBadRequest() throws Exception {
         givenUser(Constants.ROLE_STAFF_ID, 4);
         when(request.getParameter("action")).thenReturn("unknown");
         when(request.getParameter("appointment_id")).thenReturn("12");
@@ -62,7 +62,7 @@ public class AppointmentActionServletTest {
     }
 
     @Test
-    public void testStaffCheckInReturnsSuccess() throws Exception {
+    void testStaffCheckInReturnsSuccess() throws Exception {
         givenUser(Constants.ROLE_STAFF_ID, 4);
         when(request.getParameter("action")).thenReturn("checkin");
         when(request.getParameter("appointment_id")).thenReturn("12");

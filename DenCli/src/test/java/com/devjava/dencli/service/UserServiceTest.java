@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     private UserDAO userDAO;
     private UserService userService;
@@ -23,7 +23,7 @@ public class UserServiceTest {
      * Phương thức thiết lập môi trường và mock objects trước mỗi test case.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         userDAO = mock(UserDAO.class);
         userService = new UserServiceImpl(userDAO);
     }
@@ -32,7 +32,7 @@ public class UserServiceTest {
      * Kiểm thử đăng nhập thành công khi mật khẩu chính xác.
      */
     @Test
-    public void testLoginSuccess() {
+    void testLoginSuccess() {
         String email = "doctor@gmail.com";
         String rawPassword = "DoctorPassword123";
         String hashedPassword = PasswordUtil.hashPassword(rawPassword);
@@ -56,7 +56,7 @@ public class UserServiceTest {
      * Kiểm thử đăng nhập thất bại khi nhập sai mật khẩu.
      */
     @Test
-    public void testLoginWrongPassword() {
+    void testLoginWrongPassword() {
         String email = "doctor@gmail.com";
         String rawPassword = "DoctorPassword123";
         String hashedPassword = PasswordUtil.hashPassword(rawPassword);
@@ -76,7 +76,7 @@ public class UserServiceTest {
      * Kiểm thử đăng ký bệnh nhân thành công với dữ liệu hợp lệ.
      */
     @Test
-    public void testRegisterCustomerSuccess() {
+    void testRegisterCustomerSuccess() {
         User newUser = new User();
         newUser.setFullName("Nguyen Van A");
         newUser.setPhone("0905123456");
@@ -97,7 +97,7 @@ public class UserServiceTest {
      * Kiểm thử đăng ký thất bại khi số điện thoại đã tồn tại.
      */
     @Test
-    public void testRegisterCustomerDuplicatePhone() {
+    void testRegisterCustomerDuplicatePhone() {
         User newUser = new User();
         newUser.setFullName("Nguyen Van B");
         newUser.setPhone("0905999888");

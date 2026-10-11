@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,10 +45,10 @@ public class AppointmentSchedulerListener implements ServletContextListener {
 
             int updatedRows = ps.executeUpdate();
             if (updatedRows > 0) {
-                LOGGER.info("[Scheduler] Auto-cancelled " + updatedRows + " expired pending appointment(s).");
+                LOGGER.log(Level.INFO, "[Scheduler] Auto-cancelled {0} expired pending appointment(s).", updatedRows);
             }
         } catch (Exception e) {
-            LOGGER.warning("[Scheduler] Scheduled task error: " + e.getMessage());
+            LOGGER.log(Level.WARNING, () -> "[Scheduler] Scheduled task error: " + e.getMessage());
         }
     }
 

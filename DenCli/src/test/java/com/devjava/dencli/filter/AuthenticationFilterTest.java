@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AuthenticationFilterTest {
+class AuthenticationFilterTest {
 
     private AuthenticationFilter authenticationFilter;
     private HttpServletRequest request;
@@ -28,7 +28,7 @@ public class AuthenticationFilterTest {
     private HttpSession session;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         authenticationFilter = new AuthenticationFilter();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -42,7 +42,7 @@ public class AuthenticationFilterTest {
      * Kiểm thử truy cập các tài nguyên công khai (public/static/login/register) được bypass mà không cần đăng nhập.
      */
     @Test
-    public void testPublicResourceBypassed() throws IOException, ServletException {
+    void testPublicResourceBypassed() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/login.jsp");
 
         authenticationFilter.doFilter(request, response, chain);
@@ -56,7 +56,7 @@ public class AuthenticationFilterTest {
      * Kiểm thử truy cập tài nguyên tĩnh (/css/style.css) được bypass trực tiếp.
      */
     @Test
-    public void testStaticCssBypassed() throws IOException, ServletException {
+    void testStaticCssBypassed() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/css/style.css");
 
         authenticationFilter.doFilter(request, response, chain);
@@ -69,7 +69,7 @@ public class AuthenticationFilterTest {
      * Kiểm thử người dùng đã đăng nhập (có User trong session) được phép truy cập trang bảo mật.
      */
     @Test
-    public void testAuthenticatedUserAllowed() throws IOException, ServletException {
+    void testAuthenticatedUserAllowed() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -88,7 +88,7 @@ public class AuthenticationFilterTest {
      * Kiểm thử người dùng chưa đăng nhập cố tình truy cập trang bảo mật sẽ bị redirect về login.jsp kèm lưu targetUrl.
      */
     @Test
-    public void testUnauthenticatedPageRedirectsToLogin() throws IOException, ServletException {
+    void testUnauthenticatedPageRedirectsToLogin() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin.jsp");
         when(request.getQueryString()).thenReturn("tab=users");
         when(request.getSession(false)).thenReturn(null);
@@ -109,7 +109,7 @@ public class AuthenticationFilterTest {
      * Kiểm thử người dùng chưa đăng nhập gọi API JSON sẽ nhận mã HTTP 401 Unauthorized thay vì redirect.
      */
     @Test
-    public void testUnauthenticatedApiReturns401() throws IOException, ServletException {
+    void testUnauthenticatedApiReturns401() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/api/appointments/action");
         when(request.getHeader("Accept")).thenReturn("application/json");
         when(request.getSession(false)).thenReturn(null);

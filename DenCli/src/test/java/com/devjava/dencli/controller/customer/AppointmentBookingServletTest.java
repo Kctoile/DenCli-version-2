@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-public class AppointmentBookingServletTest {
+class AppointmentBookingServletTest {
 
     private AppointmentBookingServlet bookingServlet;
     private HttpServletRequest request;
@@ -31,7 +31,7 @@ public class AppointmentBookingServletTest {
     private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         bookingServlet = new AppointmentBookingServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -53,7 +53,7 @@ public class AppointmentBookingServletTest {
      * Kiểm thử GET /customer/book lấy danh sách bác sĩ và dịch vụ chuyển tiếp sang book.jsp.
      */
     @Test
-    public void testDoGetFetchesDoctorsAndServices() throws Exception {
+    void testDoGetFetchesDoctorsAndServices() throws Exception {
         when(userService.getDoctors()).thenReturn(new ArrayList<>());
 
         bookingServlet.doGet(request, response);
@@ -68,7 +68,7 @@ public class AppointmentBookingServletTest {
      * Kiểm thử POST /customer/book đặt lịch thành công khi không có xung đột giờ khám.
      */
     @Test
-    public void testDoPostBookingSuccess() throws Exception {
+    void testDoPostBookingSuccess() throws Exception {
         User patient = new User();
         patient.setUserId(5);
         when(session.getAttribute(Constants.SESSION_USER)).thenReturn(patient);
@@ -91,7 +91,7 @@ public class AppointmentBookingServletTest {
      * Kiểm thử POST /customer/book phát sinh lỗi trùng lịch (Slot Conflict).
      */
     @Test
-    public void testDoPostBookingSlotConflict() throws Exception {
+    void testDoPostBookingSlotConflict() throws Exception {
         User patient = new User();
         patient.setUserId(5);
         when(session.getAttribute(Constants.SESSION_USER)).thenReturn(patient);

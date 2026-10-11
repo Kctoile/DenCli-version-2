@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class RevenueReportServletTest {
+class RevenueReportServletTest {
 
     private RevenueReportServlet revenueReportServlet;
     private HttpServletRequest request;
@@ -28,7 +28,7 @@ public class RevenueReportServletTest {
     private AppointmentService appointmentService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         revenueReportServlet = new RevenueReportServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -41,7 +41,7 @@ public class RevenueReportServletTest {
      * Kiểm thử GET /admin/api/revenue trả về đúng định dạng JSON và dữ liệu doanh thu các tháng.
      */
     @Test
-    public void testDoGetReturnsJsonRevenueReport() throws Exception {
+    void testDoGetReturnsJsonRevenueReport() throws Exception {
         when(request.getParameter("year")).thenReturn("2026");
 
         StringWriter sw = new StringWriter();

@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DBConnectionTest {
+class DBConnectionTest {
 
     /**
      * Phương thức kiểm thử việc nạp Driver com.microsoft.sqlserver.jdbc.SQLServerDriver thành công.
      */
     @Test
-    public void testDriverClassAvailable() {
+    void testDriverClassAvailable() {
         assertDoesNotThrow(() -> {
             // Nạp class Driver kiểm tra xem thư viện mssql-jdbc đã sẵn sàng trong classpath chưa
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -25,7 +25,7 @@ public class DBConnectionTest {
      * Phương thức kiểm thử các hàm đóng tài nguyên tiện ích khi truyền giá trị null không gây ra lỗi ngoại lệ.
      */
     @Test
-    public void testSafeCloseWithNull() {
+    void testSafeCloseWithNull() {
         assertDoesNotThrow(() -> {
             DBConnection.closeResultSet(null);
             DBConnection.closeStatement(null);
@@ -40,7 +40,7 @@ public class DBConnectionTest {
      */
     @Test
     @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
-    public void testGetConnectionSuccess() {
+    void testGetConnectionSuccess() {
         assertDoesNotThrow(() -> {
             try (java.sql.Connection conn = DBConnection.getConnection()) {
                 assertNotNull(conn);

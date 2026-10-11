@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,23 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hóa đơn viện phí khám chữa bệnh | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        @media print {
-            .no-print, header, nav, .btn, footer, .toast-container { display: none !important; }
-            body { background-color: #fff !important; }
-            .card-custom { box-shadow: none !important; border: none !important; }
-            .print-full-width { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -42,7 +32,7 @@
 
             <!-- Nội dung chính -->
             <main class="col-12 col-md-9 col-lg-10 p-4 print-full-width">
-                <div class="card card-custom bg-white p-4 p-md-5 mx-auto" style="max-width: 880px;">
+                <div class="dencli-card bg-white p-4 p-md-5 mx-auto" style="max-width: 880px;">
 
                     <!-- Tiêu đề Hóa đơn & Thông tin phòng khám -->
                     <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">

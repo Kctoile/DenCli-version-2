@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.service.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.dao.impl.AppointmentDAOImpl;
@@ -23,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class AppointmentServiceImpl implements AppointmentService {
+
+    private static final Logger LOGGER = Logger.getLogger(AppointmentServiceImpl.class.getName());
 
     private final AppointmentDAO appointmentDAO;
     private final ServiceDAO serviceDAO;
@@ -83,7 +87,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 AppointmentWebSocket.broadcast("{\"event\":\"NEW_APPOINTMENT\",\"appointmentId\":" + appointmentId + "}");
             } catch (Exception e) {
                 // Non-blocking: DB transaction is already safely committed
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
 
@@ -302,13 +306,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             }
         }
         return false;
-    }
-
-    private boolean canTransition(Appointment appointment, String targetStatus) {
-        if (appointment == null || targetStatus == null) {
-            return false;
-        }
-        return isValidStatusTransition(appointment.getStatus(), targetStatus);
     }
 
     /**

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AuthorizationFilterTest {
+class AuthorizationFilterTest {
 
     private AuthorizationFilter authorizationFilter;
     private HttpServletRequest request;
@@ -30,7 +30,7 @@ public class AuthorizationFilterTest {
     private RequestDispatcher dispatcher;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         authorizationFilter = new AuthorizationFilter();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -46,7 +46,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Quản trị viên (ADMIN - 1) truy cập phân hệ /admin.jsp thành công.
      */
     @Test
-    public void testAdminAccessAdminPathSuccess() throws IOException, ServletException {
+    void testAdminAccessAdminPathSuccess() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -65,7 +65,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Bác sĩ (DOCTOR - 2) cố tình truy cập phân hệ Quản trị /admin.jsp bị chặn mã 403 và forward sang 403.jsp.
      */
     @Test
-    public void testDoctorAccessAdminPathForbidden() throws IOException, ServletException {
+    void testDoctorAccessAdminPathForbidden() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -86,7 +86,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Bác sĩ (DOCTOR - 2) truy cập buồng khám /doctor.jsp thành công.
      */
     @Test
-    public void testDoctorAccessDoctorPathSuccess() throws IOException, ServletException {
+    void testDoctorAccessDoctorPathSuccess() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/doctor.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -105,7 +105,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Bệnh nhân (CUSTOMER - 5) cố tình truy cập buồng khám Bác sĩ /doctor.jsp bị chặn 403.
      */
     @Test
-    public void testCustomerAccessDoctorPathForbidden() throws IOException, ServletException {
+    void testCustomerAccessDoctorPathForbidden() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/doctor.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -125,7 +125,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Bệnh nhân (CUSTOMER - 5) truy cập trang đặt lịch /book.jsp thành công.
      */
     @Test
-    public void testCustomerAccessCustomerPathSuccess() throws IOException, ServletException {
+    void testCustomerAccessCustomerPathSuccess() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/book.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -144,7 +144,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử Lễ tân (STAFF - 4) truy cập bàn tiếp đón /staff.jsp thành công.
      */
     @Test
-    public void testStaffAccessStaffPathSuccess() throws IOException, ServletException {
+    void testStaffAccessStaffPathSuccess() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/staff.jsp");
         when(request.getSession(false)).thenReturn(session);
 
@@ -163,7 +163,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử truy cập phân hệ bảo vệ khi chưa đăng nhập sẽ chuyển hướng sang login.jsp.
      */
     @Test
-    public void testUnauthenticatedAccessRedirectsToLogin() throws IOException, ServletException {
+    void testUnauthenticatedAccessRedirectsToLogin() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin.jsp");
         when(request.getSession(false)).thenReturn(null);
 
@@ -177,7 +177,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử đường dẫn công khai thông thường (/index.jsp) không bị chặn bởi AuthorizationFilter.
      */
     @Test
-    public void testNonRoleProtectedPathAllowed() throws IOException, ServletException {
+    void testNonRoleProtectedPathAllowed() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/index.jsp");
 
         authorizationFilter.doFilter(request, response, chain);
@@ -190,7 +190,7 @@ public class AuthorizationFilterTest {
      * Kiểm thử yêu cầu API không đủ quyền sẽ trả về JSON HTTP 403 Forbidden thay vì forward 403.jsp.
      */
     @Test
-    public void testApiForbiddenReturns403Json() throws IOException, ServletException {
+    void testApiForbiddenReturns403Json() throws IOException, ServletException {
         when(request.getRequestURI()).thenReturn("/DenCli/admin/users");
         when(request.getHeader("Accept")).thenReturn("application/json");
         when(request.getSession(false)).thenReturn(session);

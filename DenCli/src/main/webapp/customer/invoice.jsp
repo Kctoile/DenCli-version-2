@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,22 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hóa đơn & Chi tiết khám bệnh #${appointmentId} | DenCli</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .card-custom { border: none; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        @media print {
-            .no-print, header, nav, .btn, footer, .sidebar { display: none !important; }
-            body { background-color: #fff !important; }
-            .card-custom { box-shadow: none !important; border: none !important; }
-            .print-full-width { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -38,7 +28,7 @@
             </div>
 
             <main class="col-12 col-md-9 col-lg-10 p-4 print-full-width">
-                <div class="card card-custom bg-white p-4 p-md-5 mx-auto" style="max-width: 880px;">
+                <div class="dencli-card bg-white p-4 p-md-5 mx-auto" style="max-width: 880px;">
 
                     <!-- Tiêu đề Hóa đơn -->
                     <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
@@ -157,20 +147,20 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Tiền dịch vụ:</span>
                                     <span class="fw-semibold">
-                                        <fmt:formatNumber value="${invoice.totalServiceFee}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
+                                        <fmt:formatNumber value="${invoice.servicesTotal}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
                                     </span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Tiền thuốc:</span>
                                     <span class="fw-semibold">
-                                        <fmt:formatNumber value="${invoice.totalMedicineFee}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
+                                        <fmt:formatNumber value="${invoice.medicinesTotal}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
                                     </span>
                                 </div>
                                 <hr class="my-2">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="fs-5 fw-bold text-dark">TỔNG CỘNG:</span>
                                     <span class="fs-4 fw-bold text-danger">
-                                        <fmt:formatNumber value="${invoice.totalAmount}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
+                                        <fmt:formatNumber value="${invoice.grandTotal}" type="currency" currencySymbol="₫" maxFractionDigits="0" />
                                     </span>
                                 </div>
                             </div>
@@ -179,16 +169,16 @@
 
                     <!-- Nút thao tác -->
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top no-print">
-                        <a href="${pageContext.request.contextPath}/customer/profile" class="btn btn-outline-secondary">
+                        <a href="${pageContext.request.contextPath}/customer/profile" class="btn btn-outline-secondary rounded-pill px-3">
                             ← Quay lại Hồ sơ của tôi
                         </a>
                         <div class="d-flex gap-2">
                             <c:if test="${invoice.status != 'Completed'}">
-                                <a href="${pageContext.request.contextPath}/payment/vnpay?appointment_id=${appointmentId}" class="btn btn-success fw-bold">
-                                    💳 Thanh toán trực tuyến VNPAY
+                                <a href="${pageContext.request.contextPath}/payment/vnpay?appointment_id=${appointmentId}" class="btn btn-cta-primary fw-bold">
+                                    <span>💳</span><span>Thanh toán trực tuyến VNPAY</span>
                                 </a>
                             </c:if>
-                            <button type="button" class="btn btn-outline-primary fw-semibold" onclick="window.print()">
+                            <button type="button" class="btn btn-outline-primary fw-semibold rounded-pill px-3" onclick="window.print()">
                                 🖨️ In / Xuất PDF Hóa đơn
                             </button>
                         </div>

@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +13,6 @@ import java.util.List;
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Prescription;
-
-import com.devjava.dencli.dao.DBConnection;
-import com.devjava.dencli.dao.PrescriptionDAO;
-import com.devjava.dencli.model.Prescription;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.model.PrescriptionDetail;
 import com.devjava.dencli.model.PrescriptionDetail;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PrescriptionDAOImpl implements PrescriptionDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(PrescriptionDAOImpl.class.getName());
 
     @Override
     public boolean isResultAssignedToDoctor(int resultId, int doctorId, Connection conn) {
@@ -42,7 +35,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
                 return rs.next();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -53,118 +46,77 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
      * @param conn Kết nối JDBC của Transaction (hoặc null)
      * @return Mã prescription_id vừa được sinh ra, hoặc -1 nếu thất bại
      */
-    @Override // Ghi đè phương thức insertPrescription từ interface PrescriptionDAO
-    public int insertPrescription(Prescription prescription, Connection conn) {
+    // ponytail: helper method executes insert with provided Connection (no duplicate PreparedStatement binding)
+    private int executeInsertPrescription(Connection conn, Prescription prescription) throws SQLException {
         String sql = "INSERT INTO prescriptions (result_id, instructions) VALUES (?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            if (prescription.getResultId() != null) {
+                ps.setInt(1, prescription.getResultId());
+            } else {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            }
 
+            ps.setString(2, prescription.getInstructions());
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rsKeys = ps.getGeneratedKeys()) {
+                    if (rsKeys.next()) {
+                        return rsKeys.getInt(1);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int insertPrescription(Prescription prescription, Connection conn) {
         if (conn != null) {
-            // Khi có Connection từ Transaction bên ngoài, sử dụng try-with-resources cho PreparedStatement
-            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                if (prescription.getResultId() != null) {
-                    ps.setInt(1, prescription.getResultId());
-                } else {
-                    ps.setNull(1, java.sql.Types.INTEGER);
-                }
-
-                ps.setString(2, prescription.getInstructions());
-
-                int rows = ps.executeUpdate();
-                if (rows > 0) {
-                    try (ResultSet rsKeys = ps.getGeneratedKeys()) {
-                        if (rsKeys.next()) {
-                            return rsKeys.getInt(1);
-                        }
-                    }
-                }
-
+            try {
+                return executeInsertPrescription(conn, prescription);
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                return -1;
             }
-
-            return -1;
-        } else {
-            // Tự mở Connection bằng try-with-resources khi không có Transaction ngoài
-            try (Connection localConn = DBConnection.getConnection();
-                 PreparedStatement ps = localConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-                if (prescription.getResultId() != null) {
-                    ps.setInt(1, prescription.getResultId());
-                } else {
-                    ps.setNull(1, java.sql.Types.INTEGER);
-                }
-
-                ps.setString(2, prescription.getInstructions());
-
-                int rows = ps.executeUpdate();
-                if (rows > 0) {
-                    try (ResultSet rsKeys = ps.getGeneratedKeys()) {
-                        if (rsKeys.next()) {
-                            return rsKeys.getInt(1);
-                        }
-                    }
-                }
-
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-            }
-
+        }
+        try (Connection localConn = DBConnection.getConnection()) {
+            return executeInsertPrescription(localConn, prescription);
+        } catch (ClassNotFoundException | SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return -1;
         }
     }
 
-    /**
-     * Phương thức thêm một bản ghi chi tiết đơn thuốc vào bảng prescription_details.
-     * @param detail Đối tượng chi tiết thuốc
-     * @param conn Kết nối JDBC của Transaction (hoặc null)
-     * @return true nếu thêm thành công
-     */
-    @Override // Ghi đè phương thức insertPrescriptionDetail từ interface PrescriptionDAO
-    public boolean insertPrescriptionDetail(PrescriptionDetail detail, Connection conn) {
+    // ponytail: helper method executes detail insert with provided Connection
+    private boolean executeInsertPrescriptionDetail(Connection conn, PrescriptionDetail detail) throws SQLException {
         String sql = "INSERT INTO prescription_details (prescription_id, medicine_id, prescribed_quantity, purchased_quantity, unit_price) "
                + "SELECT ?, medicine_id, ?, ?, price FROM medicines WHERE medicine_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, detail.getPrescriptionId());
+            ps.setInt(2, detail.getPrescribedQuantity());
+            ps.setInt(3, detail.getPurchasedQuantity() != null ? detail.getPurchasedQuantity() : detail.getPrescribedQuantity());
+            ps.setInt(4, detail.getMedicineId());
 
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean insertPrescriptionDetail(PrescriptionDetail detail, Connection conn) {
         if (conn != null) {
-            // Quản lý PreparedStatement trên Connection chung của Transaction
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, detail.getPrescriptionId());
-                ps.setInt(2, detail.getPrescribedQuantity());
-
-                if (detail.getPurchasedQuantity() != null) {
-                    ps.setInt(4, detail.getPurchasedQuantity());
-                } else {
-                    ps.setInt(4, detail.getPrescribedQuantity());
-                }
-
-                ps.setInt(5, detail.getMedicineId());
-
-                return ps.executeUpdate() > 0;
-
+            try {
+                return executeInsertPrescriptionDetail(conn, detail);
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
-        } else {
-            // Mở kết nối riêng khi không có Transaction
-            try (Connection localConn = DBConnection.getConnection();
-                 PreparedStatement ps = localConn.prepareStatement(sql)) {
-
-                ps.setInt(1, detail.getPrescriptionId());
-                ps.setInt(2, detail.getPrescribedQuantity());
-
-                if (detail.getPurchasedQuantity() != null) {
-                    ps.setInt(4, detail.getPurchasedQuantity());
-                } else {
-                    ps.setInt(4, detail.getPrescribedQuantity());
-                }
-
-                ps.setInt(5, detail.getMedicineId());
-
-                return ps.executeUpdate() > 0;
-
-            } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
+        }
+        try (Connection localConn = DBConnection.getConnection()) {
+            return executeInsertPrescriptionDetail(localConn, detail);
+        } catch (ClassNotFoundException | SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return false;
         }
     }
 
@@ -175,7 +127,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
      */
     @Override // Ghi đè phương thức getPrescriptionByResultId từ interface PrescriptionDAO
     public Prescription getPrescriptionByResultId(int resultId) {
-        String sql = "SELECT * FROM prescriptions WHERE result_id = ?";
+        String sql = "SELECT prescription_id, result_id, instructions FROM prescriptions WHERE result_id = ?";
 
         // Sử dụng try-with-resources để tự động giải phóng Connection
         try (Connection conn = DBConnection.getConnection();
@@ -198,7 +150,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -243,7 +195,7 @@ public class PrescriptionDAOImpl implements PrescriptionDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;

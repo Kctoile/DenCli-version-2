@@ -114,15 +114,11 @@ public class AuthenticationFilter implements Filter {
         }
 
         // Các tài nguyên tĩnh, xác thực công khai, callback thanh toán và websocket
-        if (path.startsWith("/assets/") || path.startsWith("/css/")
+        return path.startsWith("/assets/") || path.startsWith("/css/")
                 || path.startsWith("/js/") || path.startsWith("/images/")
                 || path.startsWith("/vendor/") || path.startsWith("/auth/")
                 || path.startsWith("/payment/vnpay-return") || path.startsWith("/ws/")
-                || path.startsWith("/api/appointments/booked-slots")) {
-            return true;
-        }
-
-        return false;
+                || path.startsWith("/api/appointments/booked-slots");
     }
 
     @Override

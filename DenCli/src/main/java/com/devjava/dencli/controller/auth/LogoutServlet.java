@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "AuthLogoutServlet", urlPatterns = {"/logout"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class LogoutServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

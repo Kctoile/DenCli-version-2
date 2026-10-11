@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Service;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class ServiceDAOImpl implements ServiceDAO {
 
+    private static final Logger LOGGER = Logger.getLogger(ServiceDAOImpl.class.getName());
+
     /**
      * Phương thức lấy toàn bộ danh sách dịch vụ nha khoa hiện có, sắp xếp theo tên dịch vụ.
      * @return Danh sách các dịch vụ
@@ -23,7 +27,7 @@ public class ServiceDAOImpl implements ServiceDAO {
     @Override // Ghi đè phương thức getAllServices từ interface ServiceDAO
     public List<Service> getAllServices() {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM services ORDER BY service_id ASC";
+        String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services ORDER BY service_id ASC";
 
         // Sử dụng try-with-resources để tự động giải phóng tài nguyên kết nối
         try (Connection conn = DBConnection.getConnection();
@@ -38,7 +42,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi khi lấy danh sách dịch vụ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return services;
@@ -51,7 +55,7 @@ public class ServiceDAOImpl implements ServiceDAO {
      */
     @Override // Ghi đè phương thức getServiceById từ interface ServiceDAO
     public Service getServiceById(int serviceId) {
-        String sql = "SELECT * FROM services WHERE service_id = ?";
+        String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services WHERE service_id = ?";
 
         // Sử dụng try-with-resources đóng Connection và PreparedStatement an toàn
         try (Connection conn = DBConnection.getConnection();
@@ -67,7 +71,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In ngoại lệ khi truy vấn dịch vụ theo ID thất bại
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -101,7 +105,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận ngoại lệ hệ thống
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return services;
@@ -116,7 +120,7 @@ public class ServiceDAOImpl implements ServiceDAO {
     @Override // Ghi đè phương thức getServicesWithPagination từ interface ServiceDAO
     public List<Service> getServicesWithPagination(int offset, int limit) {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM services ORDER BY service_id ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services ORDER BY service_id ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         // Sử dụng try-with-resources để tự động giải phóng Connection
         try (Connection conn = DBConnection.getConnection();
@@ -135,7 +139,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In vết lỗi phân trang dịch vụ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return services;
@@ -160,7 +164,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi khi đếm số dịch vụ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -194,7 +198,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In ngoại lệ khi thêm mới dịch vụ thất bại
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -231,7 +235,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi cập nhật thông tin dịch vụ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -257,7 +261,7 @@ public class ServiceDAOImpl implements ServiceDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Bắt lỗi khi xóa dịch vụ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;

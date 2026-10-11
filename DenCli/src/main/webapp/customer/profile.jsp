@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ sơ cá nhân & Lịch sử khám | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,13 +60,13 @@
                     </c:forEach>
 
                     <!-- Khối thông tin tài khoản -->
-                    <div class="card card-custom bg-white p-4 mb-4">
-                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <div class="dencli-card p-4 mb-4">
+                        <div class="page-header-box">
                             <div>
-                                <h4 class="fw-bold text-primary mb-1">👤 Hồ sơ cá nhân</h4>
-                                <p class="text-muted small mb-0">Quản lý và cập nhật thông tin liên hệ của bạn tại phòng khám.</p>
+                                <h4 class="page-header-title">👤 Hồ sơ cá nhân</h4>
+                                <p class="page-header-subtitle">Quản lý và cập nhật thông tin liên hệ của bạn tại phòng khám.</p>
                             </div>
-                            <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 fw-semibold">
+                            <span class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 fw-semibold rounded-pill">
                                 Mã BN: #<c:out value="${profileUser.userId}" />
                             </span>
                         </div>
@@ -105,20 +105,20 @@
                                 </div>
                             </div>
                             <div class="text-end mt-3">
-                                <button type="submit" class="btn btn-primary px-4 fw-semibold">Lưu thay đổi</button>
+                                <button type="submit" class="btn btn-den-primary px-4 py-2 fw-semibold rounded-pill">Lưu thay đổi</button>
                             </div>
                         </form>
                     </div>
 
                     <!-- Khối lịch sử khám bệnh -->
-                    <div class="card card-custom bg-white p-4">
-                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <div class="dencli-card p-4">
+                        <div class="page-header-box">
                             <div>
-                                <h4 class="fw-bold text-primary mb-1">📋 Lịch sử & Trạng thái Đặt khám</h4>
-                                <p class="text-muted small mb-0">Theo dõi tiến trình các cuộc hẹn từ khi đặt lịch đến khi hoàn tất.</p>
+                                <h4 class="page-header-title">📋 Lịch sử & Trạng thái Đặt khám</h4>
+                                <p class="page-header-subtitle">Theo dõi tiến trình các cuộc hẹn từ khi đặt lịch đến khi hoàn tất.</p>
                             </div>
-                            <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-sm btn-primary fw-semibold px-3">
-                                + Đặt lịch mới
+                            <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-cta-primary btn-sm rounded-pill px-3">
+                                <span>📅</span><span>Đặt lịch mới</span>
                             </a>
                         </div>
 
@@ -170,22 +170,22 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${app.status == 'Pending'}">
-                                                                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                                                <span class="status-badge status-pending">Chờ xác nhận</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Confirmed'}">
-                                                                <span class="badge bg-info text-dark">Đã xác nhận</span>
+                                                                <span class="status-badge status-confirmed">Đã xác nhận</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Checked In'}">
-                                                                <span class="badge bg-primary">Đã tiếp đón</span>
+                                                                <span class="status-badge status-checkedin">Đã tiếp đón</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Completed'}">
-                                                                <span class="badge bg-success">Đã hoàn thành</span>
+                                                                <span class="status-badge status-completed">Đã hoàn thành</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Cancelled'}">
-                                                                <span class="badge bg-danger">Đã hủy</span>
+                                                                <span class="status-badge status-cancelled">Đã hủy</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badge bg-secondary"><c:out value="${app.status}" /></span>
+                                                                <span class="status-badge bg-secondary text-white"><c:out value="${app.status}" /></span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>

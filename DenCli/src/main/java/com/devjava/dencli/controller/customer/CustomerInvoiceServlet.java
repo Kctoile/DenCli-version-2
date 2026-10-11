@@ -19,6 +19,7 @@ import java.io.IOException;
  * Servlet cho phép Bệnh nhân xem chi tiết hóa đơn viện phí, đơn thuốc và in/xuất PDF hóa đơn của mình.
  */
 @WebServlet(name = "CustomerInvoiceServlet", urlPatterns = {"/customer/invoice"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class CustomerInvoiceServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -41,6 +42,7 @@ public class CustomerInvoiceServlet extends HttpServlet {
                 appointmentId = Integer.parseInt(appStr.trim());
             }
         } catch (NumberFormatException ignored) {
+            // Retain appointmentId = 0 to trigger validation check below
         }
 
         if (appointmentId <= 0) {

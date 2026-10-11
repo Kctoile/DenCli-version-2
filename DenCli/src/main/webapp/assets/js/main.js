@@ -68,26 +68,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const card = document.getElementById(caseId);
         if (!card) return;
 
+        const isBefore = state === 'before';
         const beforeBox = card.querySelector('.case-box-before');
         const afterBox = card.querySelector('.case-box-after');
         const btnBefore = card.querySelector('.btn-toggle-before');
         const btnAfter = card.querySelector('.btn-toggle-after');
 
-        if (state === 'before') {
-            if (beforeBox) beforeBox.style.display = 'block';
-            if (afterBox) afterBox.style.display = 'none';
-            if (btnBefore) btnBefore.classList.add('active', 'btn-primary');
-            if (btnBefore) btnBefore.classList.remove('btn-outline-secondary');
-            if (btnAfter) btnAfter.classList.remove('active', 'btn-primary');
-            if (btnAfter) btnAfter.classList.add('btn-outline-secondary');
-        } else {
-            if (beforeBox) beforeBox.style.display = 'none';
-            if (afterBox) afterBox.style.display = 'block';
-            if (btnAfter) btnAfter.classList.add('active', 'btn-success');
-            if (btnAfter) btnAfter.classList.remove('btn-outline-secondary');
-            if (btnBefore) btnBefore.classList.remove('active', 'btn-primary');
-            if (btnBefore) btnBefore.classList.add('btn-outline-secondary');
-        }
+        if (beforeBox) beforeBox.style.display = isBefore ? 'block' : 'none';
+        if (afterBox) afterBox.style.display = isBefore ? 'none' : 'block';
+
+        btnBefore?.classList.toggle('active', isBefore);
+        btnBefore?.classList.toggle('btn-primary', isBefore);
+        btnBefore?.classList.toggle('btn-outline-secondary', !isBefore);
+
+        btnAfter?.classList.toggle('active', !isBefore);
+        btnAfter?.classList.toggle('btn-success', !isBefore);
+        btnAfter?.classList.toggle('btn-outline-secondary', isBefore);
     };
 
     // 5. Smooth Scrolling for Internal Anchors with Navbar Offset

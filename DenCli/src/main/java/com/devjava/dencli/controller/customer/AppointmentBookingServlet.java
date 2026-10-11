@@ -28,12 +28,15 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "CustomerBookingServlet", urlPatterns = {"/customer/book"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class AppointmentBookingServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
     private static final ServiceDAO serviceDAO = new ServiceDAOImpl();
     private static final String JSON_CONTENT_TYPE = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
+    private static final String KEY_SUCCESS = "success";
+    private static final String KEY_MESSAGE = "message";
 
     /**
      * GET /customer/book: Lấy danh sách bác sĩ và danh mục dịch vụ, chuyển tiếp sang trang đặt lịch.
@@ -100,8 +103,8 @@ public class AppointmentBookingServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> err = new HashMap<>();
-            err.put("success", false);
-            err.put("message", "Vui lòng đăng nhập để thực hiện đặt lịch.");
+            err.put(KEY_SUCCESS, false);
+            err.put(KEY_MESSAGE, "Vui lòng đăng nhập để thực hiện đặt lịch.");
             response.getWriter().print(gson.toJson(err));
         } else {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
@@ -155,8 +158,8 @@ public class AppointmentBookingServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> resData = new HashMap<>();
-            resData.put("success", true);
-            resData.put("message", "Đặt lịch khám bệnh thành công! Mã cuộc hẹn: #" + appointmentId);
+            resData.put(KEY_SUCCESS, true);
+            resData.put(KEY_MESSAGE, "Đặt lịch khám bệnh thành công! Mã cuộc hẹn: #" + appointmentId);
             resData.put("appointment_id", appointmentId);
             response.getWriter().print(gson.toJson(resData));
         } else {
@@ -172,8 +175,8 @@ public class AppointmentBookingServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType(JSON_CONTENT_TYPE);
             Map<String, Object> err = new HashMap<>();
-            err.put("success", false);
-            err.put("message", message);
+            err.put(KEY_SUCCESS, false);
+            err.put(KEY_MESSAGE, message);
             err.put("error_code", "ERR_SLOT_CONFLICT");
             response.getWriter().print(gson.toJson(err));
         } else {

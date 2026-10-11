@@ -10,7 +10,6 @@ import com.devjava.dencli.model.User;
 import com.devjava.dencli.service.UserService;
 import com.devjava.dencli.util.Constants;
 import com.devjava.dencli.util.PasswordUtil;
-import java.util.Collections;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
@@ -80,10 +79,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // Nếu người dùng có nhập email thì kiểm tra email trùng lặp
-        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
-            if (userDAO.checkEmailExists(user.getEmail().trim())) {
-                return false;
-            }
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty() && userDAO.checkEmailExists(user.getEmail().trim())) {
+            return false;
         }
 
         // Gọi hàm băm mật khẩu BCrypt từ lớp tiện ích PasswordUtil

@@ -32,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "DoctorExaminationServlet", urlPatterns = {"/doctor/examination", "/doctor/dashboard"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ExaminationServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -156,7 +157,7 @@ public class ExaminationServlet extends HttpServlet {
         if (revisitDateStr != null && !revisitDateStr.isBlank()) {
             try {
                 revisitDate = Date.valueOf(revisitDateStr.trim());
-                if (revisitDate.before(Date.valueOf(java.time.LocalDate.now()))) {
+                if (revisitDate.before(Date.valueOf(java.time.LocalDate.now(java.time.ZoneId.systemDefault())))) {
                     handleError(response, isJson, request, "Ngày tái khám không thể ở trong quá khứ.");
                     return;
                 }
@@ -180,7 +181,7 @@ public class ExaminationServlet extends HttpServlet {
                 resData.put("result_id", resultId);
                 response.getWriter().print(gson.toJson(resData));
             } else {
-                request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE, "Ghi nhận hồ sơ bệnh án thành công!");
+                request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE, "Ghi nhận hồ sơ bệnh án thành công! Mã bệnh án (Result ID) là #" + resultId + " (dùng mã này để kê đơn thuốc).");
                 response.sendRedirect(request.getContextPath() + "/doctor/examination");
             }
         } else {

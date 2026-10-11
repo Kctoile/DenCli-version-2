@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.dao.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +21,8 @@ import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.PrescribedService;
 
 public class ExaminationResultDAOImpl implements ExaminationResultDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ExaminationResultDAOImpl.class.getName());
 
     /**
      * Phương thức thêm mới một bản ghi kết quả khám lâm sàng vào bảng examination_results.
@@ -57,7 +61,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
                 }
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
             return -1;
@@ -87,7 +91,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
                 }
 
             } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
             return -1;
@@ -129,7 +133,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -156,7 +160,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
                 return ps.executeUpdate() > 0;
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
         } else {
@@ -172,7 +176,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
                 return ps.executeUpdate() > 0;
 
             } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
         }
@@ -211,7 +215,7 @@ public class ExaminationResultDAOImpl implements ExaminationResultDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;

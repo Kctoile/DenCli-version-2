@@ -30,6 +30,7 @@ public class AppointmentCalendarEndpoint {
     // Map lưu trữ topic: key = "{doctorId}_{date}", value = Set các WebSocket Session đang mở
     private static final Map<String, Set<Session>> TOPIC_SESSIONS = new ConcurrentHashMap<>();
 
+    private static final String UNKNOWN_VAL = "unknown";
     private String topicKey;
 
     @OnOpen
@@ -52,14 +53,14 @@ public class AppointmentCalendarEndpoint {
             }
         }
         LOGGER.log(Level.INFO, "[WebSocket Calendar] Client disconnected: {0}",
-            new Object[]{session == null ? "unknown" : safeLogValue(session.getId())});
+            new Object[]{session == null ? UNKNOWN_VAL : safeLogValue(session.getId())});
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
         LOGGER.log(Level.WARNING, "[WebSocket Calendar] Error on {0}: {1}",
-            new Object[]{session == null ? "unknown" : safeLogValue(session.getId()),
-                throwable == null ? "unknown" : safeLogValue(throwable.getMessage())});
+            new Object[]{session == null ? UNKNOWN_VAL : safeLogValue(session.getId()),
+                throwable == null ? UNKNOWN_VAL : safeLogValue(throwable.getMessage())});
         onClose(session);
     }
 
@@ -68,7 +69,9 @@ public class AppointmentCalendarEndpoint {
         if (session != null && "ping".equalsIgnoreCase(message)) {
             try {
                 session.getBasicRemote().sendText("pong");
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                // Best-effort pong response
+            }
         }
     }
 
@@ -102,7 +105,9 @@ public class AppointmentCalendarEndpoint {
                             new Object[]{safeLogValue(s.getId()), safeLogValue(e.getMessage())});
                     try {
                         s.close();
-                    } catch (IOException ignored) {}
+                    } catch (IOException ignored) {
+                        // Best-effort session closure
+                    }
                 }
             }
         }

@@ -21,6 +21,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 @WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin/dashboard"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

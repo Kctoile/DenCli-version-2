@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class BillingServiceTest {
+class BillingServiceTest {
 
     private AppointmentDAO appointmentDAO;
     private ServiceDAO serviceDAO;
@@ -37,7 +37,7 @@ public class BillingServiceTest {
      * Khởi tạo các mock objects và inject vào BillingServiceImpl.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         appointmentDAO = mock(AppointmentDAO.class);
         serviceDAO = mock(ServiceDAO.class);
         examinationResultDAO = mock(ExaminationResultDAO.class);
@@ -50,7 +50,7 @@ public class BillingServiceTest {
      * Kiểm thử tính tổng hóa đơn gồm dịch vụ đặt trước + dịch vụ chỉ định thêm + đơn thuốc.
      */
     @Test
-    public void testCalculateInvoiceComprehensive() {
+    void testCalculateInvoiceComprehensive() {
         int appointmentId = 12;
 
         Appointment app = new Appointment();
@@ -97,7 +97,7 @@ public class BillingServiceTest {
      * Kiểm thử đánh dấu thanh toán hóa đơn thành công.
      */
     @Test
-    public void testPayInvoiceSuccess() {
+    void testPayInvoiceSuccess() {
         when(appointmentDAO.updateAppointmentStatusIfCurrent(20, Constants.APPOINTMENT_CHECKED_IN,
             Constants.APPOINTMENT_COMPLETED)).thenReturn(true);
 

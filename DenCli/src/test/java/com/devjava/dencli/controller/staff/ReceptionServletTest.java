@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-public class ReceptionServletTest {
+class ReceptionServletTest {
 
     private ReceptionServlet receptionServlet;
     private HttpServletRequest request;
@@ -28,7 +28,7 @@ public class ReceptionServletTest {
     private AppointmentService appointmentService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         receptionServlet = new ReceptionServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -48,7 +48,7 @@ public class ReceptionServletTest {
      * Kiểm thử GET /staff/reception lấy danh sách cuộc hẹn và forward tới reception.jsp.
      */
     @Test
-    public void testDoGetFetchesAppointments() throws Exception {
+    void testDoGetFetchesAppointments() throws Exception {
         when(appointmentService.getAllAppointments(null, null, 1, 50)).thenReturn(new ArrayList<>());
 
         receptionServlet.doGet(request, response);
@@ -62,7 +62,7 @@ public class ReceptionServletTest {
      * Kiểm thử POST /staff/reception hành động checkin thành công.
      */
     @Test
-    public void testDoPostCheckInSuccess() throws Exception {
+    void testDoPostCheckInSuccess() throws Exception {
         User staff = new User();
         staff.setUserId(4);
         staff.setRoleId(Constants.ROLE_STAFF_ID);
@@ -84,7 +84,7 @@ public class ReceptionServletTest {
      * Kiểm thử POST /staff/reception hành động cancel thành công.
      */
     @Test
-    public void testDoPostCancelSuccess() throws Exception {
+    void testDoPostCancelSuccess() throws Exception {
         User staff = new User();
         staff.setUserId(4);
         staff.setRoleId(Constants.ROLE_STAFF_ID);

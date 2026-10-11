@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Người dùng | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,11 +30,11 @@
             <main class="col-12 col-md-9 col-lg-10 p-4">
                 <div class="container-fluid p-0">
 
-                    <div class="card card-custom bg-white p-4">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                    <div class="dencli-card p-4">
+                        <div class="page-header-box">
                             <div>
-                                <h4 class="fw-bold text-primary mb-1">👥 Danh sách Tài khoản & Người dùng</h4>
-                                <p class="text-muted small mb-0">Quản lý toàn bộ nhân sự và bệnh nhân trên hệ thống phòng khám.</p>
+                                <h4 class="page-header-title">👥 Danh sách Tài khoản & Người dùng</h4>
+                                <p class="page-header-subtitle">Quản lý toàn bộ nhân sự và bệnh nhân trên hệ thống phòng khám.</p>
                             </div>
 
                             <!-- Bộ lọc vai trò -->
@@ -90,16 +90,16 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${u.roleId == 1}">
-                                                                <span class="badge bg-warning text-dark">⚙️ Quản trị viên</span>
+                                                                <span class="status-badge status-pending">⚙️ Quản trị viên</span>
                                                             </c:when>
                                                             <c:when test="${u.roleId == 2}">
-                                                                <span class="badge bg-info text-dark">🩺 Bác sĩ</span>
+                                                                <span class="status-badge status-confirmed">🩺 Bác sĩ</span>
                                                             </c:when>
                                                             <c:when test="${u.roleId == 4}">
-                                                                <span class="badge bg-primary">💁 Lễ tân</span>
+                                                                <span class="status-badge status-checkedin">💁 Lễ tân</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badge bg-secondary">👤 Bệnh nhân</span>
+                                                                <span class="status-badge bg-light text-dark border">👤 Bệnh nhân</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>

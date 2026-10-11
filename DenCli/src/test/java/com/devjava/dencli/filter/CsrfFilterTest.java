@@ -9,10 +9,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CsrfFilterTest {
+class CsrfFilterTest {
 
     private CsrfFilter csrfFilter;
     private HttpServletRequest request;

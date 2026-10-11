@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -9,126 +9,14 @@
     <meta name="description" content="Đặt lịch hẹn khám chữa răng trực tuyến tại Phòng khám Nha khoa DenCli. Chọn bác sĩ, dịch vụ và khung giờ nhanh chóng.">
     <title>Đăng Ký Đặt Lịch Khám | DenCli Dental Clinic</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
 
-    <style>
-        :root {
-            --dencli-primary: #0EA5E9;
-            --dencli-navy: #1E3A5F;
-            --dencli-coral: #FF6B6B;
-            --dencli-coral-hover: #fa5252;
-            --dencli-bg: #F8FAFC;
-        }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--dencli-bg);
-            color: #0F172A;
-        }
-
-        .booking-hero {
-            background: linear-gradient(135deg, #1E3A5F 0%, #0369A1 100%);
-            color: #FFFFFF;
-            padding: 3rem 0 4rem;
-            margin-bottom: -2rem;
-        }
-
-        .booking-container {
-            max-width: 980px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 10;
-        }
-
-        .booking-card {
-            background: #FFFFFF;
-            border-radius: 1.5rem;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 20px 40px -15px rgba(30, 58, 95, 0.12);
-            padding: 2.5rem;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--dencli-navy);
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .form-control, .form-select {
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-color: #CBD5E1;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--dencli-primary);
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
-        }
-
-        .services-selection-box {
-            max-height: 240px;
-            overflow-y: auto;
-            border-radius: 0.75rem;
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            padding: 1rem;
-        }
-
-        .service-checkbox-card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .service-checkbox-card:hover {
-            border-color: var(--dencli-primary);
-            background-color: #F0F9FF;
-        }
-
-        .btn-submit-booking {
-            background-color: var(--dencli-coral);
-            color: #FFFFFF;
-            font-weight: 700;
-            font-size: 1.05rem;
-            padding: 0.875rem 2.5rem;
-            border-radius: 9999px;
-            border: none;
-            box-shadow: 0 10px 25px -3px rgba(255, 107, 107, 0.4);
-            transition: all 0.25s ease;
-        }
-
-        .btn-submit-booking:hover:not(:disabled) {
-            background-color: var(--dencli-coral-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -3px rgba(255, 107, 107, 0.5);
-            color: #FFFFFF;
-        }
-
-        .btn-submit-booking:disabled {
-            opacity: 0.75;
-            cursor: not-allowed;
-        }
-
-        .guarantee-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: #334155;
-            font-weight: 500;
-        }
-    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -150,7 +38,7 @@
 
     <!-- Booking Form Container -->
     <main class="container booking-container mb-5">
-        <div class="booking-card">
+        <div class="dencli-card p-4 p-md-5">
             <!-- Alert cảnh báo lỗi trực tiếp trên Form (Slot Conflict hoặc thiếu dữ liệu) -->
             <div id="bookingAlert" class="alert alert-danger d-none align-items-center gap-2 mb-4 rounded-3 shadow-sm" role="alert">
                 <span class="fs-4">⚠️</span>
@@ -270,8 +158,8 @@
                         <a href="${pageContext.request.contextPath}/customer/profile" class="btn btn-outline-secondary rounded-pill px-4">
                             Lịch Sử Khám
                         </a>
-                        <button type="submit" id="btnSubmitBooking" class="btn btn-submit-booking d-inline-flex align-items-center gap-2">
-                            <span id="btnSubmitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <button type="submit" id="btnSubmitBooking" class="btn-cta-primary d-inline-flex align-items-center gap-2">
+                            <span id="btnSubmitSpinner" class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                             <span id="btnSubmitText">Xác Nhận Đặt Lịch</span>
                         </button>
                     </div>

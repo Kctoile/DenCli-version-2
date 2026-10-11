@@ -7,7 +7,6 @@
 function handleLogin(event) {
     event.preventDefault();
 
-    const form = document.getElementById('loginForm');
     const alertSuccess = document.getElementById('alertSuccess');
     const alertError = document.getElementById('alertError');
     const btn = document.getElementById('btnSubmit');
@@ -23,7 +22,7 @@ function handleLogin(event) {
             alertError.textContent = 'Vui l\u00F2ng nh\u1EADp \u0111\u1EA7y \u0111\u1EE7 t\u00E0i kho\u1EA3n v\u00E0 m\u1EADt kh\u1EA9u.';
             alertError.style.display = 'block';
         }
-        return false;
+        return;
     }
 
     if (btn) {
@@ -44,7 +43,7 @@ function handleLogin(event) {
         'Accept': 'application/json'
     };
     const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    if (csrfMeta && csrfMeta.getAttribute('content')) {
+    if (csrfMeta?.getAttribute('content')) {
         headers['X-CSRF-TOKEN'] = csrfMeta.getAttribute('content');
     } else if (window.CSRF_TOKEN) {
         headers['X-CSRF-TOKEN'] = window.CSRF_TOKEN;
@@ -74,8 +73,8 @@ function handleLogin(event) {
                 alertSuccess.style.display = 'block';
             }
 
-            const targetUrl = (data.data && data.data.target_url) ? data.data.target_url : '';
-            const role = (data.data && data.data.role) ? data.data.role : 'CUSTOMER';
+            const targetUrl = data.data?.target_url || '';
+            const role = data.data?.role || 'CUSTOMER';
 
             setTimeout(() => {
                 if (targetUrl && targetUrl.length > 0) {
@@ -108,8 +107,6 @@ function handleLogin(event) {
             alertError.style.display = 'block';
         }
     });
-
-    return false;
 }
 
 function togglePasswordVisibility(inputId, toggleButton) {

@@ -7,6 +7,7 @@ package com.devjava.dencli.service;
 import java.math.BigDecimal;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +25,7 @@ import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.service.impl.PrescriptionServiceImpl;
 
-public class PrescriptionServiceTest {
+class PrescriptionServiceTest {
 
     private PrescriptionDAO prescriptionDAO;
     private MedicineDAO medicineDAO;
@@ -34,7 +35,7 @@ public class PrescriptionServiceTest {
      * Khởi tạo mock objects trước mỗi kịch bản test.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         prescriptionDAO = mock(PrescriptionDAO.class);
         medicineDAO = mock(MedicineDAO.class);
         prescriptionService = new PrescriptionServiceImpl(prescriptionDAO, medicineDAO);
@@ -44,7 +45,7 @@ public class PrescriptionServiceTest {
      * Kiểm thử từ chối kê đơn khi đối tượng prescription rỗng hoặc không có danh sách chi tiết thuốc.
      */
     @Test
-    public void testCreatePrescriptionInvalidInput() {
+    void testCreatePrescriptionInvalidInput() {
         // Test null
         assertFalse(prescriptionService.createPrescriptionWithStockDeduction(null, 2));
 
@@ -62,7 +63,7 @@ public class PrescriptionServiceTest {
      * Kiểm thử thêm mới một loại thuốc vào kho thành công.
      */
     @Test
-    public void testAddMedicineSuccess() {
+    void testAddMedicineSuccess() {
         Medicine med = new Medicine();
         med.setMedicineName("Paracetamol 500mg");
         med.setPrice(new BigDecimal("15000"));
@@ -79,7 +80,7 @@ public class PrescriptionServiceTest {
      * Kiểm thử từ chối thêm thuốc khi thiếu tên hoặc giá không hợp lệ.
      */
     @Test
-    public void testAddMedicineInvalid() {
+    void testAddMedicineInvalid() {
         Medicine med = new Medicine();
         med.setMedicineName(""); // Tên trống
         med.setPrice(null);
@@ -88,5 +89,20 @@ public class PrescriptionServiceTest {
 
         assertFalse(added);
         verify(medicineDAO, never()).insertMedicine(any(Medicine.class));
+    }
+
+    /**
+     * Kiểm thử thiết lập và lấy thông tin liều dùng thuốc (dosage) trong chi tiết đơn thuốc.
+     */
+    @Test
+    void testPrescriptionDetailDosage() {
+        com.devjava.dencli.model.PrescriptionDetail detail = new com.devjava.dencli.model.PrescriptionDetail();
+        detail.setMedicineId(5);
+        detail.setPrescribedQuantity(2);
+        detail.setDosage("2 viên/ngày, sáng-tối sau ăn");
+
+        assertEquals("2 viên/ngày, sáng-tối sau ăn", detail.getDosage());
+        assertEquals(5, detail.getMedicineId());
+        assertEquals(2, detail.getPrescribedQuantity());
     }
 }

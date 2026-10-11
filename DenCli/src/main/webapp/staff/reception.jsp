@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bàn Tiếp đón & Điều phối Bệnh nhân | DenCli</title>
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,11 +46,11 @@
                         <c:remove var="successMessage" scope="session" />
                     </c:if>
 
-                    <div class="card card-custom bg-white p-4">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                    <div class="dencli-card p-4">
+                        <div class="page-header-box">
                             <div>
-                                <h4 class="fw-bold text-primary mb-1">💁 Tiếp đón & Phân phối Lịch hẹn</h4>
-                                <p class="text-muted small mb-0">Quản lý tiếp nhận bệnh nhân, check-in phòng khám và điều phối thanh toán.</p>
+                                <h4 class="page-header-title">💁 Tiếp đón & Phân phối Lịch hẹn</h4>
+                                <p class="page-header-subtitle">Quản lý tiếp nhận bệnh nhân, check-in phòng khám và điều phối thanh toán.</p>
                             </div>
 
                             <!-- Bộ lọc Trạng thái và Ngày hẹn -->
@@ -122,27 +122,27 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${app.status == 'Pending'}">
-                                                                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                                                <span class="status-badge status-pending">Chờ xác nhận</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Confirmed'}">
-                                                                <span class="badge bg-info text-dark">Đã xác nhận</span>
+                                                                <span class="status-badge status-confirmed">Đã xác nhận</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Checked In'}">
-                                                                <span class="badge bg-primary">Đã check-in</span>
+                                                                <span class="status-badge status-checkedin">Đã check-in</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Completed'}">
-                                                                <span class="badge bg-success">Đã khám xong</span>
+                                                                <span class="status-badge status-completed">Đã khám xong</span>
                                                             </c:when>
                                                             <c:when test="${app.status == 'Cancelled'}">
-                                                                <span class="badge bg-danger">Đã hủy</span>
+                                                                <span class="status-badge status-cancelled">Đã hủy</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badge bg-secondary"><c:out value="${app.status}" /></span>
+                                                                <span class="status-badge bg-secondary text-white"><c:out value="${app.status}" /></span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
                                                     <td class="text-center">
-                                                        <div class="btn-group btn-group-sm" role="group">
+                                                        <div class="btn-group btn-group-sm">
                                                             <c:choose>
                                                                 <c:when test="${app.status == 'Pending'}">
                                                                     <button type="button" class="btn btn-outline-success" 

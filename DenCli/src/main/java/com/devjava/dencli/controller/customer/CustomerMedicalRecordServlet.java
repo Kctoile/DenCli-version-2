@@ -27,11 +27,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/customer/medical-records")
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class CustomerMedicalRecordServlet extends HttpServlet {
     // ponytail: dung DAOImpl truc tiep thay vi them DAO vao ServiceFactory
-    private final AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-    private final ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
-    private final PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
+    private final transient AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
+    private final transient PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

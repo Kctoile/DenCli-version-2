@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ForgotPasswordServletTest {
+class ForgotPasswordServletTest {
 
     private ForgotPasswordServlet servlet;
     private HttpServletRequest request;
@@ -70,7 +70,7 @@ public class ForgotPasswordServletTest {
         servlet.doPost(request, response);
 
         verify(session).setAttribute(eq("fp_otp"), anyString());
-        verify(session).setAttribute(eq("fp_email"), eq("existing@example.com"));
+        verify(session).setAttribute("fp_email", "existing@example.com");
 
         String result = responseWriter.toString();
         assertTrue(result.contains("\"success\":true"));

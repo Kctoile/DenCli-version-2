@@ -9,13 +9,13 @@ import java.sql.Time;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DateUtilTest {
+class DateUtilTest {
 
     /**
      * Phương thức kiểm thử việc parse chuỗi ngày hợp lệ.
      */
     @Test
-    public void testParseDateValid() {
+    void testParseDateValid() {
         Date d = DateUtil.parseDate("2026-08-15");
         assertNotNull(d);
         assertEquals("2026-08-15", DateUtil.formatDate(d));
@@ -25,7 +25,7 @@ public class DateUtilTest {
      * Phương thức kiểm thử việc parse chuỗi ngày không hợp lệ.
      */
     @Test
-    public void testParseDateInvalid() {
+    void testParseDateInvalid() {
         assertNull(DateUtil.parseDate("invalid-date"));
         assertNull(DateUtil.parseDate(null));
         assertNull(DateUtil.parseDate("   "));
@@ -35,7 +35,7 @@ public class DateUtilTest {
      * Phương thức kiểm thử việc parse chuỗi giờ hợp lệ cả 5 ký tự và 8 ký tự.
      */
     @Test
-    public void testParseTimeValid() {
+    void testParseTimeValid() {
         Time t1 = DateUtil.parseTime("08:30");
         assertNotNull(t1);
 

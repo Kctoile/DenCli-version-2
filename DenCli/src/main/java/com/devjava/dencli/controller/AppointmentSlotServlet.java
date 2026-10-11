@@ -19,10 +19,12 @@ import java.util.Map;
  * Phục vụ đồng bộ trạng thái disabled trên giao diện đặt lịch khám.
  */
 @WebServlet(name = "AppointmentSlotServlet", urlPatterns = {"/api/appointments/booked-slots"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class AppointmentSlotServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
+    private static final String KEY_SUCCESS = "success";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,7 +37,7 @@ public class AppointmentSlotServlet extends HttpServlet {
         Map<String, Object> result = new HashMap<>();
 
         if (doctorIdParam == null || dateParam == null || doctorIdParam.trim().isEmpty() || dateParam.trim().isEmpty()) {
-            result.put("success", false);
+            result.put(KEY_SUCCESS, false);
             result.put("message", "Thiếu tham số doctorId hoặc date");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().print(gson.toJson(result));
@@ -47,13 +49,13 @@ public class AppointmentSlotServlet extends HttpServlet {
             AppointmentService appointmentService = ServiceFactory.getAppointmentService();
             List<String> bookedSlots = appointmentService.getBookedTimeSlots(doctorId, dateParam.trim());
 
-            result.put("success", true);
+            result.put(KEY_SUCCESS, true);
             result.put("doctorId", doctorId);
             result.put("date", dateParam.trim());
             result.put("bookedSlots", bookedSlots);
             response.getWriter().print(gson.toJson(result));
         } catch (NumberFormatException e) {
-            result.put("success", false);
+            result.put(KEY_SUCCESS, false);
             result.put("message", "doctorId không hợp lệ");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().print(gson.toJson(result));

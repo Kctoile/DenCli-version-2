@@ -35,6 +35,7 @@ public abstract class BaseDAO {
             try {
                 conn.rollback();
             } catch (SQLException ignored) {
+                // Best-effort rollback during failure handling
             }
         }
     }

@@ -1,23 +1,16 @@
 package com.devjava.dencli.controller.customer;
 
-import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.User;
-import com.devjava.dencli.model.dto.InvoiceResponseDTO;
-import com.devjava.dencli.service.AppointmentService;
-import com.devjava.dencli.service.BillingService;
-import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CustomerInvoiceServletTest {
+class CustomerInvoiceServletTest {
 
     private CustomerInvoiceServlet servlet;
     private HttpServletRequest request;

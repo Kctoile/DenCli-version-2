@@ -6,66 +6,9 @@
             <script>
                 window.CSRF_TOKEN = "${csrfToken}";
             </script>
-            <style>
-                 :root {
-                    --dencli-primary: #0EA5E9;
-                    --dencli-navy: #1E3A5F;
-                    --dencli-coral: #FF6B6B;
-                    --dencli-coral-hover: #fa5252;
-                    --dencli-bg-light: #F8FAFC;
-                }
-                
-                .dencli-navbar {
-                    background: linear-gradient(135deg, #1E3A5F 0%, #0F2744 100%);
-                    box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.15);
-                    transition: all 0.3s ease;
-                }
-                
-                .dencli-brand {
-                    font-weight: 800;
-                    letter-spacing: -0.5px;
-                    font-size: 1.45rem;
-                    color: #ffffff !important;
-                }
-                
-                .dencli-brand .brand-highlight {
-                    color: #0EA5E9;
-                }
-                
-                .dencli-nav-link {
-                    color: rgba(255, 255, 255, 0.85) !important;
-                    font-weight: 500;
-                    font-size: 0.95rem;
-                    padding: 0.5rem 0.9rem !important;
-                    border-radius: 0.5rem;
-                    transition: all 0.2s ease-in-out;
-                }
-                
-                .dencli-nav-link:hover {
-                    color: #38BDF8 !important;
-                    background-color: rgba(14, 165, 233, 0.12);
-                }
-                
-                .btn-cta-nav {
-                    background-color: var(--dencli-coral);
-                    color: #ffffff !important;
-                    font-weight: 600;
-                    font-size: 0.9rem;
-                    border-radius: 9999px;
-                    padding: 0.55rem 1.35rem;
-                    border: none;
-                    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
-                    transition: all 0.25s ease;
-                }
-                
-                .btn-cta-nav:hover {
-                    background-color: var(--dencli-coral-hover);
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.45);
-                }
-            </style>
+            <!-- Navbar styles centralized in dencli-theme.css -->
 
-            <nav class="navbar navbar-expand-lg navbar-dark dencli-navbar sticky-top py-2 py-lg-3">
+            <nav class="navbar navbar-expand-lg navbar-dark dencli-navbar sticky-top py-2 py-lg-3" style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2744 100%) !important; box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.15);">
                 <div class="container px-3 px-md-4">
                     <!-- Logo DenCli Dental -->
                     <a class="navbar-brand dencli-brand d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/index.jsp">
@@ -191,7 +134,7 @@
             </nav>
 
             <!-- Bootstrap 5 JS Bundle & Native Dropdown Fallback -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     var userBtn = document.getElementById('userMenuDropdown');

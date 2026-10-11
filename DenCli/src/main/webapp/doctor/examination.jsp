@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
             <!DOCTYPE html>
@@ -9,9 +9,9 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Buồng khám Bác sĩ | DenCli</title>
                 <!-- Bootstrap 5 CSS CDN -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
                 <!-- DenCli Design System Theme -->
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=3">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
                 <!-- Google Fonts -->
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,11 +51,11 @@
                                 </c:if>
 
                                 <!-- Thẻ danh sách ca khám -->
-                                <div class="card card-custom bg-white p-4 mb-4">
-                                    <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
+                                <div class="dencli-card p-4 mb-4">
+                                    <div class="page-header-box">
                                         <div>
-                                            <h4 class="fw-bold text-primary mb-1">🩺 Buồng khám Bác sĩ</h4>
-                                            <p class="text-muted small mb-0">Danh sách các ca khám được phân công cho bạn.</p>
+                                            <h4 class="page-header-title">🩺 Buồng khám Bác sĩ</h4>
+                                            <p class="page-header-subtitle">Danh sách các ca khám được phân công cho bạn.</p>
                                         </div>
                                         <!-- Bộ lọc ngày -->
                                         <form action="${pageContext.request.contextPath}/doctor/examination" method="GET" class="d-flex gap-2 align-items-center">
@@ -125,22 +125,22 @@
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${app.status == 'Pending'}">
-                                                                            <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                                                            <span class="status-badge status-pending">Chờ xác nhận</span>
                                                                         </c:when>
                                                                         <c:when test="${app.status == 'Confirmed'}">
-                                                                            <span class="badge bg-info text-dark">Đã xác nhận</span>
+                                                                            <span class="status-badge status-confirmed">Đã xác nhận</span>
                                                                         </c:when>
                                                                         <c:when test="${app.status == 'Checked In'}">
-                                                                            <span class="badge bg-primary">Đang chờ khám</span>
+                                                                            <span class="status-badge status-checkedin">Đang chờ khám</span>
                                                                         </c:when>
                                                                         <c:when test="${app.status == 'Completed'}">
-                                                                            <span class="badge bg-success">Đã hoàn thành</span>
+                                                                            <span class="status-badge status-completed">Đã hoàn thành</span>
                                                                         </c:when>
                                                                         <c:when test="${app.status == 'Cancelled'}">
-                                                                            <span class="badge bg-danger">Đã hủy</span>
+                                                                            <span class="status-badge status-cancelled">Đã hủy</span>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <span class="badge bg-secondary"><c:out value="${app.status}" /></span>
+                                                                            <span class="status-badge bg-secondary text-white"><c:out value="${app.status}" /></span>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td>
@@ -149,11 +149,20 @@
                                                                         📋 Lịch sử khám
                                                                     </button>
                                                                     <button type="button" class="btn btn-sm btn-primary fw-semibold" onclick="openExamModal(${app.appointmentId}, '${app.patientId}')">
-                                                            🩺 Khám & Chẩn đoán
-                                                        </button>
-                                                                    <a href="${pageContext.request.contextPath}/doctor/prescription" class="btn btn-sm btn-outline-success ms-1">
-                                                            💊 Kê đơn
-                                                        </a>
+                                                                        🩺 Khám & Chẩn đoán
+                                                                    </button>
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty app.examinationResult and app.examinationResult.resultId > 0}">
+                                                                            <a href="${pageContext.request.contextPath}/doctor/prescription?result_id=${app.examinationResult.resultId}" class="btn btn-sm btn-outline-success ms-1" title="Kê đơn cho hồ sơ bệnh án #${app.examinationResult.resultId}">
+                                                                                💊 Kê đơn
+                                                                            </a>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <a href="${pageContext.request.contextPath}/doctor/prescription" class="btn btn-sm btn-outline-success ms-1">
+                                                                                💊 Kê đơn
+                                                                            </a>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>

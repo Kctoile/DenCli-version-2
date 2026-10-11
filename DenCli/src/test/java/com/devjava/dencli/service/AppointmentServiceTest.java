@@ -10,15 +10,13 @@ import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
 import com.devjava.dencli.service.impl.AppointmentServiceImpl;
 import com.devjava.dencli.util.Constants;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AppointmentServiceTest {
+class AppointmentServiceTest {
 
     private AppointmentDAO appointmentDAO;
     private ServiceDAO serviceDAO;
@@ -28,7 +26,7 @@ public class AppointmentServiceTest {
      * Khởi tạo mock objects trước mỗi kịch bản test.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         appointmentDAO = mock(AppointmentDAO.class);
         serviceDAO = mock(ServiceDAO.class);
         appointmentService = new AppointmentServiceImpl(appointmentDAO, serviceDAO);
@@ -38,7 +36,7 @@ public class AppointmentServiceTest {
      * Kiểm thử đặt lịch bị từ chối do trùng slot khám với lịch hẹn khác của bác sĩ.
      */
     @Test
-    public void testBookAppointmentConflictSlot() {
+    void testBookAppointmentConflictSlot() {
         BookingRequestDTO request = new BookingRequestDTO();
         request.setDoctorId(2);
         request.setAppointmentDate("2026-09-20");
@@ -59,7 +57,7 @@ public class AppointmentServiceTest {
      * Kiểm thử đặt lịch thành công khi bác sĩ còn trống lịch.
      */
     @Test
-    public void testBookAppointmentSuccess() {
+    void testBookAppointmentSuccess() {
         BookingRequestDTO request = new BookingRequestDTO();
         request.setDoctorId(2);
         request.setAppointmentDate("2026-09-20");
@@ -78,7 +76,7 @@ public class AppointmentServiceTest {
      * Kiểm thử tiếp đón bệnh nhân và gán phòng khám thành công.
      */
     @Test
-    public void testCheckInAppointmentSuccess() {
+    void testCheckInAppointmentSuccess() {
         when(appointmentDAO.checkInAppointmentIfCurrent(15, Constants.APPOINTMENT_CONFIRMED,
             "Phòng 201", Constants.APPOINTMENT_CHECKED_IN)).thenReturn(true);
 
@@ -94,7 +92,7 @@ public class AppointmentServiceTest {
      * Kiểm thử bệnh nhân chỉ được phép hủy lịch hẹn do chính mình đặt.
      */
     @Test
-    public void testCancelAppointmentOwnership() {
+    void testCancelAppointmentOwnership() {
         when(appointmentDAO.cancelAppointmentForPatient(100, 5)).thenReturn(true);
 
         // Bệnh nhân ID 5 hủy lịch của chính mình -> Thành công
@@ -109,7 +107,7 @@ public class AppointmentServiceTest {
     }
 
     @Test
-    public void testCompletedAppointmentCannotBeCancelled() {
+    void testCompletedAppointmentCannotBeCancelled() {
         when(appointmentDAO.cancelAppointmentForPatient(101, 5)).thenReturn(false);
 
         assertFalse(appointmentService.cancelAppointment(101, 5, Constants.ROLE_CUSTOMER_ID));
@@ -117,7 +115,7 @@ public class AppointmentServiceTest {
         }
 
         @Test
-        public void testConfirmUsesExpectedCurrentStatus() {
+        void testConfirmUsesExpectedCurrentStatus() {
         when(appointmentDAO.updateAppointmentStatusIfCurrent(102, Constants.APPOINTMENT_PENDING,
             Constants.APPOINTMENT_CONFIRMED)).thenReturn(true);
 

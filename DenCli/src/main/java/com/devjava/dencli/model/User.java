@@ -30,23 +30,6 @@ public class User implements Serializable {
     public User() {
     }
 
-    /**
-     * Constructor khởi tạo đối tượng User với đầy đủ các trường dữ liệu từ cơ sở dữ liệu.
-     */
-    public User(int userId, String fullName, String email, String password, String phone, 
-                int roleId, String gender, Date dob, String address, Timestamp createdAt, int displayOrder) {
-        this.userId = userId;
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.roleId = roleId;
-        this.gender = gender;
-        this.dob = dob;
-        this.address = address;
-        this.createdAt = createdAt;
-        this.displayOrder = displayOrder;
-    }
 
     public int getUserId() {
         return userId;

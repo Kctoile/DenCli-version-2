@@ -4,6 +4,8 @@
  */
 package com.devjava.dencli.service.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -21,6 +23,8 @@ import com.devjava.dencli.service.ExaminationService;
 import com.devjava.dencli.util.Constants;
 
 public class ExaminationServiceImpl implements ExaminationService {
+
+    private static final Logger LOGGER = Logger.getLogger(ExaminationServiceImpl.class.getName());
 
     private final ExaminationResultDAO examinationResultDAO;
     private final AppointmentDAO appointmentDAO;
@@ -48,7 +52,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     public int recordExamination(int appointmentId, int doctorId, String diagnosis, List<PrescribedService> additionalServices,
                                  Date revisitDate, String revisitNote) {
         if (appointmentId <= 0 || doctorId <= 0 || diagnosis == null || diagnosis.trim().isEmpty()
-                || (revisitDate != null && revisitDate.before(Date.valueOf(java.time.LocalDate.now())))) {
+                || (revisitDate != null && revisitDate.before(Date.valueOf(java.time.LocalDate.now(java.time.ZoneId.systemDefault()))))) {
             return -1;
         }
 
@@ -104,7 +108,7 @@ public class ExaminationServiceImpl implements ExaminationService {
             return resultId;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             // Rollback nếu có bất kỳ lỗi nào xảy ra
             if (conn != null) {
@@ -112,7 +116,7 @@ public class ExaminationServiceImpl implements ExaminationService {
                     conn.rollback();
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
 
@@ -126,7 +130,7 @@ public class ExaminationServiceImpl implements ExaminationService {
                     conn.close();
 
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
         }

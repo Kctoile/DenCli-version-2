@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
@@ -11,7 +11,7 @@
     <title>Nha Khoa Quốc Tế DenCli | Straighter Teeth, Brighter Confidence</title>
 
     <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
     
     <!-- DenCli Pure CSS Stylesheet & Framer Motion Engine -->
     <link rel="stylesheet" href="${ctx}/assets/css/style.css?v=3">
-    <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=3">
+    <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=4">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -132,7 +132,8 @@
             <div class="mx-auto mt-4" style="max-width: 440px;">
                 <div class="input-group shadow-sm rounded-pill overflow-hidden border">
                     <span class="input-group-text bg-white border-0 ps-3">🔍</span>
-                    <input type="text" id="filterServiceInput" class="form-control border-0 py-2" placeholder="Tìm kiếm nhanh loại niềng răng...">
+                    <label for="filterServiceInput" class="visually-hidden">Tìm kiếm nhanh loại niềng răng</label>
+                    <input type="text" id="filterServiceInput" class="form-control border-0 py-2" placeholder="Tìm kiếm nhanh loại niềng răng..." aria-label="Tìm kiếm nhanh loại niềng răng">
                 </div>
             </div>
         </div>
@@ -250,7 +251,7 @@
                             <span class="text-muted small">Thời gian: 15 tháng</span>
                         </div>
                         <!-- Toggle Controls -->
-                        <div class="btn-group w-100 mb-3" role="group">
+                        <div class="btn-group w-100 mb-3">
                             <button type="button" class="btn btn-sm btn-primary active btn-toggle-before" onclick="toggleCaseView('case1', 'before')">Trước điều trị</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-after" onclick="toggleCaseView('case1', 'after')">Sau điều trị ✨</button>
                         </div>
@@ -277,7 +278,7 @@
                             <span class="case-badge-type bg-success-subtle text-success">Mắc Cài Sứ Tự Buộc</span>
                             <span class="text-muted small">Thời gian: 18 tháng</span>
                         </div>
-                        <div class="btn-group w-100 mb-3" role="group">
+                        <div class="btn-group w-100 mb-3">
                             <button type="button" class="btn btn-sm btn-primary active btn-toggle-before" onclick="toggleCaseView('case2', 'before')">Trước điều trị</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-after" onclick="toggleCaseView('case2', 'after')">Sau điều trị ✨</button>
                         </div>
@@ -302,7 +303,7 @@
                             <span class="case-badge-type bg-warning-subtle text-warning-emphasis">Niềng Răng Tuổi Teen</span>
                             <span class="text-muted small">Thời gian: 12 tháng</span>
                         </div>
-                        <div class="btn-group w-100 mb-3" role="group">
+                        <div class="btn-group w-100 mb-3">
                             <button type="button" class="btn btn-sm btn-primary active btn-toggle-before" onclick="toggleCaseView('case3', 'before')">Trước điều trị</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-after" onclick="toggleCaseView('case3', 'after')">Sau điều trị ✨</button>
                         </div>
@@ -625,7 +626,7 @@
     <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
     <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!-- Motion Engine JS -->
     <script src="${ctx}/assets/js/main.js"></script>
 </body>

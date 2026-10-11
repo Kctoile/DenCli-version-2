@@ -4,6 +4,7 @@
  */
 package com.devjava.dencli.dao;
 
+import java.util.logging.Level;
 import com.devjava.dencli.util.Constants;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,30 +22,27 @@ public final class DBConnection {
     private DBConnection() {
     }
 
-    private static volatile com.zaxxer.hikari.HikariDataSource dataSource;
+    // ponytail: synchronized method over volatile compound object (Sonar S3077)
+    private static com.zaxxer.hikari.HikariDataSource dataSource;
 
-    private static com.zaxxer.hikari.HikariDataSource getDataSource() {
+    private static synchronized com.zaxxer.hikari.HikariDataSource getDataSource() {
         if (dataSource == null) {
-            synchronized (DBConnection.class) {
-                if (dataSource == null) {
-                    com.zaxxer.hikari.HikariConfig config = new com.zaxxer.hikari.HikariConfig();
-                    String url = String.format(
-                        "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
-                        Constants.DB_HOST,
-                        Constants.DB_PORT,
-                        Constants.DB_NAME
-                    );
-                    config.setJdbcUrl(url);
-                    config.setUsername(Constants.DB_USER);
-                    config.setPassword(Constants.DB_PASSWORD);
-                    config.setMaximumPoolSize(10);
-                    config.setMinimumIdle(2);
-                    config.setIdleTimeout(30000);
-                    config.setConnectionTimeout(5000);
-                    config.setPoolName("DenCliHikariPool");
-                    dataSource = new com.zaxxer.hikari.HikariDataSource(config);
-                }
-            }
+            com.zaxxer.hikari.HikariConfig config = new com.zaxxer.hikari.HikariConfig();
+            String url = String.format(
+                "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
+                Constants.DB_HOST,
+                Constants.DB_PORT,
+                Constants.DB_NAME
+            );
+            config.setJdbcUrl(url);
+            config.setUsername(Constants.DB_USER);
+            config.setPassword(Constants.DB_PASSWORD);
+            config.setMaximumPoolSize(10);
+            config.setMinimumIdle(2);
+            config.setIdleTimeout(30000);
+            config.setConnectionTimeout(5000);
+            config.setPoolName("DenCliHikariPool");
+            dataSource = new com.zaxxer.hikari.HikariDataSource(config);
         }
         return dataSource;
     }
@@ -65,7 +63,6 @@ public final class DBConnection {
             return getDataSource().getConnection();
         } catch (Exception poolEx) {
             LOGGER.warning("HikariCP pool unavailable, fallback to DriverManager: " + poolEx.getMessage());
-            Class.forName(DRIVER_CLASS);
             String url = String.format(
                 "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;",
                 Constants.DB_HOST,
@@ -88,7 +85,7 @@ public final class DBConnection {
 
             } catch (SQLException e) {
                 // Ghi nhận lỗi khi đóng ResultSet ra log
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -105,7 +102,7 @@ public final class DBConnection {
 
             } catch (SQLException e) {
                 // Ghi nhận lỗi khi đóng Statement ra log
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -122,7 +119,7 @@ public final class DBConnection {
 
             } catch (SQLException e) {
                 // Ghi nhận lỗi khi đóng Connection ra log
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }

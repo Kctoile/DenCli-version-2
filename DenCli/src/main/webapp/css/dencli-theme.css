@@ -119,8 +119,8 @@ footer h1, footer h2, footer h3, footer h4, footer h5, footer h6 {
 
 footer .badge,
 .bg-dark .badge {
-    background-color: rgba(14, 165, 233, 0.18) !important;
-    color: #E0F2FE !important;
+    background-color: #0369a1 !important;
+    color: #ffffff !important;
     border: 1px solid rgba(56, 189, 248, 0.45) !important;
 }
 
@@ -874,3 +874,365 @@ footer a.text-muted:hover {
         padding: 2rem 1.25rem;
     }
 }
+
+/* ═══════════════════════════════════════════
+   13. UNIFIED DESIGN SYSTEM EXTENSIONS (index.jsp sync)
+   ═══════════════════════════════════════════ */
+.dencli-card {
+    background-color: #FFFFFF;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-lg);
+    box-shadow: var(--den-shadow-sm);
+    transition: var(--den-transition);
+}
+
+.dencli-card:hover {
+    box-shadow: var(--den-shadow-md);
+}
+
+.page-header-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--den-border-subtle);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+}
+
+.page-header-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--den-navy-dark);
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-header-subtitle {
+    font-size: 0.875rem;
+    color: var(--den-muted);
+    margin-bottom: 0;
+}
+
+/* Status Badges - Unified Semantic Pills */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.825rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    letter-spacing: 0.01em;
+}
+
+.status-pending {
+    background-color: var(--den-warning-bg);
+    color: var(--den-warning-text);
+    border: 1px solid var(--den-warning-border);
+}
+
+.status-confirmed,
+.status-checkedin {
+    background-color: var(--den-info-bg);
+    color: var(--den-info-text);
+    border: 1px solid var(--den-info-border);
+}
+
+.status-completed {
+    background-color: var(--den-success-bg);
+    color: var(--den-success-text);
+    border: 1px solid var(--den-success-border);
+}
+
+.status-cancelled {
+    background-color: var(--den-danger-bg);
+    color: var(--den-danger-text);
+    border: 1px solid var(--den-danger-border);
+}
+
+/* Unified Buttons */
+.btn-cta-primary {
+    background: linear-gradient(135deg, var(--den-coral) 0%, #FA5252 100%);
+    color: #FFFFFF !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.6rem;
+    border-radius: 9999px;
+    border: none;
+    box-shadow: 0 4px 14px rgba(255, 107, 107, 0.38);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--den-transition);
+}
+
+.btn-cta-primary:hover {
+    background: linear-gradient(135deg, #FA5252 0%, #E03131 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(255, 107, 107, 0.46);
+    color: #FFFFFF !important;
+}
+
+.btn-cta-secondary {
+    background: #FFFFFF;
+    color: var(--den-navy) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: 9999px;
+    border: 1.5px solid var(--den-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--den-transition);
+}
+
+.btn-cta-secondary:hover {
+    background: var(--den-surface-subtle);
+    border-color: var(--den-primary);
+    color: var(--den-primary-dark) !important;
+    transform: translateY(-2px);
+}
+
+.btn-den-primary {
+    background: linear-gradient(135deg, var(--den-primary) 0%, var(--den-primary-dark) 100%);
+    color: #FFFFFF !important;
+    font-weight: 600;
+    border-radius: var(--den-radius-sm);
+    border: none;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.28);
+    transition: var(--den-transition);
+}
+
+.btn-den-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.38);
+    color: #FFFFFF !important;
+}
+
+/* Filter Toolbar */
+.filter-toolbar {
+    background: var(--den-surface-subtle);
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Error State / System Pages */
+/* Error State / System Pages */
+.system-error-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background-color: var(--den-bg);
+}
+
+.system-error-card {
+    background: #FFFFFF;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-xl);
+    box-shadow: var(--den-shadow-lg);
+    padding: 3rem 2rem;
+    max-width: 560px;
+    width: 100%;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.system-error-code {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--den-primary) 0%, var(--den-navy) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.05em;
+}
+
+.system-error-code-danger {
+    background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.system-error-code-warning {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.system-error-code-info {
+    background: linear-gradient(135deg, var(--den-primary) 0%, #0284C7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.system-icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.system-icon-danger {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.system-icon-info {
+    background-color: #E0F2FE;
+    color: #0284C7;
+}
+
+.system-icon-warning {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+/* Common Header & Navbar */
+.dencli-navbar,
+nav.dencli-navbar,
+.navbar.dencli-navbar {
+    background: linear-gradient(135deg, #1E3A5F 0%, #0F2744 100%) !important;
+    background-color: #1E3A5F !important;
+    box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.15) !important;
+    transition: var(--den-transition);
+}
+
+.dencli-brand,
+.dencli-brand:hover,
+.dencli-brand:focus {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 1.45rem;
+    color: #FFFFFF !important;
+}
+
+.dencli-brand .brand-highlight {
+    color: var(--den-primary) !important;
+}
+
+.dencli-nav-link,
+.dencli-nav-link:link,
+.dencli-nav-link:visited {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--den-radius-sm);
+    transition: all 0.2s ease-in-out;
+}
+
+.dencli-nav-link:hover,
+.dencli-nav-link:focus {
+    color: #38BDF8 !important;
+    background-color: rgba(14, 165, 233, 0.12) !important;
+}
+
+.btn-cta-nav {
+    background-color: var(--den-coral);
+    color: #FFFFFF !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 9999px;
+    padding: 0.55rem 1.35rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+    transition: var(--den-transition);
+}
+
+.btn-cta-nav:hover {
+    background-color: var(--den-coral-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.45);
+    color: #FFFFFF !important;
+}
+
+/* Customer Booking Components */
+.booking-hero {
+    background: linear-gradient(135deg, #1E3A5F 0%, #0369A1 100%);
+    color: #FFFFFF;
+    padding: 3rem 0 4rem;
+    margin-bottom: -2rem;
+}
+
+.booking-container {
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.services-selection-box {
+    max-height: 240px;
+    overflow-y: auto;
+    border-radius: var(--den-radius-sm);
+    background: var(--den-surface-subtle);
+    border: 1px solid var(--den-border);
+    padding: 1rem;
+}
+
+.service-checkbox-card {
+    background: #FFFFFF;
+    border: 1px solid var(--den-border);
+    border-radius: var(--den-radius-sm);
+    padding: 0.75rem 1rem;
+    transition: var(--den-transition);
+    cursor: pointer;
+}
+
+.service-checkbox-card:hover {
+    border-color: var(--den-primary);
+    background-color: var(--den-primary-subtle);
+}
+
+.guarantee-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #334155;
+    font-weight: 500;
+}
+
+/* Step Wizard / Utility */
+.step-hidden {
+    display: none !important;
+}
+
+/* Universal Print Styles */
+@media print {
+    .no-print, header, nav, .btn, footer, .sidebar, .toast-container {
+        display: none !important;
+    }
+    body {
+        background-color: #FFFFFF !important;
+    }
+    .dencli-card, .card, .card-custom {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .print-full-width {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+
+

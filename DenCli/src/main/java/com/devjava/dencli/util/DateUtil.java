@@ -14,7 +14,6 @@ public final class DateUtil {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TIME_FORMAT = "HH:mm:ss";
-    private static final String TIME_SHORT_FORMAT = "HH:mm";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     // Khởi tạo constructor private để ngăn tạo đối tượng từ lớp tiện ích này

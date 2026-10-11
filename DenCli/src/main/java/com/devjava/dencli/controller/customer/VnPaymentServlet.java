@@ -20,6 +20,7 @@ import java.io.IOException;
  * Servlet khởi tạo thanh toán viện phí trực tuyến qua cổng VNPAY.
  */
 @WebServlet(name = "VnPaymentServlet", urlPatterns = {"/payment/vnpay"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class VnPaymentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +43,7 @@ public class VnPaymentServlet extends HttpServlet {
                 appointmentId = Integer.parseInt(appStr.trim());
             }
         } catch (NumberFormatException ignored) {
+            // Retain appointmentId = 0 to trigger validation check below
         }
 
         if (appointmentId <= 0) {

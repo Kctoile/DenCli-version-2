@@ -16,6 +16,7 @@ public class InvoiceResponseDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int appointmentId;
+    private Integer patientId;
     private String patientName;
     private String patientPhone;
     private String doctorName;
@@ -30,6 +31,7 @@ public class InvoiceResponseDTO implements Serializable {
     private List<PrescriptionDetail> medicines = new ArrayList<>();
 
     public InvoiceResponseDTO() {
+        // Default constructor for serialization and framework reflection
     }
 
     public int getAppointmentId() {
@@ -38,6 +40,14 @@ public class InvoiceResponseDTO implements Serializable {
 
     public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
+    }
+
+    public Integer getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
     public String getPatientName() {
@@ -100,17 +110,6 @@ public class InvoiceResponseDTO implements Serializable {
         return grandTotal;
     }
 
-    public BigDecimal getTotalAmount() {
-        return grandTotal;
-    }
-
-    public BigDecimal getTotalServiceFee() {
-        return servicesTotal;
-    }
-
-    public BigDecimal getTotalMedicineFee() {
-        return medicinesTotal;
-    }
 
     public void setGrandTotal(BigDecimal grandTotal) {
         this.grandTotal = grandTotal;

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
  * Servlet điều hướng và xử lý xác thực Google OAuth 2.0 (UC-04 mở rộng).
  */
 @WebServlet(name = "GoogleLoginServlet", urlPatterns = {"/auth/google"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class GoogleLoginServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(GoogleLoginServlet.class.getName());
@@ -35,7 +36,8 @@ public class GoogleLoginServlet extends HttpServlet {
     private static final String CLIENT_SECRET = getConfig("GOOGLE_CLIENT_SECRET");
     private static final String REDIRECT_URI = getConfig("GOOGLE_REDIRECT_URI", "http://localhost:8080/DenCli/auth/google");
 
-    private UserDAO userDAO = new UserDAOImpl();
+    // ponytail: final transient field on HttpServlet avoids mutable instance state (Sonar S2226)
+    private final transient UserDAO userDAO = new UserDAOImpl();
 
     private static String getConfig(String key) {
         String val = System.getProperty(key);

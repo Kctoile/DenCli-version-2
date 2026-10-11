@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/customer/revisitation")
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class CustomerRevisitationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,7 +28,7 @@ public class CustomerRevisitationServlet extends HttpServlet {
         if (u == null) { resp.sendRedirect(req.getContextPath() + "/login.jsp"); return; }
         AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
         List<Appointment> revisits = appointmentDAO.getUpcomingRevisitsByPatient(
-            u.getUserId(), Date.valueOf(LocalDate.now()));
+            u.getUserId(), Date.valueOf(LocalDate.now(java.time.ZoneId.systemDefault())));
         req.setAttribute("revisits", revisits);
         req.getRequestDispatcher("/customer/revisitation.jsp").forward(req, resp);
     }

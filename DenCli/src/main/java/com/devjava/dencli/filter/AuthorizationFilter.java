@@ -48,25 +48,8 @@ public class AuthorizationFilter implements Filter {
         }
 
         // 1. Xác định xem đường dẫn có thuộc phân hệ yêu cầu phân quyền Role hay không
-        boolean isRoleProtected = false;
-        int requiredRoleId = 0;
-
-        if (path.startsWith("/admin/") || path.equals("/admin") || path.equals("/admin.jsp")) {
-            isRoleProtected = true;
-            requiredRoleId = Constants.ROLE_ADMIN_ID;
-        } else if (path.startsWith("/doctor/") || path.equals("/doctor") || path.equals("/doctor.jsp")) {
-            isRoleProtected = true;
-            requiredRoleId = Constants.ROLE_DOCTOR_ID;
-        } else if (path.startsWith("/staff/") || path.equals("/staff") || path.equals("/staff.jsp")) {
-            isRoleProtected = true;
-            requiredRoleId = Constants.ROLE_STAFF_ID;
-        } else if (path.startsWith("/customer/") || path.equals("/customer") || path.equals("/book.jsp")) {
-            isRoleProtected = true;
-            requiredRoleId = Constants.ROLE_CUSTOMER_ID;
-        }
-
-        // Nếu không thuộc phân hệ bảo vệ theo vai trò, cho phép đi tiếp
-        if (!isRoleProtected) {
+        int requiredRoleId = getRequiredRoleId(path);
+        if (requiredRoleId == 0) {
             chain.doFilter(request, response);
             return;
         }
@@ -117,6 +100,22 @@ public class AuthorizationFilter implements Filter {
 
     @Override
     public void destroy() {
-        // Giải phóng tài nguyên của Filter
+        // No custom cleanup needed for AuthorizationFilter
+    }
+
+    private int getRequiredRoleId(String path) {
+        if (path.startsWith("/admin/") || path.equals("/admin") || path.equals("/admin.jsp")) {
+            return Constants.ROLE_ADMIN_ID;
+        }
+        if (path.startsWith("/doctor/") || path.equals("/doctor") || path.equals("/doctor.jsp")) {
+            return Constants.ROLE_DOCTOR_ID;
+        }
+        if (path.startsWith("/staff/") || path.equals("/staff") || path.equals("/staff.jsp")) {
+            return Constants.ROLE_STAFF_ID;
+        }
+        if (path.startsWith("/customer/") || path.equals("/customer") || path.equals("/book.jsp")) {
+            return Constants.ROLE_CUSTOMER_ID;
+        }
+        return 0;
     }
 }

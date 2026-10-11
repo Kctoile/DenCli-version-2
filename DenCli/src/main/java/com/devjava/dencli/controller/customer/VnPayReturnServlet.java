@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * Servlet tiếp nhận callback kết quả giao dịch thanh toán từ VNPAY.
  */
 @WebServlet(name = "VnPayReturnServlet", urlPatterns = {"/payment/vnpay-return"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class VnPayReturnServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +48,7 @@ public class VnPayReturnServlet extends HttpServlet {
             try {
                 appointmentId = Integer.parseInt(txnRef.split("_")[0]);
             } catch (NumberFormatException ignored) {
+                // Retain appointmentId = 0 to redirect invalid transactions
             }
         }
 

@@ -69,6 +69,7 @@ public class BillingServiceImpl implements BillingService {
 
         InvoiceResponseDTO invoice = new InvoiceResponseDTO();
         invoice.setAppointmentId(appointmentId);
+        invoice.setPatientId(app.getPatientId());
         invoice.setPatientName(app.getPatientName());
         invoice.setPatientPhone(app.getPatientPhone());
         invoice.setDoctorName(app.getDoctorName());

@@ -14,9 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "SessionServlet", urlPatterns = {"/auth/session"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class SessionServlet extends HttpServlet {
 
-    private final Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

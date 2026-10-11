@@ -42,7 +42,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi truy vấn ra console
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -69,7 +69,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn CSDL
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -111,7 +111,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In vết lỗi chi tiết khi thực thi câu lệnh INSERT thất bại
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -142,7 +142,7 @@ public class UserDAOImpl implements UserDAO {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
-            LOGGER.log(Level.SEVERE, "Login lookup failed for identifier: " + emailOrPhone, e);
+            LOGGER.log(Level.SEVERE, e, () -> "Login lookup failed for identifier: " + emailOrPhone);
             throw new IllegalStateException("Unable to query the user account.", e);
         }
 
@@ -174,7 +174,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Bắt và in ngoại lệ hệ thống
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return null;
@@ -204,7 +204,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi khi tải danh sách bác sĩ
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return doctors;
@@ -245,7 +245,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Bắt lỗi khi phân trang người dùng
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return list;
@@ -275,7 +275,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi khi đếm số lượng người dùng
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return 0;
@@ -308,7 +308,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // In ngoại lệ khi cập nhật thông tin người dùng thất bại
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
@@ -336,7 +336,7 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (ClassNotFoundException | SQLException e) {
             // Ghi nhận lỗi đổi mật khẩu
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return false;
