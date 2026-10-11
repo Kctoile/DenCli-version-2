@@ -7,7 +7,10 @@
 
     var socket = null;
     var reconnectTimeout = null;
+    var heartbeatInterval = null;
     var currentTopic = null;
+    var reconnectAttempts = 0;
+    var isManuallyClosed = false;
 
     function getContextPath() {
         return window.APP_CONTEXT_PATH || (window.location.pathname.startsWith('/DenCli') ? '/DenCli' : '');
@@ -80,6 +83,44 @@
                 });
         }
 
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+        }
+
+        function startHeartbeat() {
+            stopHeartbeat();
+            // ponytail: keepalive ping every 25s to avoid proxy/gateway timeout
+            heartbeatInterval = setInterval(function() {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    try {
+                        socket.send('ping');
+                    } catch (e) {
+                        stopHeartbeat();
+                    }
+                }
+            }, 25000);
+        }
+
+        function scheduleReconnect(doctorId, date) {
+            if (isManuallyClosed || !doctorId || !date) {
+                return;
+            }
+            clearTimeout(reconnectTimeout);
+            // ponytail: exponential backoff with ceiling (1.5s, 2.25s, 3.37s... max 15s)
+            var delay = Math.min(1500 * Math.pow(1.5, reconnectAttempts), 15000);
+            reconnectAttempts++;
+            console.log('[Realtime Calendar] Thử kết nối lại lần ' + reconnectAttempts + ' sau ' + Math.round(delay) + 'ms');
+
+            reconnectTimeout = setTimeout(function() {
+                if (doctorSelect.value === doctorId && dateInput.value === date) {
+                    connectWebSocket(doctorId, date);
+                }
+            }, delay);
+        }
+
         function connectWebSocket(doctorId, date) {
             var topic = doctorId + '_' + date;
             if (socket && currentTopic === topic && socket.readyState === WebSocket.OPEN) {
@@ -87,10 +128,13 @@
             }
 
             if (socket) {
+                isManuallyClosed = true;
+                stopHeartbeat();
                 try { socket.close(); } catch (e) {}
                 socket = null;
             }
 
+            isManuallyClosed = false;
             currentTopic = topic;
             clearTimeout(reconnectTimeout);
 
@@ -102,9 +146,16 @@
 
                 socket.onopen = function() {
                     console.log('[Realtime Calendar] Đã kết nối kênh Doctor ' + doctorId + ' ngày ' + date);
+                    reconnectAttempts = 0;
+                    startHeartbeat();
+                    // ponytail: re-sync booked slots on open in case any were booked while disconnected
+                    fetchBookedSlots(doctorId, date);
                 };
 
                 socket.onmessage = function(event) {
+                    if (event.data === 'pong') {
+                        return; // Heartbeat pong response
+                    }
                     try {
                         var data = JSON.parse(event.data);
                         if (data.event === 'SLOT_BOOKED') {
@@ -119,13 +170,10 @@
                 };
 
                 socket.onclose = function(e) {
-                    console.log('[Realtime Calendar] Mất kết nối WebSocket:', e.code);
-                    if (currentTopic === topic) {
-                        reconnectTimeout = setTimeout(function() {
-                            if (doctorSelect.value === doctorId && dateInput.value === date) {
-                                connectWebSocket(doctorId, date);
-                            }
-                        }, 3000);
+                    stopHeartbeat();
+                    if (!isManuallyClosed && currentTopic === topic) {
+                        console.log('[Realtime Calendar] Mất kết nối WebSocket (code: ' + e.code + '), kích hoạt auto-reconnect...');
+                        scheduleReconnect(doctorId, date);
                     }
                 };
 
@@ -134,6 +182,7 @@
                 };
             } catch (err) {
                 console.error('[Realtime Calendar] Lỗi khởi tạo WebSocket:', err);
+                scheduleReconnect(doctorId, date);
             }
         }
 
@@ -142,10 +191,14 @@
             var date = dateInput.value;
 
             if (doctorId && date) {
+                reconnectAttempts = 0;
                 fetchBookedSlots(doctorId, date);
                 connectWebSocket(doctorId, date);
             } else {
                 resetAllOptions();
+                isManuallyClosed = true;
+                stopHeartbeat();
+                clearTimeout(reconnectTimeout);
                 if (socket) {
                     try { socket.close(); } catch (e) {}
                     socket = null;
@@ -156,6 +209,24 @@
 
         doctorSelect.addEventListener('change', syncCalendar);
         dateInput.addEventListener('change', syncCalendar);
+
+        // ponytail: restore connection immediately when browser regains network
+        window.addEventListener('online', function() {
+            console.log('[Realtime Calendar] Mạng đã hồi phục, đồng bộ lại lịch...');
+            if (doctorSelect.value && dateInput.value) {
+                syncCalendar();
+            }
+        });
+
+        // Cleanup before unload
+        window.addEventListener('beforeunload', function() {
+            isManuallyClosed = true;
+            stopHeartbeat();
+            clearTimeout(reconnectTimeout);
+            if (socket) {
+                try { socket.close(); } catch (e) {}
+            }
+        });
 
         if (doctorSelect.value && dateInput.value) {
             syncCalendar();
