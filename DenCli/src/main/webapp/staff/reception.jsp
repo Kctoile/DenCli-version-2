@@ -1,62 +1,66 @@
 ﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bàn Tiếp đón & Điều phối Bệnh nhân | DenCli</title>
-    <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="d-flex flex-column min-vh-100">
+    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+            <!DOCTYPE html>
+            <html lang="vi">
 
-    <!-- Header dùng chung -->
-    <jsp:include page="/WEB-INF/views/common/header.jsp" />
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Bàn Tiếp đón & Điều phối Bệnh nhân | DenCli</title>
+                <!-- Bootstrap 5 CSS CDN -->
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+                <!-- DenCli Design System Theme -->
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=5">
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+            </head>
 
-    <div class="container-fluid flex-grow-1">
-        <div class="row min-vh-100">
-            <!-- Sidebar điều hướng theo Role -->
-            <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+            <body class="d-flex flex-column min-vh-100">
 
-            <!-- Nội dung chính -->
-            <main class="col-12 col-md-9 col-lg-10 p-4">
-                <div class="container-fluid p-0">
+                <!-- Header dùng chung -->
+                <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-                    <!-- Thông báo phản hồi -->
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                            <strong>⚠️ Lỗi:</strong> <c:out value="${errorMessage}" />
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </c:if>
+                <div class="container-fluid flex-grow-1">
+                    <div class="row min-vh-100">
+                        <!-- Sidebar điều hướng theo Role -->
+                        <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
-                    <c:if test="${not empty sessionScope.successMessage}">
-                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                            <strong>✅ Thành công:</strong> <c:out value="${sessionScope.successMessage}" />
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        <c:remove var="successMessage" scope="session" />
-                    </c:if>
+                        <!-- Nội dung chính -->
+                        <main class="col-12 col-md-9 col-lg-10 p-4">
+                            <div class="container-fluid p-0">
 
-                    <div class="dencli-card p-4">
-                        <div class="page-header-box">
-                            <div>
-                                <h4 class="page-header-title">💁 Tiếp đón & Phân phối Lịch hẹn</h4>
-                                <p class="page-header-subtitle">Quản lý tiếp nhận bệnh nhân, check-in phòng khám và điều phối thanh toán.</p>
-                            </div>
+                                <!-- Thông báo phản hồi -->
+                                <c:if test="${not empty errorMessage}">
+                                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                        <strong>⚠️ Lỗi:</strong>
+                                        <c:out value="${errorMessage}" />
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </c:if>
 
-                            <!-- Bộ lọc Trạng thái và Ngày hẹn -->
-                            <form action="${pageContext.request.contextPath}/staff/reception" method="GET" class="d-flex flex-wrap gap-2 align-items-center">
-                                <label for="statusFilter" class="visually-hidden">Trạng thái</label>
-                                <select id="statusFilter" name="status" class="form-select form-select-sm" style="width: auto;">
+                                <c:if test="${not empty sessionScope.successMessage}">
+                                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                                        <strong>✅ Thành công:</strong>
+                                        <c:out value="${sessionScope.successMessage}" />
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    <c:remove var="successMessage" scope="session" />
+                                </c:if>
+
+                                <div class="dencli-card p-4">
+                                    <div class="page-header-box">
+                                        <div>
+                                            <h4 class="page-header-title">💁 Tiếp đón & Phân phối Lịch hẹn</h4>
+                                            <p class="page-header-subtitle">Quản lý tiếp nhận bệnh nhân, check-in phòng khám và điều phối thanh toán.</p>
+                                        </div>
+
+                                        <!-- Bộ lọc Trạng thái và Ngày hẹn -->
+                                        <form action="${pageContext.request.contextPath}/staff/reception" method="GET" class="d-flex flex-wrap gap-2 align-items-center">
+                                            <label for="statusFilter" class="visually-hidden">Trạng thái</label>
+                                            <select id="statusFilter" name="status" class="form-select form-select-sm" style="width: auto;">
                                     <option value="" ${empty selectedStatus ? 'selected' : ''}>-- Tất cả trạng thái --</option>
                                     <option value="Pending" ${selectedStatus == 'Pending' ? 'selected' : ''}>Chờ xác nhận</option>
                                     <option value="Confirmed" ${selectedStatus == 'Confirmed' ? 'selected' : ''}>Đã xác nhận</option>
@@ -64,235 +68,263 @@
                                     <option value="Completed" ${selectedStatus == 'Completed' ? 'selected' : ''}>Đã hoàn thành</option>
                                     <option value="Cancelled" ${selectedStatus == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                                 </select>
-                                <label for="dateFilter" class="visually-hidden">Ngày hẹn</label>
-                                <input type="date" id="dateFilter" name="date" class="form-control form-control-sm" value="${selectedDate}" style="width: auto;">
-                                <button type="submit" class="btn btn-sm btn-primary">Lọc</button>
-                                <a href="${pageContext.request.contextPath}/staff/reception" class="btn btn-sm btn-outline-secondary">Xóa lọc</a>
-                            </form>
-                        </div>
+                                            <label for="dateFilter" class="visually-hidden">Ngày hẹn</label>
+                                            <input type="date" id="dateFilter" name="date" class="form-control form-control-sm" value="${selectedDate}" style="width: auto;">
+                                            <button type="submit" class="btn btn-sm btn-primary">Lọc</button>
+                                            <a href="${pageContext.request.contextPath}/staff/reception" class="btn btn-sm btn-outline-secondary">Xóa lọc</a>
+                                        </form>
+                                    </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Mã hẹn</th>
-                                        <th scope="col">Ngày khám</th>
-                                        <th scope="col">Giờ khám</th>
-                                        <th scope="col">Mã BN</th>
-                                        <th scope="col">BS phụ trách</th>
-                                        <th scope="col">Phòng</th>
-                                        <th scope="col">Ghi chú</th>
-                                        <th scope="col">Trạng thái</th>
-                                        <th scope="col" class="text-center">Thao tác nhanh</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${empty appointments}">
-                                            <tr>
-                                                <td colspan="9" class="text-center py-5">
-                                                    <div class="empty-state-box">
-                                                        <div class="empty-state-icon">💁</div>
-                                                        <h6 class="fw-bold text-navy mb-1">Không tìm thấy ca khám nào</h6>
-                                                        <p class="text-muted small mb-0">Không có lịch hẹn nào phù hợp với bộ lọc ngày hoặc trạng thái hiện tại.</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:forEach items="${appointments}" var="app">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
                                                 <tr>
-                                                    <td class="fw-bold text-primary">#<c:out value="${app.appointmentId}" /></td>
-                                                    <td><c:out value="${app.appointmentDate}" /></td>
-                                                    <td><span class="badge bg-light text-dark border"><c:out value="${app.appointmentTime}" /></span></td>
-                                                    <td>BN-#<c:out value="${app.patientId}" /></td>
-                                                    <td>BS-#<c:out value="${app.doctorId}" /></td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${not empty app.room}"><c:out value="${app.room}" /></c:when>
-                                                            <c:otherwise><span class="text-muted">—</span></c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td class="small text-muted" style="max-width: 180px;">
-                                                        <c:choose>
-                                                            <c:when test="${not empty app.notes}"><c:out value="${app.notes}" /></c:when>
-                                                            <c:otherwise>—</c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${app.status == 'Pending'}">
-                                                                <span class="status-badge status-pending">Chờ xác nhận</span>
-                                                            </c:when>
-                                                            <c:when test="${app.status == 'Confirmed'}">
-                                                                <span class="status-badge status-confirmed">Đã xác nhận</span>
-                                                            </c:when>
-                                                            <c:when test="${app.status == 'Checked In'}">
-                                                                <span class="status-badge status-checkedin">Đã check-in</span>
-                                                            </c:when>
-                                                            <c:when test="${app.status == 'Completed'}">
-                                                                <span class="status-badge status-completed">Đã khám xong</span>
-                                                            </c:when>
-                                                            <c:when test="${app.status == 'Cancelled'}">
-                                                                <span class="status-badge status-cancelled">Đã hủy</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="status-badge bg-secondary text-white"><c:out value="${app.status}" /></span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <div class="btn-group btn-group-sm">
-                                                            <c:choose>
-                                                                <c:when test="${app.status == 'Pending'}">
-                                                                    <button type="button" class="btn btn-outline-success" 
-                                                                            onclick="quickAction('confirm', ${app.appointmentId})" title="Xác nhận lịch hẹn">
+                                                    <th scope="col">Mã hẹn</th>
+                                                    <th scope="col">Ngày khám</th>
+                                                    <th scope="col">Giờ khám</th>
+                                                    <th scope="col">Mã BN</th>
+                                                    <th scope="col">BS phụ trách</th>
+                                                    <th scope="col">Phòng</th>
+                                                    <th scope="col">Ghi chú</th>
+                                                    <th scope="col">Trạng thái</th>
+                                                    <th scope="col" class="text-center">Thao tác nhanh</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:choose>
+                                                    <c:when test="${empty appointments}">
+                                                        <tr>
+                                                            <td colspan="9" class="text-center py-5">
+                                                                <div class="empty-state-box">
+                                                                    <div class="empty-state-icon">💁</div>
+                                                                    <h6 class="fw-bold text-navy mb-1">Không tìm thấy ca khám nào</h6>
+                                                                    <p class="text-muted small mb-0">Không có lịch hẹn nào phù hợp với bộ lọc ngày hoặc trạng thái hiện tại.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:forEach items="${appointments}" var="app">
+                                                            <tr>
+                                                                <td class="fw-bold text-primary">#
+                                                                    <c:out value="${app.appointmentId}" />
+                                                                </td>
+                                                                <td>
+                                                                    <c:out value="${app.appointmentDate}" />
+                                                                </td>
+                                                                <td><span class="badge bg-light text-dark border"><c:out value="${app.appointmentTime}" /></span></td>
+                                                                <td>BN-#
+                                                                    <c:out value="${app.patientId}" />
+                                                                </td>
+                                                                <td>BS-#
+                                                                    <c:out value="${app.doctorId}" />
+                                                                </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty app.room}">
+                                                                            <c:out value="${app.room}" /></c:when>
+                                                                        <c:otherwise><span class="text-muted">—</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td class="small text-muted" style="max-width: 180px;">
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty app.notes}">
+                                                                            <c:out value="${app.notes}" /></c:when>
+                                                                        <c:otherwise>—</c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${app.status == 'Pending'}">
+                                                                            <span class="status-badge status-pending">Chờ xác nhận</span>
+                                                                        </c:when>
+                                                                        <c:when test="${app.status == 'Confirmed'}">
+                                                                            <span class="status-badge status-confirmed">Đã xác nhận</span>
+                                                                        </c:when>
+                                                                        <c:when test="${app.status == 'Checked In'}">
+                                                                            <span class="status-badge status-checkedin">Đã check-in</span>
+                                                                        </c:when>
+                                                                        <c:when test="${app.status == 'Completed'}">
+                                                                            <span class="status-badge status-completed">Đã khám xong</span>
+                                                                        </c:when>
+                                                                        <c:when test="${app.status == 'Cancelled'}">
+                                                                            <span class="status-badge status-cancelled">Đã hủy</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="status-badge bg-secondary text-white"><c:out value="${app.status}" /></span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <c:choose>
+                                                                            <c:when test="${app.status == 'Pending'}">
+                                                                                <button type="button" class="btn btn-outline-success" onclick="quickAction('confirm', ${app.appointmentId})" title="Xác nhận lịch hẹn">
                                                                         ✓ Xác nhận
                                                                     </button>
-                                                                    <button type="button" class="btn btn-outline-danger" 
-                                                                            onclick="quickAction('cancel', ${app.appointmentId})" title="Hủy lịch hẹn">
+                                                                                <button type="button" class="btn btn-outline-danger" onclick="quickAction('cancel', ${app.appointmentId})" title="Hủy lịch hẹn">
                                                                         ✕ Hủy
                                                                     </button>
-                                                                </c:when>
-                                                                <c:when test="${app.status == 'Confirmed'}">
-                                                                    <button type="button" class="btn btn-primary fw-semibold" 
-                                                                            onclick="openCheckinModal(${app.appointmentId}, '${app.room}')" title="Tiếp đón bệnh nhân">
+                                                                            </c:when>
+                                                                            <c:when test="${app.status == 'Confirmed'}">
+                                                                                <button type="button" class="btn btn-primary fw-semibold" onclick="openCheckinModal(${app.appointmentId}, '${app.room}')" title="Tiếp đón bệnh nhân">
                                                                         💁 Check-in
                                                                     </button>
-                                                                    <button type="button" class="btn btn-outline-danger" 
-                                                                            onclick="quickAction('cancel', ${app.appointmentId})" title="Hủy lịch hẹn">
+                                                                                <button type="button" class="btn btn-outline-danger" onclick="quickAction('cancel', ${app.appointmentId})" title="Hủy lịch hẹn">
                                                                         ✕
                                                                     </button>
-                                                                </c:when>
-                                                                <c:when test="${app.status == 'Checked In'}">
-                                                                    <a href="${pageContext.request.contextPath}/staff/invoice?appointment_id=${app.appointmentId}" 
-                                                                       class="btn btn-success fw-semibold">
+                                                                            </c:when>
+                                                                            <c:when test="${app.status == 'Checked In'}">
+                                                                                <a href="${pageContext.request.contextPath}/staff/invoice?appointment_id=${app.appointmentId}" class="btn btn-success fw-semibold">
                                                                         🧾 Thu ngân
                                                                     </a>
-                                                                </c:when>
-                                                                <c:when test="${app.status == 'Completed'}">
-                                                                    <a href="${pageContext.request.contextPath}/staff/invoice?appointment_id=${app.appointmentId}" 
-                                                                       class="btn btn-outline-secondary">
+                                                                            </c:when>
+                                                                            <c:when test="${app.status == 'Completed'}">
+                                                                                <a href="${pageContext.request.contextPath}/staff/invoice?appointment_id=${app.appointmentId}" class="btn btn-outline-secondary">
                                                                         Xem hóa đơn
                                                                     </a>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="text-muted small">—</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </table>
-                        </div>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <span class="text-muted small">—</span>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </main>
                     </div>
-
                 </div>
-            </main>
-        </div>
-    </div>
 
-    <!-- Modal Check-in phân phòng -->
-    <div class="modal fade" id="checkinModal" tabindex="-1" aria-labelledby="checkinModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" id="checkinModalLabel">💁 Tiếp đón bệnh nhân & Phân phòng khám</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="mb-3 text-muted">Xác nhận bệnh nhân đã có mặt tại sảnh tiếp đón cho <strong>Cuộc hẹn #<span id="checkinAppIdText"></span></strong>.</p>
-                    <input type="hidden" id="checkinAppointmentId" value="">
+                <!-- Modal Check-in phân phòng -->
+                <div class="modal fade" id="checkinModal" tabindex="-1" aria-labelledby="checkinModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title fw-bold" id="checkinModalLabel">💁 Tiếp đón bệnh nhân & Phân phòng khám</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <p class="mb-3 text-muted">Xác nhận bệnh nhân đã có mặt tại sảnh tiếp đón cho <strong>Cuộc hẹn #<span id="checkinAppIdText"></span></strong>.</p>
+                                <input type="hidden" id="checkinAppointmentId" value="">
 
-                    <div class="mb-3">
-                        <label for="checkinRoom" class="form-label fw-semibold">Phân phòng khám chuyên khoa</label>
-                        <select id="checkinRoom" class="form-select">
+                                <div class="mb-3">
+                                    <label for="checkinRoom" class="form-label fw-semibold">Phân phòng khám chuyên khoa</label>
+                                    <select id="checkinRoom" class="form-select">
                             <option value="Phòng khám 101 - Răng hàm mặt">Phòng khám 101 - Răng hàm mặt</option>
                             <option value="Phòng khám 102 - Chỉnh nha & Niềng">Phòng khám 102 - Chỉnh nha & Niềng</option>
                             <option value="Phòng khám 103 - Cấy ghép Implant">Phòng khám 103 - Cấy ghép Implant</option>
                             <option value="Phòng khám 104 - Tẩy trắng & Thẩm mỹ">Phòng khám 104 - Tẩy trắng & Thẩm mỹ</option>
                         </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="button" class="btn btn-primary fw-semibold px-4" onclick="submitCheckin()">Xác nhận Check-in</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary fw-semibold px-4" onclick="submitCheckin()">Xác nhận Check-in</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Footer dùng chung -->
-    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
+                <!-- Footer dùng chung -->
+                <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
-    <!-- AJAX Fetch Actions: Check-in, Xác nhận, Hủy hẹn -->
-    <script>
-        function openCheckinModal(appId, currentRoom) {
-            document.getElementById('checkinAppointmentId').value = appId;
-            document.getElementById('checkinAppIdText').textContent = appId;
-            if (currentRoom && currentRoom.trim() !== '') {
-                document.getElementById('checkinRoom').value = currentRoom;
-            }
-            var modal = new bootstrap.Modal(document.getElementById('checkinModal'));
-            modal.show();
-        }
+                <!-- AJAX Fetch Actions: Check-in, Xác nhận, Hủy hẹn -->
+                <script>
+                    function openCheckinModal(appId, currentRoom) {
+                        document.getElementById('checkinAppointmentId').value = appId;
+                        document.getElementById('checkinAppIdText').textContent = appId;
+                        if (currentRoom && currentRoom.trim() !== '') {
+                            document.getElementById('checkinRoom').value = currentRoom;
+                        }
+                        var modal = new bootstrap.Modal(document.getElementById('checkinModal'));
+                        modal.show();
+                    }
 
-        function submitCheckin() {
-            var appId = document.getElementById('checkinAppointmentId').value;
-            var room = document.getElementById('checkinRoom').value;
+                    function submitCheckin() {
+                        var appId = document.getElementById('checkinAppointmentId').value;
+                        var room = document.getElementById('checkinRoom').value;
 
-            fetch('${pageContext.request.contextPath}/staff/reception', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN || '' },
-                body: JSON.stringify({ action: 'checkin', appointment_id: parseInt(appId), room: room })
-            })
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    showToast('success', data.message || 'Check-in thành công!');
-                    setTimeout(function() { window.location.reload(); }, 1000);
-                } else {
-                    showToast('danger', data.message || 'Check-in thất bại.');
-                }
-            })
-            .catch(function(err) {
-                showToast('danger', 'Lỗi kết nối máy chủ.');
-            });
-        }
+                        fetch('${pageContext.request.contextPath}/staff/reception', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': window.CSRF_TOKEN || ''
+                                },
+                                body: JSON.stringify({
+                                    action: 'checkin',
+                                    appointment_id: parseInt(appId),
+                                    room: room
+                                })
+                            })
+                            .then(function(res) {
+                                return res.json();
+                            })
+                            .then(function(data) {
+                                if (data.success) {
+                                    showToast('success', data.message || 'Check-in thành công!');
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    showToast('danger', data.message || 'Check-in thất bại.');
+                                }
+                            })
+                            .catch(function(err) {
+                                showToast('danger', 'Lỗi kết nối máy chủ.');
+                            });
+                    }
 
-        function quickAction(actionType, appId) {
-            var actionName = actionType === 'confirm' ? 'xác nhận' : 'hủy';
-            if (!confirm('Bạn có chắc chắn muốn ' + actionName + ' lịch hẹn #' + appId + ' không?')) {
-                return;
-            }
+                    function quickAction(actionType, appId) {
+                        var actionName = actionType === 'confirm' ? 'xác nhận' : 'hủy';
+                        if (!confirm('Bạn có chắc chắn muốn ' + actionName + ' lịch hẹn #' + appId + ' không?')) {
+                            return;
+                        }
 
-            fetch('${pageContext.request.contextPath}/staff/reception', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': window.CSRF_TOKEN || '' },
-                body: JSON.stringify({ action: actionType, appointment_id: appId })
-            })
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (data.success) {
-                    showToast('success', data.message || 'Thao tác thành công!');
-                    setTimeout(function() { window.location.reload(); }, 1000);
-                } else {
-                    showToast('danger', data.message || 'Thao tác thất bại.');
-                }
-            })
-            .catch(function(err) {
-                showToast('danger', 'Lỗi kết nối máy chủ.');
-            });
-        }
-    </script>
-    <!-- Real-time slot synchronization via WebSocket -->
-    <script>
-        window.APP_CONTEXT_PATH = '${pageContext.request.contextPath}';
-    </script>
-    <script src="${pageContext.request.contextPath}/assets/js/appointment-realtime.js"></script>
-</body>
-</html>
+                        fetch('${pageContext.request.contextPath}/staff/reception', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': window.CSRF_TOKEN || ''
+                                },
+                                body: JSON.stringify({
+                                    action: actionType,
+                                    appointment_id: appId
+                                })
+                            })
+                            .then(function(res) {
+                                return res.json();
+                            })
+                            .then(function(data) {
+                                if (data.success) {
+                                    showToast('success', data.message || 'Thao tác thành công!');
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    showToast('danger', data.message || 'Thao tác thất bại.');
+                                }
+                            })
+                            .catch(function(err) {
+                                showToast('danger', 'Lỗi kết nối máy chủ.');
+                            });
+                    }
+                </script>
+                <!-- Real-time slot synchronization via WebSocket -->
+                <script>
+                    window.APP_CONTEXT_PATH = '${pageContext.request.contextPath}';
+                </script>
+                <script src="${pageContext.request.contextPath}/assets/js/appointment-realtime.js"></script>
+            </body>
+
+            </html>

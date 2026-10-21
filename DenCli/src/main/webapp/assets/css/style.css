@@ -5,7 +5,6 @@
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
     /* Brand Colors per Specification */
     --dencli-primary: #0EA5E9;
@@ -19,23 +18,22 @@
     --dencli-success: #10B981;
     --dencli-warning: #F59E0B;
     --dencli-danger: #EF4444;
-
     /* Neutrals */
     --dencli-bg: #FFFFFF;
     --dencli-bg-soft: #F8FAFC;
     --dencli-card-bg: #FFFFFF;
     --dencli-text-main: #0F172A;
-    --dencli-text-muted: #334155;          /* High contrast Slate-700 (9.5:1 ratio vs white, replaced light gray #64748B) */
-    --dencli-text-subtle: #475569;         /* High contrast Slate-600 (7.0:1 ratio, replaced light gray #94A3B8) */
+    --dencli-text-muted: #334155;
+    /* High contrast Slate-700 (9.5:1 ratio vs white, replaced light gray #64748B) */
+    --dencli-text-subtle: #475569;
+    /* High contrast Slate-600 (7.0:1 ratio, replaced light gray #94A3B8) */
     --dencli-border: #CBD5E1;
     --dencli-border-focus: #38BDF8;
-
     /* Shadows & Spring Transitions */
     --dencli-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
     --dencli-shadow-md: 0 6px 18px -2px rgba(14, 165, 233, 0.12);
     --dencli-shadow-lg: 0 16px 36px -6px rgba(30, 58, 95, 0.14);
     --dencli-shadow-coral: 0 10px 25px -3px rgba(255, 107, 107, 0.42);
-    
     /* Framer Motion Spring Timing Function */
     --dencli-spring: cubic-bezier(0.16, 1, 0.3, 1);
     --dencli-radius-sm: 8px;
@@ -45,9 +43,11 @@
     --dencli-radius-pill: 9999px;
 }
 
+
 /* ==========================================================================
    GLOBAL BASE
    ========================================================================== */
+
 html {
     scroll-behavior: smooth;
 }
@@ -79,9 +79,11 @@ a {
     color: var(--dencli-text-muted) !important;
 }
 
+
 /* ==========================================================================
    FRAMER MOTION REPLICAS (0.6s FADE UP & SCROLL REVEAL)
    ========================================================================== */
+
 @keyframes heroFadeUp {
     0% {
         opacity: 0;
@@ -98,17 +100,29 @@ a {
     animation: heroFadeUp 0.6s var(--dencli-spring) forwards;
 }
 
-.motion-delay-1 { animation-delay: 0.1s; }
-.motion-delay-2 { animation-delay: 0.25s; }
-.motion-delay-3 { animation-delay: 0.4s; }
-.motion-delay-4 { animation-delay: 0.55s; }
+.motion-delay-1 {
+    animation-delay: 0.1s;
+}
+
+.motion-delay-2 {
+    animation-delay: 0.25s;
+}
+
+.motion-delay-3 {
+    animation-delay: 0.4s;
+}
+
+.motion-delay-4 {
+    animation-delay: 0.55s;
+}
+
 
 /* Cards Fade on Scroll */
+
 .fade-on-scroll {
     opacity: 0;
     transform: translateY(28px);
     transition: opacity 0.65s var(--dencli-spring), transform 0.65s var(--dencli-spring);
-    will-change: opacity, transform;
 }
 
 .fade-on-scroll.is-visible {
@@ -116,9 +130,25 @@ a {
     transform: translateY(0);
 }
 
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    .motion-fade-up,
+    .fade-on-scroll {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        will-change: auto;
+    }
+}
+
+
 /* ==========================================================================
    TACTILE BUTTONS & CTAS
    ========================================================================== */
+
 .btn-cta-primary {
     background-color: var(--dencli-coral);
     color: #ffffff !important;
@@ -170,9 +200,11 @@ a {
     transform: scale(0.98) translateY(1px);
 }
 
+
 /* ==========================================================================
    HERO SECTION (SPLIT HERO)
    ========================================================================== */
+
 .hero-section {
     background: radial-gradient(100% 120% at 85% 10%, #E0F2FE 0%, #F0F9FF 35%, #FFFFFF 100%);
     padding: 5rem 0 4.5rem;
@@ -214,7 +246,9 @@ a {
     line-height: 1.65;
 }
 
+
 /* Hero Office Photo Frame */
+
 .hero-photo-wrapper {
     position: relative;
     border-radius: var(--dencli-radius-xl);
@@ -259,9 +293,11 @@ a {
     color: var(--dencli-navy);
 }
 
+
 /* ==========================================================================
    TRUST BAND (4 STATS)
    ========================================================================== */
+
 .trust-band {
     background: linear-gradient(135deg, var(--dencli-navy) 0%, var(--dencli-navy-dark) 100%);
     color: #FFFFFF;
@@ -287,9 +323,11 @@ a {
     font-weight: 600;
 }
 
+
 /* ==========================================================================
    3-COLUMN SERVICES GRID
    ========================================================================== */
+
 .service-card {
     background: #FFFFFF;
     border-radius: var(--dencli-radius-lg);
@@ -339,9 +377,11 @@ a {
     color: var(--dencli-primary-dark);
 }
 
+
 /* ==========================================================================
    BEFORE / AFTER SLIDER & CASES
    ========================================================================== */
+
 .before-after-card {
     background: #FFFFFF;
     border-radius: var(--dencli-radius-lg);
@@ -370,9 +410,11 @@ a {
     overflow: hidden;
 }
 
+
 /* ==========================================================================
    3-STEP HOW IT WORKS
    ========================================================================== */
+
 .step-card {
     background: #FFFFFF;
     border: 1px solid var(--dencli-border);
@@ -405,9 +447,11 @@ a {
     box-shadow: 0 10px 24px -2px rgba(14, 165, 233, 0.45);
 }
 
+
 /* ==========================================================================
    TESTIMONIAL CARDS
    ========================================================================== */
+
 .testimonial-card {
     background: #FFFFFF;
     border-radius: var(--dencli-radius-lg);
@@ -442,9 +486,11 @@ a {
     box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
 }
 
+
 /* ==========================================================================
    INSURANCE & FINANCING SECTION
    ========================================================================== */
+
 .finance-card {
     background: #FFFFFF;
     border-radius: var(--dencli-radius-lg);
@@ -459,9 +505,11 @@ a {
     border-color: #BAE6FD;
 }
 
+
 /* ==========================================================================
    DOCTORS CARDS
    ========================================================================== */
+
 .doctor-card {
     background: #FFFFFF;
     border-radius: var(--dencli-radius-lg);
@@ -493,9 +541,11 @@ a {
     box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
 }
 
+
 /* ==========================================================================
    CTA BANNER SECTION
    ========================================================================== */
+
 .cta-banner {
     background: linear-gradient(135deg, var(--dencli-navy) 0%, var(--dencli-navy-dark) 100%);
     border-radius: var(--dencli-radius-xl);
@@ -529,9 +579,11 @@ a {
     pointer-events: none;
 }
 
+
 /* ==========================================================================
    MOBILE STICKY "BOOK NOW" BAR
    ========================================================================== */
+
 .mobile-sticky-cta {
     z-index: 1080;
     background: rgba(255, 255, 255, 0.96);
@@ -540,9 +592,11 @@ a {
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
 }
 
+
 /* ==========================================================================
    RESPONSIVE DESIGN (MOBILE STACKED HERO)
    ========================================================================== */
+
 @media (max-width: 991.98px) {
     .hero-title {
         font-size: 2.5rem;

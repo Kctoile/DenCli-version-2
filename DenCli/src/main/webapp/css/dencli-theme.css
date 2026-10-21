@@ -10,72 +10,143 @@
 /* ═══════════════════════════════════════════
    1. DESIGN TOKENS
    ═══════════════════════════════════════════ */
+
 :root {
-    /* Brand Colors */
+    color-scheme: light dark;
+    /* ── Brand Colors ──────────────────────────────────── */
     --den-primary: #0EA5E9;
     --den-primary-dark: #0284C7;
+    --den-primary-contrast: #075985;
     --den-primary-light: #E0F2FE;
     --den-primary-subtle: #F0F9FF;
     --den-navy: #1E3A5F;
-    --den-navy-dark: #0F2744;
+    --den-navy-dark: #0D1B2A;
     --den-coral: #FF6B6B;
     --den-coral-hover: #FA5252;
     --den-coral-light: #FFF1F2;
-
-    /* Semantic Feedback */
-    --den-success: #10B981;
-    --den-success-text: #065F46;   /* High contrast emerald (8.5:1 ratio vs #ECFDF5) */
+    --den-indigo: #6366F1;
+    --den-indigo-dark: #4F46E5;
+    /* ── Gradient System ───────────────────────────────── */
+    --den-gradient-brand: linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%);
+    --den-gradient-hero: linear-gradient(135deg, #0D1B2A 0%, #1E3A5F 60%, #0284C7 100%);
+    --den-gradient-card: linear-gradient(145deg, rgba(14, 165, 233, 0.08) 0%, rgba(99, 102, 241, 0.06) 100%);
+    --den-gradient-nav: linear-gradient(135deg, #0D1B2A 0%, #1E3A5F 100%);
+    /* ── Glassmorphism ─────────────────────────────────── */
+    --den-glass-bg: rgba(255, 255, 255, 0.72);
+    --den-glass-border: rgba(255, 255, 255, 0.35);
+    --den-glass-shadow: 0 8px 32px rgba(14, 165, 233, 0.12);
+    --den-glass-blur: blur(16px) saturate(180%);
+    /* ── Semantic Feedback ─────────────────────────────── */
+    --den-success: #047857;
+    --den-success-text: #065F46;
     --den-success-bg: #ECFDF5;
     --den-success-border: #A7F3D0;
-    --den-warning: #F59E0B;
-    --den-warning-text: #78350F;   /* High contrast amber (10.0:1 ratio vs #FFFBEB) */
+    --den-warning: #92400E;
+    --den-warning-text: #78350F;
     --den-warning-bg: #FFFBEB;
     --den-warning-border: #FDE68A;
-    --den-danger: #EF4444;
-    --den-danger-text: #991B1B;    /* High contrast crimson (9.2:1 ratio vs #FEF2F2) */
+    --den-danger: #B91C1C;
+    --den-danger-text: #991B1B;
     --den-danger-bg: #FEF2F2;
     --den-danger-border: #FECACA;
-    --den-info: #0284C7;
-    --den-info-text: #0C4A6E;      /* High contrast oceanic navy (10.5:1 ratio vs #EFF6FF) */
+    --den-info: #075985;
+    --den-info-text: #0C4A6E;
     --den-info-bg: #EFF6FF;
     --den-info-border: #BFDBFE;
-
-    /* Surfaces & Neutrals */
+    /* ── Surfaces & Neutrals ───────────────────────────── */
     --den-bg: #F8FAFC;
     --den-surface: #FFFFFF;
     --den-surface-subtle: #F1F5F9;
     --den-text: #0F172A;
     --den-text-secondary: #1E293B;
-    --den-muted: #334155;          /* High-contrast Slate-700 (9.5:1 ratio vs white, replaced light gray #64748B) */
-    --den-subtle: #475569;         /* High-contrast Slate-600 (7.0:1 ratio, replaced light gray #94A3B8) */
-    --den-border: #CBD5E1;         /* Crisp boundary border */
+    --den-muted: #334155;
+    --den-subtle: #475569;
+    --den-border: #CBD5E1;
     --den-border-subtle: #E2E8F0;
     --den-border-focus: #38BDF8;
-
     /* Bootstrap 5 Theme Variables Override */
     --bs-body-color: #0F172A;
     --bs-secondary-color: #334155;
-
-    /* Typography & Radius */
+    /* ── Typography & Radius ───────────────────────────── */
     --den-font: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --den-radius-sm: 8px;
     --den-radius-md: 12px;
     --den-radius-lg: 16px;
     --den-radius-xl: 24px;
+    --den-radius-card: 20px;
     --den-radius-pill: 9999px;
-
-    /* Elevated Shadows & Tactile */
+    /* ── Shadows ───────────────────────────────────────── */
     --den-shadow-xs: 0 1px 2px rgba(15, 39, 68, 0.04);
     --den-shadow-sm: 0 2px 6px -1px rgba(15, 39, 68, 0.06);
     --den-shadow-md: 0 6px 18px -2px rgba(15, 39, 68, 0.08);
     --den-shadow-lg: 0 16px 32px -4px rgba(15, 39, 68, 0.1);
     --den-shadow-coral: 0 8px 24px -2px rgba(255, 107, 107, 0.35);
+    --den-shadow-brand: 0 8px 24px -2px rgba(14, 165, 233, 0.30);
     --den-transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@media (prefers-color-scheme: dark) {
+     :root {
+        --den-primary-light: #12354D;
+        --den-primary-contrast: #7DD3FC;
+        --den-primary-subtle: #0C293D;
+        --den-success: #6EE7B7;
+        --den-success-text: #A7F3D0;
+        --den-success-bg: #123427;
+        --den-success-border: #1F684D;
+        --den-warning: #FCD34D;
+        --den-warning-text: #FDE68A;
+        --den-warning-bg: #3B2D10;
+        --den-warning-border: #7A5A1B;
+        --den-danger: #FDA4AF;
+        --den-danger-text: #FDA4AF;
+        --den-danger-bg: #3B1D25;
+        --den-danger-border: #7A2C3A;
+        --den-info: #7DD3FC;
+        --den-info-text: #BAE6FD;
+        --den-info-bg: #0C2B40;
+        --den-info-border: #1D5476;
+        --den-bg: #0D1B2A;
+        --den-surface: #132337;
+        --den-surface-subtle: #1A2E45;
+        --den-text: #F1F5F9;
+        --den-text-secondary: #E2E8F0;
+        --den-muted: #CBD5E1;
+        --den-subtle: #B6C5D6;
+        --den-border: #40566D;
+        --den-border-subtle: #33485F;
+        --dencli-bg: #0D1B2A;
+        --dencli-bg-soft: #132337;
+        --dencli-card-bg: #132337;
+        --dencli-text-main: #F1F5F9;
+        --dencli-text-muted: #CBD5E1;
+        --dencli-text-subtle: #B6C5D6;
+        --dencli-border: #40566D;
+        --bs-body-bg: #0D1B2A;
+        --bs-body-color: #F1F5F9;
+        --bs-secondary-color: #CBD5E1;
+        --bs-secondary-bg: #1A2E45;
+        --bs-tertiary-bg: #132337;
+        --bs-border-color: #40566D;
+        --bs-card-bg: #132337;
+        --bs-card-color: #F1F5F9;
+        --bs-accordion-bg: #132337;
+        --bs-accordion-color: #F1F5F9;
+        --bs-accordion-btn-color: #F1F5F9;
+        --bs-accordion-active-bg: #1A2E45;
+        --bs-accordion-active-color: #F1F5F9;
+        --bs-list-group-bg: #132337;
+        --bs-list-group-color: #F1F5F9;
+        --bs-list-group-border-color: #40566D;
+        color-scheme: dark;
+    }
+}
+
+
 /* ═══════════════════════════════════════════
-   2. GLOBAL FOUNDATIONS
+   3. GLOBAL FOUNDATIONS
    ═══════════════════════════════════════════ */
+
 html {
     scroll-behavior: smooth;
 }
@@ -94,20 +165,113 @@ body {
     color: var(--den-primary-dark);
 }
 
+
+/* ── Glassmorphism Utility ─────────────────────────────────── */
+
+.den-glass {
+    background: var(--den-glass-bg);
+    border: 1px solid var(--den-glass-border);
+    box-shadow: var(--den-glass-shadow);
+    backdrop-filter: var(--den-glass-blur);
+    -webkit-backdrop-filter: var(--den-glass-blur);
+}
+
+
+/* ── Skeleton Loading ──────────────────────────────────────── */
+
+@keyframes den-shimmer {
+    0% {
+        background-position: -600px 0
+    }
+    100% {
+        background-position: 600px 0
+    }
+}
+
+.den-skeleton {
+    background: linear-gradient(90deg, var(--den-surface-subtle) 25%, var(--den-border-subtle) 50%, var(--den-surface-subtle) 75%);
+    background-size: 600px 100%;
+    animation: den-shimmer 1.4s ease-in-out infinite;
+    border-radius: var(--den-radius-sm);
+    color: transparent !important;
+    pointer-events: none;
+}
+
+
+/* ── Gradient & Shadow Utilities ───────────────────────────── */
+
+.den-gradient-brand {
+    background: var(--den-gradient-brand);
+}
+
+.den-gradient-hero {
+    background: var(--den-gradient-hero);
+}
+
+.den-gradient-card {
+    background: var(--den-gradient-card);
+}
+
+.den-shadow-brand {
+    box-shadow: var(--den-shadow-brand);
+}
+
+
+/* ── Page Fade-in Transition ───────────────────────────────── */
+
+@keyframes den-fadein {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.den-page-enter {
+    animation: den-fadein 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+
 /* ═══════════════════════════════════════════
    3. TYPOGRAPHY HIERARCHY & HIGH CONTRAST TEXT
    ═══════════════════════════════════════════ */
-h1, h2, h3, h4, h5, h6 {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: var(--den-navy-dark);
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
+
 /* Ensure dark-background containers always have bright white headings and clear contrast */
-.cta-banner h1, .cta-banner h2, .cta-banner h3, .cta-banner h4,
-.booking-hero h1, .booking-hero h2, .booking-hero h3,
-.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
-footer h1, footer h2, footer h3, footer h4, footer h5, footer h6 {
+
+.cta-banner h1,
+.cta-banner h2,
+.cta-banner h3,
+.cta-banner h4,
+.booking-hero h1,
+.booking-hero h2,
+.booking-hero h3,
+.bg-dark h1,
+.bg-dark h2,
+.bg-dark h3,
+.bg-dark h4,
+.bg-dark h5,
+.bg-dark h6,
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer h6 {
     color: #FFFFFF !important;
 }
 
@@ -129,24 +293,50 @@ footer .badge,
 }
 
 .text-primary {
-    color: var(--den-primary-dark) !important;
+    color: var(--den-primary-contrast) !important;
+}
+
+.text-info {
+    color: var(--den-info) !important;
+}
+
+.text-success {
+    color: var(--den-success) !important;
+}
+
+.text-warning {
+    color: var(--den-warning) !important;
+}
+
+.text-danger {
+    color: var(--den-danger) !important;
+}
+
+.hero-badge,
+.service-tag,
+.service-price {
+    color: var(--den-primary-contrast);
 }
 
 .text-coral {
     color: var(--den-coral) !important;
 }
 
+
 /* Clear high-contrast text overrides - replacing washed-out light gray */
+
 .text-muted,
 .form-text,
 small.text-muted,
 .small.text-muted {
-    color: var(--den-muted) !important; /* #334155 - sharp and easily readable */
+    color: var(--den-muted) !important;
+    /* #334155 - sharp and easily readable */
     font-weight: 500;
 }
 
 .text-secondary {
-    color: var(--den-text-secondary) !important; /* #1E293B */
+    color: var(--den-text-secondary) !important;
+    /* #1E293B */
     font-weight: 500;
 }
 
@@ -154,7 +344,9 @@ small.text-muted,
     color: var(--den-subtle) !important;
 }
 
+
 /* Contextual high contrast for dark regions (Footer, dark hero banners, trust band) */
+
 .bg-dark .text-muted,
 .bg-dark .text-secondary,
 footer .text-muted,
@@ -163,7 +355,8 @@ footer .text-secondary,
 .trust-band .text-secondary,
 .cta-banner .text-muted,
 .cta-banner .text-secondary {
-    color: #CBD5E1 !important; /* High contrast Slate-300: 10:1 contrast ratio against dark backgrounds */
+    color: #CBD5E1 !important;
+    /* High contrast Slate-300: 10:1 contrast ratio against dark backgrounds */
 }
 
 footer a.text-secondary,
@@ -176,9 +369,11 @@ footer a.text-muted:hover {
     color: #38BDF8 !important;
 }
 
+
 /* ═══════════════════════════════════════════
    4. TACTILE BUTTONS & CTAS
    ═══════════════════════════════════════════ */
+
 .btn {
     font-family: var(--den-font);
     font-weight: 600;
@@ -210,57 +405,24 @@ footer a.text-muted:hover {
     box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
 }
 
-.btn-cta-primary {
-    background-color: var(--den-coral);
-    border: none;
-    color: #FFFFFF !important;
-    font-weight: 700;
-    padding: 0.85rem 2rem;
-    border-radius: var(--den-radius-pill);
-    box-shadow: var(--den-shadow-coral);
-    transition: var(--den-transition);
-}
-
-.btn-cta-primary:hover {
-    background-color: var(--den-coral-hover);
-    color: #FFFFFF !important;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px -2px rgba(255, 107, 107, 0.45);
-}
-
-.btn-cta-secondary {
-    background-color: #FFFFFF;
-    border: 1px solid var(--den-border);
-    color: var(--den-navy) !important;
-    font-weight: 600;
-    padding: 0.85rem 1.75rem;
-    border-radius: var(--den-radius-pill);
-    transition: var(--den-transition);
-}
-
-.btn-cta-secondary:hover {
-    background-color: var(--den-surface-subtle);
-    color: var(--den-primary-dark) !important;
-    border-color: var(--den-primary);
-    transform: translateY(-1px);
-}
-
 .btn-outline-primary {
-    color: var(--den-primary-dark);
-    border-color: var(--den-primary);
+    color: var(--den-primary-contrast);
+    border-color: var(--den-primary-contrast);
     background-color: transparent;
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--den-primary);
-    border-color: var(--den-primary);
+    background-color: #075985;
+    border-color: #075985;
     color: #FFFFFF;
     transform: translateY(-1px);
 }
 
+
 /* ═══════════════════════════════════════════
    5. CARDS & ELEVATED PANELS
    ═══════════════════════════════════════════ */
+
 .card,
 .card-custom {
     background-color: var(--den-surface);
@@ -285,9 +447,11 @@ footer a.text-muted:hover {
     border-color: var(--den-border-focus);
 }
 
+
 /* ═══════════════════════════════════════════
    5.1 KPI STAT CARDS & METRICS
    ═══════════════════════════════════════════ */
+
 .kpi-card {
     background: #FFFFFF;
     border: 1px solid var(--den-border);
@@ -349,9 +513,11 @@ footer a.text-muted:hover {
     color: var(--den-navy);
 }
 
+
 /* ═══════════════════════════════════════════
    6. CLINICAL STATUS BADGES (High Scannability)
    ═══════════════════════════════════════════ */
+
 .badge {
     font-weight: 600;
     padding: 0.4em 0.85em;
@@ -359,7 +525,9 @@ footer a.text-muted:hover {
     letter-spacing: 0.01em;
 }
 
+
 /* Pill status tints */
+
 .badge-pending,
 .bg-warning-subtle {
     background-color: var(--den-warning-bg) !important;
@@ -391,7 +559,7 @@ footer a.text-muted:hover {
 
 .bg-primary-subtle {
     background-color: var(--den-primary-subtle) !important;
-    color: var(--den-primary-dark) !important;
+    color: var(--den-primary-contrast) !important;
     border: 1px solid var(--den-primary-light);
 }
 
@@ -417,9 +585,11 @@ footer a.text-muted:hover {
     font-weight: 700;
 }
 
+
 /* ═══════════════════════════════════════════
    7. FORM CONTROLS & ERGONOMIC INPUTS
    ═══════════════════════════════════════════ */
+
 .form-label {
     font-weight: 600;
     color: var(--den-navy-dark);
@@ -451,9 +621,11 @@ footer a.text-muted:hover {
     color: var(--den-subtle);
 }
 
+
 /* ═══════════════════════════════════════════
    8. DATA TABLES (Admin, Doctor, Staff)
    ═══════════════════════════════════════════ */
+
 .table-responsive {
     border-radius: var(--den-radius-md);
     border: 1px solid var(--den-border);
@@ -494,9 +666,11 @@ footer a.text-muted:hover {
     border-bottom: none;
 }
 
+
 /* ═══════════════════════════════════════════
    8.1 EMPTY STATES (Clean clinical feedback)
    ═══════════════════════════════════════════ */
+
 .empty-state-box {
     padding: 2.75rem 1.5rem;
     text-align: center;
@@ -517,9 +691,11 @@ footer a.text-muted:hover {
     margin-bottom: 1rem;
 }
 
+
 /* ═══════════════════════════════════════════
    9. SIDEBAR NAVIGATION
    ═══════════════════════════════════════════ */
+
 .list-group-item {
     font-weight: 500;
     font-size: 0.925rem;
@@ -554,9 +730,11 @@ footer a.text-muted:hover {
     border-radius: 0 4px 4px 0;
 }
 
+
 /* ═══════════════════════════════════════════
    10. MODALS & ALERTS
    ═══════════════════════════════════════════ */
+
 .modal-content {
     border: 1px solid var(--den-border);
     border-radius: var(--den-radius-lg);
@@ -612,9 +790,11 @@ footer a.text-muted:hover {
     border-color: var(--den-border) !important;
 }
 
+
 /* ═══════════════════════════════════════════
    11. CUSTOM SCROLLBAR
    ═══════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
@@ -633,9 +813,11 @@ footer a.text-muted:hover {
     background: var(--den-primary);
 }
 
+
 /* ═══════════════════════════════════════════
    12. AUTHENTICATION PAGES (Login, Register, Forgot Password)
    ═══════════════════════════════════════════ */
+
 .page-wrapper {
     min-height: 100vh;
     display: flex;
@@ -731,7 +913,9 @@ footer a.text-muted:hover {
     color: var(--den-subtle);
 }
 
+
 /* Password field & eye visibility toggle */
+
 .password-field {
     position: relative;
     width: 100%;
@@ -739,7 +923,7 @@ footer a.text-muted:hover {
 }
 
 .password-field .form-control {
-    padding-right: 3rem !important;
+    padding-right: 3.5rem !important;
 }
 
 .password-toggle {
@@ -747,8 +931,8 @@ footer a.text-muted:hover {
     top: 50%;
     right: 0.5rem;
     transform: translateY(-50%);
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border: none;
     background: transparent;
     border-radius: var(--den-radius-pill);
@@ -790,7 +974,9 @@ footer a.text-muted:hover {
     border: 0 !important;
 }
 
+
 /* Alert styles */
+
 .alert-custom {
     padding: 0.85rem 1rem;
     border-radius: var(--den-radius-sm);
@@ -813,29 +999,6 @@ footer a.text-muted:hover {
     border: 1px solid var(--den-success-border);
 }
 
-.btn-google-login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    background: #FFFFFF;
-    border: 1.5px solid var(--den-border);
-    color: var(--den-text-secondary);
-    font-weight: 600;
-    font-size: 0.925rem;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    border-radius: var(--den-radius-sm);
-    transition: var(--den-transition);
-}
-
-.btn-google-login:hover {
-    background: var(--den-surface-subtle);
-    border-color: #94A3B8;
-    color: var(--den-navy-dark);
-    transform: translateY(-1px);
-}
 
 .btn-cta-primary:disabled {
     opacity: 0.65;
@@ -865,8 +1028,14 @@ footer a.text-muted:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 480px) {
@@ -875,9 +1044,11 @@ footer a.text-muted:hover {
     }
 }
 
+
 /* ═══════════════════════════════════════════
    13. UNIFIED DESIGN SYSTEM EXTENSIONS (index.jsp sync)
    ═══════════════════════════════════════════ */
+
 .dencli-card {
     background-color: #FFFFFF;
     border: 1px solid var(--den-border);
@@ -917,7 +1088,9 @@ footer a.text-muted:hover {
     margin-bottom: 0;
 }
 
+
 /* Status Badges - Unified Semantic Pills */
+
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -954,10 +1127,12 @@ footer a.text-muted:hover {
     border: 1px solid var(--den-danger-border);
 }
 
+
 /* Unified Buttons */
+
 .btn-cta-primary {
     background: linear-gradient(135deg, var(--den-coral) 0%, #FA5252 100%);
-    color: #FFFFFF !important;
+    color: #000000 !important;
     font-weight: 700;
     font-size: 0.95rem;
     padding: 0.75rem 1.6rem;
@@ -974,7 +1149,7 @@ footer a.text-muted:hover {
     background: linear-gradient(135deg, #FA5252 0%, #E03131 100%);
     transform: translateY(-2px);
     box-shadow: 0 8px 22px rgba(255, 107, 107, 0.46);
-    color: #FFFFFF !important;
+    color: #000000 !important;
 }
 
 .btn-cta-secondary {
@@ -994,12 +1169,12 @@ footer a.text-muted:hover {
 .btn-cta-secondary:hover {
     background: var(--den-surface-subtle);
     border-color: var(--den-primary);
-    color: var(--den-primary-dark) !important;
+    color: var(--den-primary-contrast) !important;
     transform: translateY(-2px);
 }
 
 .btn-den-primary {
-    background: linear-gradient(135deg, var(--den-primary) 0%, var(--den-primary-dark) 100%);
+    background: linear-gradient(135deg, #0369A1 0%, var(--den-primary-contrast) 100%);
     color: #FFFFFF !important;
     font-weight: 600;
     border-radius: var(--den-radius-sm);
@@ -1014,7 +1189,9 @@ footer a.text-muted:hover {
     color: #FFFFFF !important;
 }
 
+
 /* Filter Toolbar */
+
 .filter-toolbar {
     background: var(--den-surface-subtle);
     border: 1px solid var(--den-border);
@@ -1026,8 +1203,12 @@ footer a.text-muted:hover {
     gap: 0.75rem;
 }
 
+
 /* Error State / System Pages */
+
+
 /* Error State / System Pages */
+
 .system-error-wrapper {
     min-height: 100vh;
     display: flex;
@@ -1091,20 +1272,22 @@ footer a.text-muted:hover {
 
 .system-icon-danger {
     background-color: #FEE2E2;
-    color: #DC2626;
+    color: #991B1B;
 }
 
 .system-icon-info {
     background-color: #E0F2FE;
-    color: #0284C7;
+    color: #075985;
 }
 
 .system-icon-warning {
     background-color: #FEF3C7;
-    color: #D97706;
+    color: #92400E;
 }
 
+
 /* Common Header & Navbar */
+
 .dencli-navbar,
 nav.dencli-navbar,
 .navbar.dencli-navbar {
@@ -1112,6 +1295,12 @@ nav.dencli-navbar,
     background-color: #1E3A5F !important;
     box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.15) !important;
     transition: var(--den-transition);
+}
+
+.dencli-navbar .navbar-toggler,
+.btn-toggle-before,
+.btn-toggle-after {
+    min-height: 44px;
 }
 
 .dencli-brand,
@@ -1140,13 +1329,13 @@ nav.dencli-navbar,
 
 .dencli-nav-link:hover,
 .dencli-nav-link:focus {
-    color: #38BDF8 !important;
-    background-color: rgba(14, 165, 233, 0.12) !important;
+    color: #F8FAFC !important;
+    background-color: var(--den-navy) !important;
 }
 
 .btn-cta-nav {
     background-color: var(--den-coral);
-    color: #FFFFFF !important;
+    color: #000000 !important;
     font-weight: 600;
     font-size: 0.9rem;
     border-radius: 9999px;
@@ -1160,10 +1349,12 @@ nav.dencli-navbar,
     background-color: var(--den-coral-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(255, 107, 107, 0.45);
-    color: #FFFFFF !important;
+    color: #000000 !important;
 }
 
+
 /* Customer Booking Components */
+
 .booking-hero {
     background: linear-gradient(135deg, #1E3A5F 0%, #0369A1 100%);
     color: #FFFFFF;
@@ -1210,20 +1401,32 @@ nav.dencli-navbar,
     font-weight: 500;
 }
 
+
 /* Step Wizard / Utility */
+
 .step-hidden {
     display: none !important;
 }
 
+
 /* Universal Print Styles */
+
 @media print {
-    .no-print, header, nav, .btn, footer, .sidebar, .toast-container {
+    .no-print,
+    header,
+    nav,
+    .btn,
+    footer,
+    .sidebar,
+    .toast-container {
         display: none !important;
     }
     body {
         background-color: #FFFFFF !important;
     }
-    .dencli-card, .card, .card-custom {
+    .dencli-card,
+    .card,
+    .card-custom {
         box-shadow: none !important;
         border: none !important;
     }
@@ -1236,3 +1439,289 @@ nav.dencli-navbar,
 }
 
 
+/* ═══════════════════════════════════════════
+   Sidebar Navigation
+   ═══════════════════════════════════════════ */
+
+.den-sidebar {
+    background-color: #FFFFFF;
+    border-right: 1px solid var(--den-border-subtle);
+}
+
+.den-sidebar-section {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--den-muted);
+    /* #334155 — 9.7:1 on white ✓ */
+    padding: 0.35rem 0.75rem 0.2rem;
+    margin-top: 0.25rem;
+}
+
+.den-sidebar-link {
+    color: #1E293B !important;
+    /* slate-800 — 15:1 on white ✓ */
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: transparent !important;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.den-sidebar-link:hover {
+    color: var(--den-primary-dark) !important;
+    /* #0284C7 */
+    background-color: var(--den-primary-subtle) !important;
+    /* #F0F9FF */
+}
+
+.den-sidebar-link.active {
+    color: #FFFFFF !important;
+    background-color: var(--den-primary) !important;
+    font-weight: 600;
+}
+
+.den-sidebar-link.active svg {
+    stroke: #FFFFFF;
+}
+
+.den-sidebar-link svg {
+    flex-shrink: 0;
+    opacity: 0.75;
+}
+
+.den-sidebar-logout {
+    color: var(--den-danger-text) !important;
+    /* #991B1B — 10.4:1 on white ✓ */
+}
+
+.den-sidebar-logout:hover {
+    color: #7F1D1D !important;
+    background-color: #FEF2F2 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--den-bg);
+        color: var(--den-text);
+    }
+    .bg-white,
+    .bg-light {
+        background-color: var(--den-surface) !important;
+    }
+    .bg-dark .text-dark,
+    .bg-dark [style*="color: var(--dencli-navy)"],
+    .text-dark,
+    .text-navy,
+    .form-label,
+    .form-group label,
+    .page-header-title,
+    .auth-logo-section h1,
+    .table thead th,
+    [style*="color: var(--dencli-navy)"] {
+        color: var(--den-text) !important;
+    }
+    .text-primary,
+    .text-info {
+        color: #7DD3FC !important;
+    }
+    .text-success {
+        color: #6EE7B7 !important;
+    }
+    .text-warning {
+        color: #FCD34D !important;
+    }
+    .text-danger {
+        color: #FDA4AF !important;
+    }
+    .bg-primary-subtle {
+        background-color: var(--den-primary-subtle) !important;
+        color: #BAE6FD !important;
+        border-color: #164569 !important;
+    }
+    .badge-light,
+    .badge.bg-light {
+        background-color: var(--den-surface-subtle) !important;
+        color: var(--den-text) !important;
+        border-color: var(--den-border) !important;
+    }
+    .bg-white .text-muted,
+    .bg-light .text-muted,
+    .bg-white .text-secondary,
+    .bg-light .text-secondary {
+        color: var(--den-muted) !important;
+    }
+    .bg-warning.text-dark {
+        background-color: #FCD34D !important;
+        color: #0F172A !important;
+    }
+    .form-control,
+    .form-select,
+    .form-group .form-control,
+    .form-control:focus,
+    .form-select:focus {
+        background-color: var(--den-surface-subtle) !important;
+        color: var(--den-text) !important;
+        border-color: var(--den-border) !important;
+    }
+    .form-control::placeholder,
+    .form-group .form-control::placeholder {
+        color: var(--den-subtle) !important;
+        opacity: 1;
+    }
+    .input-group-text {
+        background-color: var(--den-surface-subtle) !important;
+        color: var(--den-text-secondary) !important;
+        border-color: var(--den-border) !important;
+    }
+    .table-responsive {
+        background-color: var(--den-surface) !important;
+    }
+    .table {
+        --bs-table-color: var(--den-text);
+        --bs-table-bg: transparent;
+        --bs-table-border-color: var(--den-border-subtle);
+        --bs-table-striped-color: var(--den-text);
+        --bs-table-striped-bg: rgba(255, 255, 255, 0.035);
+        --bs-table-hover-color: var(--den-text);
+        --bs-table-hover-bg: var(--den-surface-subtle);
+    }
+    .table tbody tr:hover {
+        background-color: var(--den-surface-subtle) !important;
+    }
+    .card,
+    .card-custom,
+    .dencli-card,
+    .system-error-card,
+    .service-checkbox-card,
+    .service-card,
+    .before-after-card,
+    .step-card,
+    .testimonial-card,
+    .finance-card,
+    .doctor-card,
+    .kpi-card,
+    .auth-card {
+        background-color: var(--den-surface) !important;
+        color: var(--den-text);
+        border-color: var(--den-border) !important;
+    }
+    .accordion,
+    .accordion-item,
+    .accordion-button,
+    .accordion-body,
+    .list-group-item {
+        --bs-accordion-color: var(--den-text);
+        --bs-accordion-bg: var(--den-surface);
+        --bs-accordion-btn-color: var(--den-text);
+        --bs-accordion-active-bg: var(--den-surface-subtle);
+        --bs-accordion-active-color: var(--den-text);
+        background-color: var(--den-surface) !important;
+        color: var(--den-text) !important;
+        border-color: var(--den-border) !important;
+    }
+    .accordion-button::after {
+        filter: invert(1);
+    }
+    .den-sidebar {
+        background-color: var(--den-surface) !important;
+        border-color: var(--den-border) !important;
+    }
+    .den-sidebar-link {
+        color: var(--den-text-secondary) !important;
+    }
+    .den-sidebar-link:hover {
+        color: #BAE6FD !important;
+        background-color: #0C2B40 !important;
+    }
+    .den-sidebar-link.active {
+        color: #FFFFFF !important;
+    }
+    .btn-cta-secondary {
+        background-color: var(--den-surface-subtle) !important;
+        color: var(--den-text) !important;
+        border-color: var(--den-border) !important;
+    }
+    .btn-cta-secondary:hover {
+        background-color: #203A55 !important;
+        color: #BAE6FD !important;
+    }
+    .btn-outline-primary {
+        color: #7DD3FC !important;
+        border-color: #7DD3FC !important;
+    }
+    .btn-outline-primary:hover {
+        background-color: #0369A1 !important;
+        border-color: #0369A1 !important;
+        color: #FFFFFF !important;
+    }
+    .btn-den-primary,
+    .btn-primary {
+        background-color: #0369A1;
+        border-color: #0369A1;
+        color: #FFFFFF !important;
+    }
+    .btn-den-primary {
+        background-image: linear-gradient(135deg, #075985 0%, #0369A1 100%) !important;
+    }
+    .dencli-brand .brand-highlight {
+        color: #7DD3FC !important;
+    }
+    .page-wrapper {
+        background: radial-gradient(100% 120% at 85% 10%, #132337 0%, #0D1B2A 100%);
+    }
+     ::selection {
+        background-color: #075985;
+        color: #F1F5F9;
+    }
+    .hero-section {
+        background: linear-gradient(135deg, #0D1B2A 0%, #132337 100%);
+    }
+    .hero-title {
+        color: #F1F5F9 !important;
+    }
+    .hero-title span {
+        background: none;
+        color: #7DD3FC;
+        -webkit-text-fill-color: #7DD3FC;
+    }
+    .hero-badge,
+    .service-tag {
+        background: #0C2B40;
+        color: #BAE6FD;
+    }
+    .hero-subtitle,
+    .service-card .text-muted,
+    .step-card .text-muted,
+    .testimonial-card .text-muted,
+    .finance-card .text-muted,
+    .doctor-card .text-muted {
+        color: var(--den-muted) !important;
+    }
+    .floating-stat-box,
+    .floating-badge-top {
+        background: rgba(19, 35, 55, 0.97);
+        color: var(--den-text);
+        border-color: var(--den-border);
+    }
+    .service-price {
+        color: #7DD3FC;
+    }
+    .step-circle {
+        background: linear-gradient(135deg, #0369A1 0%, #0284C7 100%);
+    }
+    .service-icon-wrapper,
+    .testimonial-avatar {
+        background-color: #12354D;
+        color: #7DD3FC;
+    }
+    .case-split-box,
+    .filter-toolbar {
+        background-color: var(--den-surface-subtle);
+        color: var(--den-text);
+        border-color: var(--den-border);
+    }
+    .guarantee-badge {
+        color: var(--den-text-secondary);
+    }
+}

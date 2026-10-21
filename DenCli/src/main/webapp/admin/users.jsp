@@ -1,171 +1,184 @@
 ﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Người dùng | DenCli</title>
-    <!-- Bootstrap 5 CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- DenCli Design System Theme -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=4">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="d-flex flex-column min-vh-100">
+    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+        <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+            <!DOCTYPE html>
+            <html lang="vi">
 
-    <!-- Header dùng chung -->
-    <jsp:include page="/WEB-INF/views/common/header.jsp" />
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Quản lý Người dùng | DenCli</title>
+                <!-- Bootstrap 5 CSS CDN -->
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+                <!-- DenCli Design System Theme -->
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=5">
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+            </head>
 
-    <div class="container-fluid flex-grow-1">
-        <div class="row min-vh-100">
-            <!-- Sidebar điều hướng theo Role -->
-            <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+            <body class="d-flex flex-column min-vh-100">
 
-            <!-- Nội dung chính -->
-            <main class="col-12 col-md-9 col-lg-10 p-4">
-                <div class="container-fluid p-0">
+                <!-- Header dùng chung -->
+                <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-                    <div class="dencli-card p-4">
-                        <div class="page-header-box">
-                            <div>
-                                <h4 class="page-header-title">👥 Danh sách Tài khoản & Người dùng</h4>
-                                <p class="page-header-subtitle">Quản lý toàn bộ nhân sự và bệnh nhân trên hệ thống phòng khám.</p>
-                            </div>
+                <div class="container-fluid flex-grow-1">
+                    <div class="row min-vh-100">
+                        <!-- Sidebar điều hướng theo Role -->
+                        <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
 
-                            <!-- Bộ lọc vai trò -->
-                            <form action="${pageContext.request.contextPath}/admin/users" method="GET" class="d-flex align-items-center gap-2">
-                                <label for="roleFilter" class="small fw-semibold text-muted text-nowrap">Vai trò:</label>
-                                <select id="roleFilter" name="role_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <!-- Nội dung chính -->
+                        <main class="col-12 col-md-9 col-lg-10 p-4">
+                            <div class="container-fluid p-0">
+
+                                <div class="dencli-card p-4">
+                                    <div class="page-header-box">
+                                        <div>
+                                            <h4 class="page-header-title">👥 Danh sách Tài khoản & Người dùng</h4>
+                                            <p class="page-header-subtitle">Quản lý toàn bộ nhân sự và bệnh nhân trên hệ thống phòng khám.</p>
+                                        </div>
+
+                                        <!-- Bộ lọc vai trò -->
+                                        <form action="${pageContext.request.contextPath}/admin/users" method="GET" class="d-flex align-items-center gap-2">
+                                            <label for="roleFilter" class="small fw-semibold text-muted text-nowrap">Vai trò:</label>
+                                            <select id="roleFilter" name="role_id" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="0" ${selectedRoleId == 0 || empty selectedRoleId ? 'selected' : ''}>-- Tất cả vai trò --</option>
                                     <option value="1" ${selectedRoleId == 1 ? 'selected' : ''}>Quản trị viên (ADMIN)</option>
                                     <option value="2" ${selectedRoleId == 2 ? 'selected' : ''}>Bác sĩ nha khoa (DOCTOR)</option>
                                     <option value="4" ${selectedRoleId == 4 ? 'selected' : ''}>Nhân viên Lễ tân (STAFF)</option>
                                     <option value="5" ${selectedRoleId == 5 ? 'selected' : ''}>Bệnh nhân (CUSTOMER)</option>
                                 </select>
-                                <span class="badge bg-light text-muted border py-2 px-3">
+                                            <span class="badge bg-light text-muted border py-2 px-3">
                                     Tổng: <c:out value="${totalRecords}" /> người
                                 </span>
-                            </form>
-                        </div>
+                                        </form>
+                                    </div>
 
-                        <!-- Bảng danh sách người dùng -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" style="width: 8%;">ID</th>
-                                        <th scope="col" style="width: 22%;">Họ và tên</th>
-                                        <th scope="col" style="width: 22%;">Email</th>
-                                        <th scope="col" style="width: 15%;">Số điện thoại</th>
-                                        <th scope="col" style="width: 15%;">Vai trò</th>
-                                        <th scope="col" style="width: 8%;">Giới tính</th>
-                                        <th scope="col" style="width: 10%;">Địa chỉ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${empty userList}">
-                                            <tr>
-                                                <td colspan="7" class="text-center py-5">
-                                                    <div class="empty-state-box">
-                                                        <div class="empty-state-icon">👥</div>
-                                                        <h6 class="fw-bold text-navy mb-1">Không tìm thấy người dùng</h6>
-                                                        <p class="text-muted small mb-0">Không có tài khoản nào phù hợp với vai trò hoặc tiêu chí đã lọc.</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:forEach items="${userList}" var="u">
+                                    <!-- Bảng danh sách người dùng -->
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
                                                 <tr>
-                                                    <td class="fw-bold text-muted">#<c:out value="${u.userId}" /></td>
-                                                    <td class="fw-semibold text-dark"><c:out value="${u.fullName}" /></td>
-                                                    <td><c:out value="${u.email}" /></td>
-                                                    <td><c:out value="${u.phone}" /></td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${u.roleId == 1}">
-                                                                <span class="status-badge status-pending">⚙️ Quản trị viên</span>
-                                                            </c:when>
-                                                            <c:when test="${u.roleId == 2}">
-                                                                <span class="status-badge status-confirmed">🩺 Bác sĩ</span>
-                                                            </c:when>
-                                                            <c:when test="${u.roleId == 4}">
-                                                                <span class="status-badge status-checkedin">💁 Lễ tân</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="status-badge bg-light text-dark border">👤 Bệnh nhân</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${not empty u.gender}"><c:out value="${u.gender}" /></c:when>
-                                                            <c:otherwise><span class="text-muted">—</span></c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td class="small text-muted" style="max-width: 150px;">
-                                                        <c:choose>
-                                                            <c:when test="${not empty u.address}"><c:out value="${u.address}" /></c:when>
-                                                            <c:otherwise>—</c:otherwise>
-                                                        </c:choose>
-                                                    </td>
+                                                    <th scope="col" style="width: 8%;">ID</th>
+                                                    <th scope="col" style="width: 22%;">Họ và tên</th>
+                                                    <th scope="col" style="width: 22%;">Email</th>
+                                                    <th scope="col" style="width: 15%;">Số điện thoại</th>
+                                                    <th scope="col" style="width: 15%;">Vai trò</th>
+                                                    <th scope="col" style="width: 8%;">Giới tính</th>
+                                                    <th scope="col" style="width: 10%;">Địa chỉ</th>
                                                 </tr>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </table>
-                        </div>
+                                            </thead>
+                                            <tbody>
+                                                <c:choose>
+                                                    <c:when test="${empty userList}">
+                                                        <tr>
+                                                            <td colspan="7" class="text-center py-5">
+                                                                <div class="empty-state-box">
+                                                                    <div class="empty-state-icon">👥</div>
+                                                                    <h6 class="fw-bold text-navy mb-1">Không tìm thấy người dùng</h6>
+                                                                    <p class="text-muted small mb-0">Không có tài khoản nào phù hợp với vai trò hoặc tiêu chí đã lọc.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:forEach items="${userList}" var="u">
+                                                            <tr>
+                                                                <td class="fw-bold text-muted">#
+                                                                    <c:out value="${u.userId}" />
+                                                                </td>
+                                                                <td class="fw-semibold text-dark">
+                                                                    <c:out value="${u.fullName}" />
+                                                                </td>
+                                                                <td>
+                                                                    <c:out value="${u.email}" />
+                                                                </td>
+                                                                <td>
+                                                                    <c:out value="${u.phone}" />
+                                                                </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${u.roleId == 1}">
+                                                                            <span class="status-badge status-pending">⚙️ Quản trị viên</span>
+                                                                        </c:when>
+                                                                        <c:when test="${u.roleId == 2}">
+                                                                            <span class="status-badge status-confirmed">🩺 Bác sĩ</span>
+                                                                        </c:when>
+                                                                        <c:when test="${u.roleId == 4}">
+                                                                            <span class="status-badge status-checkedin">💁 Lễ tân</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="status-badge bg-light text-dark border">👤 Bệnh nhân</span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty u.gender}">
+                                                                            <c:out value="${u.gender}" /></c:when>
+                                                                        <c:otherwise><span class="text-muted">—</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td class="small text-muted" style="max-width: 150px;">
+                                                                    <c:choose>
+                                                                        <c:when test="${not empty u.address}">
+                                                                            <c:out value="${u.address}" /></c:when>
+                                                                        <c:otherwise>—</c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                        <!-- Bộ thanh phân trang Pagination UI -->
-                        <c:if test="${totalPages > 1}">
-                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top flex-wrap gap-2">
-                                <div class="text-muted small">
-                                    Đang hiển thị trang <strong>${currentPage}</strong> / <strong>${totalPages}</strong>
-                                </div>
-                                <nav aria-label="Phân trang người dùng">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <!-- Nút Previous -->
-                                        <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
-                                            <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${currentPage - 1}&page_size=${pageSize}" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo; Trang trước</span>
-                                            </a>
-                                        </li>
+                                    <!-- Bộ thanh phân trang Pagination UI -->
+                                    <c:if test="${totalPages > 1}">
+                                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top flex-wrap gap-2">
+                                            <div class="text-muted small">
+                                                Đang hiển thị trang <strong>${currentPage}</strong> / <strong>${totalPages}</strong>
+                                            </div>
+                                            <nav aria-label="Phân trang người dùng">
+                                                <ul class="pagination pagination-sm mb-0">
+                                                    <!-- Nút Previous -->
+                                                    <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
+                                                        <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${currentPage - 1}&page_size=${pageSize}" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo; Trang trước</span>
+                                                        </a>
+                                                    </li>
 
-                                        <!-- Các số trang -->
-                                        <c:forEach begin="1" end="${totalPages}" var="p">
-                                            <li class="page-item ${p == currentPage ? 'active' : ''}">
-                                                <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${p}&page_size=${pageSize}">
+                                                    <!-- Các số trang -->
+                                                    <c:forEach begin="1" end="${totalPages}" var="p">
+                                                        <li class="page-item ${p == currentPage ? 'active' : ''}">
+                                                            <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${p}&page_size=${pageSize}">
                                                     ${p}
                                                 </a>
-                                            </li>
-                                        </c:forEach>
+                                                        </li>
+                                                    </c:forEach>
 
-                                        <!-- Nút Next -->
-                                        <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
-                                            <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${currentPage + 1}&page_size=${pageSize}" aria-label="Next">
-                                                <span aria-hidden="true">Trang sau &raquo;</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                                    <!-- Nút Next -->
+                                                    <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
+                                                        <a class="page-link" href="${pageContext.request.contextPath}/admin/users?role_id=${selectedRoleId}&page=${currentPage + 1}&page_size=${pageSize}" aria-label="Next">
+                                                            <span aria-hidden="true">Trang sau &raquo;</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    </c:if>
+
+                                </div>
+
                             </div>
-                        </c:if>
-
+                        </main>
                     </div>
-
                 </div>
-            </main>
-        </div>
-    </div>
 
-    <!-- Footer dùng chung -->
-    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
-</body>
-</html>
+                <!-- Footer dùng chung -->
+                <jsp:include page="/WEB-INF/views/common/footer.jsp" />
+            </body>
+
+            </html>
