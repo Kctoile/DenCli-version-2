@@ -1,6 +1,64 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- Footer dùng chung cho toàn bộ hệ thống DenCli (Bootstrap 5 & Impeccable Design) -->
-<footer class="bg-dark text-white pt-5 pb-4 mt-auto border-top border-secondary-subtle" style="background: #111827 !important;">
+<!-- Footer dùng chung cho toàn bộ hệ thống DenCli (Bootstrap 5 & Impeccable Design - High Contrast WCAG AAA) -->
+<footer class="dencli-footer pt-5 pb-4 mt-auto">
+    <style>
+        .dencli-footer {
+            background: #0B132B !important;
+            color: #E2E8F0 !important;
+            border-top: 1px solid rgba(56, 189, 248, 0.25) !important;
+        }
+        .dencli-footer .footer-heading {
+            color: #38BDF8 !important;
+            font-size: 0.9rem;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+        }
+        .dencli-footer .footer-text {
+            color: #CBD5E1 !important; /* Slate-300: Đạt chuẩn tương phản 11.5:1 trên nền tối */
+            font-size: 0.875rem;
+            line-height: 1.65;
+        }
+        .dencli-footer .footer-subtext {
+            color: #94A3B8 !important; /* Slate-400: Tương phản 7.2:1 */
+            font-size: 0.8125rem;
+        }
+        .dencli-footer .footer-link {
+            color: #CBD5E1 !important;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            transition: color 0.2s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+        .dencli-footer .footer-link:hover {
+            color: #38BDF8 !important; /* Cyan phát sáng khi hover */
+            transform: translateX(3px);
+        }
+        .dencli-footer .footer-bottom-link {
+            color: #94A3B8 !important;
+            text-decoration: none !important;
+            transition: color 0.2s ease;
+        }
+        .dencli-footer .footer-bottom-link:hover {
+            color: #38BDF8 !important;
+        }
+        .dencli-footer hr {
+            border-color: rgba(148, 163, 184, 0.25) !important;
+            opacity: 1 !important;
+        }
+        .dencli-footer .btn-cta-footer {
+            border: 1.5px solid #38BDF8 !important;
+            color: #38BDF8 !important;
+            background: transparent;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .dencli-footer .btn-cta-footer:hover {
+            background: #38BDF8 !important;
+            color: #0B132B !important;
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+        }
+    </style>
+
     <div class="container">
         <div class="row g-4 mb-4">
             <!-- Cột 1: Thông tin phòng khám -->
@@ -11,7 +69,7 @@
                     </span>
                     <h5 class="fw-bold mb-0 text-white">DenCli Dental Clinic</h5>
                 </div>
-                <p class="text-secondary small mb-3 leading-relaxed">
+                <p class="footer-text mb-3">
                     Hệ thống Nha khoa Công nghệ cao DenCli tự hào mang đến các dịch vụ chăm sóc răng miệng tiêu chuẩn Châu Âu. Đồng hành kiến tạo nụ cười tự tin và rạng rỡ cho hàng vạn gia đình Việt Nam.
                 </p>
                 <div class="d-flex flex-wrap gap-2">
@@ -26,61 +84,61 @@
 
             <!-- Cột 2: Dịch vụ nha khoa nổi bật -->
             <div class="col-lg-3 col-md-6">
-                <h6 class="text-uppercase fw-bold text-info mb-3 tracking-wide">Dịch Vụ Nổi Bật</h6>
-                <ul class="list-unstyled text-secondary small mb-0 d-flex flex-column gap-2">
-                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none hover-text-white">🦷 Niềng Răng Chỉnh Nha Mắc Cài & Invisalign</a></li>
-                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none hover-text-white">✨ Tẩy Trắng Răng Công Nghệ Laser Whitening</a></li>
-                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none hover-text-white">💎 Bọc Răng Sứ Thẩm Mỹ Cercon HT</a></li>
-                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none hover-text-white">🔩 Cấy Ghép Trồng Răng Implant Châu Âu</a></li>
-                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none hover-text-white">🩺 Khám Nha Khoa Tổng Quát & Lấy Cao Răng</a></li>
+                <h6 class="text-uppercase footer-heading mb-3">Dịch Vụ Nổi Bật</h6>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-link">🦷 Niềng Răng Chỉnh Nha Mắc Cài & Invisalign</a></li>
+                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-link">✨ Tẩy Trắng Răng Công Nghệ Laser Whitening</a></li>
+                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-link">💎 Bọc Răng Sứ Thẩm Mỹ Cercon HT</a></li>
+                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-link">🔩 Cấy Ghép Trồng Răng Implant Châu Âu</a></li>
+                    <li><a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-link">🩺 Khám Nha Khoa Tổng Quát & Lấy Cao Răng</a></li>
                 </ul>
             </div>
 
             <!-- Cột 3: Giờ làm việc & Đặt hẹn -->
             <div class="col-lg-2 col-md-6">
-                <h6 class="text-uppercase fw-bold text-info mb-3 tracking-wide">Giờ Làm Việc</h6>
-                <div class="text-secondary small mb-3">
+                <h6 class="text-uppercase footer-heading mb-3">Giờ Làm Việc</h6>
+                <div class="mb-3">
                     <p class="mb-1 fw-semibold text-white">Thứ Hai - Chủ Nhật:</p>
-                    <p class="mb-2">08:00 - 18:00</p>
-                    <p class="text-muted fst-italic mb-0">* Khám liên tục không nghỉ trưa, tiếp đón tận tâm.</p>
+                    <p class="mb-2 footer-text">08:00 - 18:00</p>
+                    <p class="footer-subtext fst-italic mb-0">* Khám liên tục không nghỉ trưa, tiếp đón tận tâm.</p>
                 </div>
-                <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1">
+                <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-sm btn-cta-footer rounded-pill px-3 py-1">
                     Đặt lịch khám ngay →
                 </a>
             </div>
 
             <!-- Cột 4: Thông tin liên hệ -->
             <div class="col-lg-3 col-md-6">
-                <h6 class="text-uppercase fw-bold text-info mb-3 tracking-wide">Liên Hệ Phòng Khám</h6>
-                <ul class="list-unstyled text-secondary small mb-0 d-flex flex-column gap-2">
+                <h6 class="text-uppercase footer-heading mb-3">Liên Hệ Phòng Khám</h6>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-2 footer-text">
                     <li class="d-flex align-items-start gap-2">
-                        <span class="text-info">📍</span>
-                        <span>45 Phố Huế, P. Nguyễn Du, Q. Hai Bà Trưng, Hà Nội</span>
+                        <span style="color: #38BDF8;">📍</span>
+                        <span class="footer-text">45 Phố Huế, P. Nguyễn Du, Q. Hai Bà Trưng, Hà Nội</span>
                     </li>
                     <li class="d-flex align-items-center gap-2">
-                        <span class="text-info">📞</span>
-                        <span>Hotline 24/7: <strong class="text-warning">1900 6868</strong></span>
+                        <span style="color: #38BDF8;">📞</span>
+                        <span class="footer-text">Hotline 24/7: <strong style="color: #FBBF24; font-size: 1.05rem;">1900 6868</strong></span>
                     </li>
                     <li class="d-flex align-items-center gap-2">
-                        <span class="text-info">✉️</span>
-                        <span>Email: info@dencli.com</span>
+                        <span style="color: #38BDF8;">✉️</span>
+                        <span class="footer-text">Email: info@dencli.com</span>
                     </li>
                 </ul>
             </div>
         </div>
 
-        <hr class="border-secondary my-4">
+        <hr class="my-4">
 
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-secondary small">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 footer-subtext">
             <div>
-                © 2026 <strong>Phòng Khám Nha Khoa Quốc Tế DenCli</strong>. Bảo lưu mọi quyền.
+                © 2026 <strong class="text-white">Phòng Khám Nha Khoa Quốc Tế DenCli</strong>. Bảo lưu mọi quyền.
             </div>
             <div class="d-flex gap-3">
-                <a href="${pageContext.request.contextPath}/index.jsp#faq" class="text-secondary text-decoration-none">Chính sách bảo mật</a>
-                <span>•</span>
-                <a href="${pageContext.request.contextPath}/index.jsp#faq" class="text-secondary text-decoration-none">Điều khoản dịch vụ</a>
-                <span>•</span>
-                <a href="${pageContext.request.contextPath}/index.jsp#services" class="text-secondary text-decoration-none">Biểu phí niêm yết</a>
+                <a href="${pageContext.request.contextPath}/index.jsp#faq" class="footer-bottom-link">Chính sách bảo mật</a>
+                <span class="text-secondary">•</span>
+                <a href="${pageContext.request.contextPath}/index.jsp#faq" class="footer-bottom-link">Điều khoản dịch vụ</a>
+                <span class="text-secondary">•</span>
+                <a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-bottom-link">Biểu phí niêm yết</a>
             </div>
         </div>
     </div>

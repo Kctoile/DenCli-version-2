@@ -371,18 +371,18 @@ footer .text-secondary,
 .trust-band .text-secondary,
 .cta-banner .text-muted,
 .cta-banner .text-secondary {
-    color: #CBD5E1;
+    color: #CBD5E1 !important;
     /* High contrast Slate-300: 10:1 contrast ratio against dark backgrounds */
 }
 
 footer a.text-secondary,
 footer a.text-muted {
-    color: #CBD5E1;
+    color: #CBD5E1 !important;
 }
 
 footer a.text-secondary:hover,
 footer a.text-muted:hover {
-    color: #38BDF8;
+    color: #38BDF8 !important;
 }
 
 
