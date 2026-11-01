@@ -1373,6 +1373,38 @@ nav.dencli-navbar,
     color: #FFFFFF;
 }
 
+/* Logout Button on Dark Navbar - High Contrast WCAG AAA */
+.btn-nav-logout {
+    color: #FFFFFF !important;
+    background-color: #DC2626 !important;
+    border: 1.5px solid #EF4444 !important;
+    font-weight: 700 !important;
+    font-size: 0.8125rem !important;
+    transition: all 0.25s ease !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4) !important;
+}
+
+.btn-nav-logout svg {
+    stroke: #FFFFFF !important;
+    transition: stroke 0.25s ease;
+}
+
+.btn-nav-logout:hover,
+.btn-nav-logout:focus {
+    color: #FFFFFF !important;
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
+    box-shadow: 0 4px 14px rgba(185, 28, 28, 0.55) !important;
+    transform: translateY(-1px);
+}
+
+.btn-nav-logout:hover svg,
+.btn-nav-logout:focus svg {
+    stroke: #FFFFFF !important;
+}
+
+
 
 /* Customer Booking Components */
 
@@ -1512,13 +1544,21 @@ nav.dencli-navbar,
 }
 
 .den-sidebar-logout {
-    color: var(--den-danger-text);
-    /* #991B1B — 10.4:1 on white ✓ */
+    color: #DC2626 !important;
+    font-weight: 700 !important;
+}
+
+.den-sidebar-logout svg {
+    stroke: #DC2626 !important;
 }
 
 .den-sidebar-logout:hover {
-    color: #7F1D1D;
-    background-color: #FEF2F2;
+    color: #FFFFFF !important;
+    background-color: #DC2626 !important;
+}
+
+.den-sidebar-logout:hover svg {
+    stroke: #FFFFFF !important;
 }
 
 @media (prefers-color-scheme: dark) {

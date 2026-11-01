@@ -11,7 +11,7 @@
                 <!-- Bootstrap 5 CSS CDN -->
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
                 <!-- DenCli Design System Theme -->
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=5">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
                 <!-- Google Fonts -->
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +49,7 @@
                                     <option value="4" ${selectedRoleId == 4 ? 'selected' : ''}>Nhân viên Lễ tân (STAFF)</option>
                                     <option value="5" ${selectedRoleId == 5 ? 'selected' : ''}>Bệnh nhân (CUSTOMER)</option>
                                 </select>
-                                            <span class="badge bg-light text-muted border py-2 px-3">
+                                            <span class="badge bg-light text-dark fw-bold border py-2 px-3">
                                     Tổng: <c:out value="${totalRecords}" /> người
                                 </span>
                                         </form>

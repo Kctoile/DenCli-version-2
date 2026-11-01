@@ -20,7 +20,7 @@
 
                 <!-- DenCli Pure CSS Stylesheet & Framer Motion Engine -->
                 <link rel="stylesheet" href="${ctx}/assets/css/style.css?v=4">
-                <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=5">
+                <link rel="stylesheet" href="${ctx}/css/dencli-theme.css?v=7">
             </head>
 
             <body class="d-flex flex-column min-vh-100">
@@ -456,9 +456,9 @@
                                     phát sinh thêm chi phí.
                                 </p>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-light text-secondary border">0% Lãi suất</span>
-                                    <span class="badge bg-light text-secondary border">Kỳ hạn 6-18 tháng</span>
-                                    <span class="badge bg-light text-secondary border">Thủ tục 3 phút</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">0% Lãi suất</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">Kỳ hạn 6-18 tháng</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">Thủ tục 3 phút</span>
                                 </div>
                             </div>
                         </div>
@@ -477,9 +477,9 @@
                                     chuẩn bị đầy đủ chứng từ và hồ sơ điều trị.
                                 </p>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-light text-secondary border">Xuất hóa đơn VAT</span>
-                                    <span class="badge bg-light text-secondary border">Bảo lãnh tư nhân</span>
-                                    <span class="badge bg-light text-secondary border">Hỗ trợ hồ sơ 100%</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">Xuất hóa đơn VAT</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">Bảo lãnh tư nhân</span>
+                                    <span class="badge bg-light text-dark fw-semibold border">Hỗ trợ hồ sơ 100%</span>
                                 </div>
                             </div>
                         </div>
@@ -508,8 +508,8 @@
                                         Hơn 12 năm kinh nghiệm lâm sàng chỉnh nha chuyên sâu. Đạt danh hiệu Bác sĩ Invisalign Platinum Elite danh giá từ Hoa Kỳ. Thành viên chính thức Hội Nắn chỉnh Răng Việt Nam (VAO).
                                     </p>
                                     <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                        <span class="badge bg-light text-secondary border">2,500+ Ca Niềng Hoàn Tất</span>
-                                        <span class="badge bg-light text-secondary border">Invisalign Platinum Elite</span>
+                                        <span class="badge bg-light text-dark fw-semibold border">2,500+ Ca Niềng Hoàn Tất</span>
+                                        <span class="badge bg-light text-dark fw-semibold border">Invisalign Platinum Elite</span>
                                     </div>
                                 </div>
                             </div>
@@ -524,8 +524,8 @@
                                         Tốt nghiệp Thạc sĩ Răng Hàm Mặt loại Giỏi, tốt nghiệp chuyên sâu về khớp cắn sinh lý và nắn chỉnh răng thẩm mỹ tại Cộng hòa Liên bang Đức. Hơn 10 năm kinh nghiệm điều trị niềng răng tuổi teen.
                                     </p>
                                     <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                        <span class="badge bg-light text-secondary border">Thạc Sĩ RHM Chính Quy</span>
-                                        <span class="badge bg-light text-secondary border">10 Năm Kinh Nghiệm</span>
+                                        <span class="badge bg-light text-dark fw-semibold border">Thạc Sĩ RHM Chính Quy</span>
+                                        <span class="badge bg-light text-dark fw-semibold border">10 Năm Kinh Nghiệm</span>
                                     </div>
                                 </div>
                             </div>

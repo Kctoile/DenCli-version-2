@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
 
     <style>
         /* Scoped UI/UX Pro Max Enhancements for Booking Page */
@@ -448,9 +448,9 @@
                 <!-- CAM KẾT VÀ NÚT SUBMIT -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 border-top mt-4">
                     <div class="d-flex flex-wrap gap-2 text-muted small">
-                        <span class="badge bg-light border text-secondary px-3 py-2 rounded-pill">🛡️ Khám êm ái - Chuẩn Châu Âu</span>
-                        <span class="badge bg-light border text-secondary px-3 py-2 rounded-pill">⏱️ Tiếp đón đúng giờ</span>
-                        <span class="badge bg-light border text-secondary px-3 py-2 rounded-pill">🔒 Bảo mật hồ sơ bệnh án</span>
+                        <span class="badge bg-light border text-dark fw-semibold px-3 py-2 rounded-pill">🛡️ Khám êm ái - Chuẩn Châu Âu</span>
+                        <span class="badge bg-light border text-dark fw-semibold px-3 py-2 rounded-pill">⏱️ Tiếp đón đúng giờ</span>
+                        <span class="badge bg-light border text-dark fw-semibold px-3 py-2 rounded-pill">🔒 Bảo mật hồ sơ bệnh án</span>
                     </div>
 
                     <div class="d-flex align-items-center gap-2 ms-auto">

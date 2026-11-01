@@ -6,7 +6,7 @@
             <script>
                 window.CSRF_TOKEN = "${csrfToken}";
             </script>
-            <!-- Navbar styles centralized in dencli-theme.css -->
+            <!-- Navbar styles centralized in dencli-theme.css?v=7 -->
 
             <nav class="navbar navbar-expand-lg navbar-dark dencli-navbar sticky-top py-2 py-lg-3">
                 <div class="container px-3 px-md-4">
@@ -31,16 +31,16 @@
                             <li class="nav-item">
                                 <c:choose>
                                     <c:when test="${sessionScope.user.roleId == 1}">
-                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/admin/dashboard">Trang chủ</a>
+                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/admin/users">Trang chủ</a>
                                     </c:when>
                                     <c:when test="${sessionScope.user.roleId == 2}">
-                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/doctor/dashboard">Trang chủ</a>
+                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/doctor/examination">Trang chủ</a>
                                     </c:when>
                                     <c:when test="${sessionScope.user.roleId == 4}">
-                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/staff/dashboard">Trang chủ</a>
+                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/staff/reception">Trang chủ</a>
                                     </c:when>
                                     <c:when test="${not empty sessionScope.user}">
-                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/customer/appointments">Trang chủ</a>
+                                        <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/customer/medical_records">Trang chủ</a>
                                     </c:when>
                                     <c:otherwise>
                                         <a class="nav-link dencli-nav-link" href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a>
@@ -96,15 +96,15 @@
                                         <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
                                             <c:choose>
                                                 <c:when test="${sessionScope.user.roleId == 1}">
-                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/admin/dashboard">⚙️ Bảng Điều Khiển Admin</a></li>
+                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/admin/users">⚙️ Bảng Điều Khiển Admin</a></li>
                                                     <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/admin/users">👥 Quản Lý Người Dùng</a></li>
                                                 </c:when>
                                                 <c:when test="${sessionScope.user.roleId == 2}">
-                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/doctor/dashboard">🩺 Dashboard Bác Sĩ</a></li>
+                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/doctor/examination">🩺 Dashboard Bác Sĩ</a></li>
                                                     <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/doctor/prescription">💊 Kê Đơn Thuốc</a></li>
                                                 </c:when>
                                                 <c:when test="${sessionScope.user.roleId == 4}">
-                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/staff/dashboard">💁 Dashboard Lễ Tân</a></li>
+                                                    <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/staff/reception">💁 Dashboard Lễ Tân</a></li>
                                                     <li><a class="dropdown-item py-2" href="${pageContext.request.contextPath}/staff/invoice">🧾 Lập Hóa Đơn Thu Phí</a></li>
                                                 </c:when>
                                                 <c:otherwise>
@@ -115,19 +115,20 @@
                                                 <hr class="dropdown-divider">
                                             </li>
                                             <li>
-                                                <a class="dropdown-item text-danger py-2" href="${pageContext.request.contextPath}/logout">
-                                        🚪 Đăng xuất
-                                    </a>
+                                                <a class="dropdown-item py-2 fw-bold d-flex align-items-center gap-2" href="${pageContext.request.contextPath}/logout" style="color: #DC2626 !important;">
+                                                    <span>🚪</span><span>Đăng xuất</span>
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>
 
                                     <!-- Nút Đăng xuất trực tiếp trên thanh điều hướng -->
                                     <a href="${pageContext.request.contextPath}/logout"
-                                       class="btn btn-sm btn-nav-logout px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm"
+                                       class="btn btn-sm btn-nav-logout px-3 py-2 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm fw-bold"
+                                       style="color: #FFFFFF !important; background-color: #DC2626 !important; border: 1.5px solid #EF4444 !important; font-weight: 700 !important;"
                                        title="Đăng xuất khỏi hệ thống">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                        <span class="d-none d-sm-inline">Đăng xuất</span>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" aria-hidden="true" style="stroke: #FFFFFF !important;"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                        <span class="d-none d-sm-inline" style="color: #FFFFFF !important;">Đăng xuất</span>
                                     </a>
                                 </c:when>
                                 <c:otherwise>

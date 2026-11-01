@@ -11,11 +11,6 @@
             <%-- MENU CHO QUẢN TRọ VIÊN (ROLE 1) --%>
             <c:when test="${sessionScope.user.roleId == 1}">
                 <div class="den-sidebar-section">Quản trị hệ thống</div>
-                <a href="<%= cp %>/admin/dashboard"
-                   class="den-sidebar-link list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 d-flex align-items-center gap-2<%= uri.contains("/admin/dashboard") ? " active" : "" %>">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    <span>Bảng điều khiển</span>
-                </a>
                 <a href="<%= cp %>/admin/users"
                    class="den-sidebar-link list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 d-flex align-items-center gap-2<%= uri.contains("/admin/users") ? " active" : "" %>">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
@@ -105,9 +100,10 @@
             <span>Đổi mật khẩu</span>
         </a>
         <a href="<%= cp %>/logout"
-           class="den-sidebar-link den-sidebar-logout list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 d-flex align-items-center gap-2 fw-semibold">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            <span>Đăng xuất</span>
+           class="den-sidebar-link den-sidebar-logout list-group-item list-group-item-action border-0 rounded-3 py-2 px-3 d-flex align-items-center gap-2 fw-bold"
+           style="color: #DC2626 !important; font-weight: 700 !important;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" aria-hidden="true" style="stroke: #DC2626 !important;"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span style="color: #DC2626 !important;">Đăng xuất</span>
         </a>
     </div>
 </div>

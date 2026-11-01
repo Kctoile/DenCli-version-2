@@ -135,9 +135,9 @@
             </div>
             <div class="d-flex gap-3">
                 <a href="${pageContext.request.contextPath}/index.jsp#faq" class="footer-bottom-link">Chính sách bảo mật</a>
-                <span class="text-secondary">•</span>
+                <span style="color: #94A3B8;">•</span>
                 <a href="${pageContext.request.contextPath}/index.jsp#faq" class="footer-bottom-link">Điều khoản dịch vụ</a>
-                <span class="text-secondary">•</span>
+                <span style="color: #94A3B8;">•</span>
                 <a href="${pageContext.request.contextPath}/index.jsp#services" class="footer-bottom-link">Biểu phí niêm yết</a>
             </div>
         </div>

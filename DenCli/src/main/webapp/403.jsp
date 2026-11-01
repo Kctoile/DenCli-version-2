@@ -11,7 +11,7 @@
             <c:if test="${not empty sessionScope.user}">
                 <c:choose>
                     <c:when test="${sessionScope.user.roleId == 1}">
-                        <c:set var="dashboardUrl" value="${pageContext.request.contextPath}/admin/dashboard" />
+                        <c:set var="dashboardUrl" value="${pageContext.request.contextPath}/admin/users" />
                         <c:set var="roleName" value="Quản trị viên (ADMIN)" />
                     </c:when>
                     <c:when test="${sessionScope.user.roleId == 2}">
@@ -41,7 +41,7 @@
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=5">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
             </head>
 
             <body class="system-error-wrapper">
@@ -70,8 +70,8 @@
                                 <a href="${dashboardUrl}" class="btn btn-den-primary rounded-pill px-4">
                         🏠 Bàn làm việc của tôi
                     </a>
-                                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger rounded-pill px-4">
-                        Đăng xuất
+                                <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" style="background-color: #DC2626 !important; border-color: #DC2626 !important; color: #FFFFFF !important;">
+                        🚪 Đăng xuất
                     </a>
                             </c:when>
                             <c:otherwise>
