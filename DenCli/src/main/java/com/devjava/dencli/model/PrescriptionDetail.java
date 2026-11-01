@@ -85,7 +85,7 @@ public class PrescriptionDetail implements Serializable {
     }
 
     public int getQuantity() {
-        return prescribedQuantity;
+        return getPrescribedQuantity();
     }
 
     public BigDecimal getSubtotal() {

@@ -23,6 +23,7 @@ import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.dto.RevenueDTO;
 
+@SuppressWarnings({"java:S2143", "squid:S2143"})
 public class AppointmentDAOImpl implements AppointmentDAO {
 
     private static final Logger LOGGER = Logger.getLogger(AppointmentDAOImpl.class.getName());

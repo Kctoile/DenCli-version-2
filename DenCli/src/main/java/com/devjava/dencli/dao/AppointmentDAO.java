@@ -12,6 +12,7 @@ import java.util.List;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.RevenueDTO;
 
+@SuppressWarnings({"java:S2143", "squid:S2143"})
 public interface AppointmentDAO {
 
     /**

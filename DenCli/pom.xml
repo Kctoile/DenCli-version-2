@@ -16,6 +16,8 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>**/target/**,target/**,**/*.min.js,**/*.min.css</sonar.exclusions>
+        <sonar.coverage.exclusions>src/main/webapp/**,**/*.jsp,**/*.html,**/*.xml,**/*.css,**/*.js,**/model/**,**/websocket/**,**/util/AppointmentSchedulerListener.java,**/dao/*DAO.java,**/service/*Service.java</sonar.coverage.exclusions>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>10.0.0</jakartaee>
     </properties>

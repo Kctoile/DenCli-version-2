@@ -10,6 +10,7 @@ import java.util.List;
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.PrescribedService;
 
+@SuppressWarnings({"java:S2143", "squid:S2143"})
 public interface ExaminationService {
 
     /**

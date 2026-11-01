@@ -3,10 +3,10 @@ package com.devjava.dencli.util;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +58,8 @@ public final class VnPayUtil {
         vnpParams.put("vnp_ReturnUrl", returnUrl);
         vnpParams.put("vnp_IpAddr", ipAddress);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnpCreateDate = formatter.format(new Date());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String vnpCreateDate = LocalDateTime.now().format(formatter);
         vnpParams.put("vnp_CreateDate", vnpCreateDate);
 
         // Sắp xếp các tham số theo thứ tự bảng chữ cái A-Z

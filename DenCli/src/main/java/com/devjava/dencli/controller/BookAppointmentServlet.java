@@ -22,8 +22,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,10 +154,14 @@ public class BookAppointmentServlet extends HttpServlet {
             return false;
         }
 
-        Date parsedDate = DateUtil.parseDate(dto.getAppointmentDate());
-        Time parsedTime = DateUtil.parseTime(dto.getAppointmentTime());
-
-        if (parsedDate == null || parsedTime == null) {
+        try {
+            LocalDate.parse(dto.getAppointmentDate().trim());
+            String timeStr = dto.getAppointmentTime().trim();
+            if (timeStr.length() == 5) {
+                timeStr += ":00";
+            }
+            LocalTime.parse(timeStr);
+        } catch (DateTimeParseException e) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST,
                     "Định dạng ngày hoặc giờ khám không hợp lệ.", INVALID_FORMAT_ERROR_CODE);
             return false;

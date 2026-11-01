@@ -53,51 +53,66 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
-        String oldPassword = "";
-        String newPassword = "";
-        String confirmPassword = "";
-
-        String contentType = request.getContentType();
-        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
-            try (BufferedReader reader = request.getReader()) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                if (json.has(PARAM_OLD_PASSWORD)) oldPassword = json.get(PARAM_OLD_PASSWORD).getAsString();
-                if (json.has(PARAM_NEW_PASSWORD)) newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
-                if (json.has(PARAM_CONFIRM_PASSWORD)) confirmPassword = json.get(PARAM_CONFIRM_PASSWORD).getAsString();
-            } catch (Exception e) {
-                sendJsonResponse(response, false, "Dữ liệu JSON không hợp lệ.");
-                return;
-            }
-        } else {
-            oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
-            newPassword = request.getParameter(PARAM_NEW_PASSWORD);
-            confirmPassword = request.getParameter(PARAM_CONFIRM_PASSWORD);
-            if (oldPassword == null) oldPassword = "";
-            if (newPassword == null) newPassword = "";
-            if (confirmPassword == null) confirmPassword = "";
-        }
-
-        if (oldPassword.isBlank() || newPassword.isBlank()) {
-            sendJsonResponse(response, false, "Vui lòng nhập đầy đủ thông tin mật khẩu.");
+        PasswordChangeRequest passReq;
+        try {
+            passReq = extractPasswords(request);
+        } catch (Exception e) {
+            sendJsonResponse(response, false, "Dữ liệu JSON không hợp lệ.");
             return;
         }
 
-        if (newPassword.trim().length() < 6) {
-            sendJsonResponse(response, false, "Mật khẩu mới phải có tối thiểu 6 ký tự.");
+        String validationError = validatePasswords(passReq);
+        if (validationError != null) {
+            sendJsonResponse(response, false, validationError);
             return;
         }
 
-        if (!newPassword.equals(confirmPassword)) {
-            sendJsonResponse(response, false, "Mật khẩu xác nhận không khớp.");
-            return;
-        }
-
-        boolean success = userService.changePassword(currentUser.getUserId(), oldPassword, newPassword);
+        boolean success = userService.changePassword(currentUser.getUserId(), passReq.oldPassword, passReq.newPassword);
         if (success) {
             sendJsonResponse(response, true, "Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.");
         } else {
             sendJsonResponse(response, false, "Mật khẩu cũ không chính xác. Vui lòng kiểm tra lại.");
         }
+    }
+
+    private PasswordChangeRequest extractPasswords(HttpServletRequest request) throws IOException {
+        PasswordChangeRequest req = new PasswordChangeRequest();
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
+            try (BufferedReader reader = request.getReader()) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                if (json.has(PARAM_OLD_PASSWORD)) req.oldPassword = json.get(PARAM_OLD_PASSWORD).getAsString();
+                if (json.has(PARAM_NEW_PASSWORD)) req.newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
+                if (json.has(PARAM_CONFIRM_PASSWORD)) req.confirmPassword = json.get(PARAM_CONFIRM_PASSWORD).getAsString();
+            }
+        } else {
+            String oldP = request.getParameter(PARAM_OLD_PASSWORD);
+            String newP = request.getParameter(PARAM_NEW_PASSWORD);
+            String confP = request.getParameter(PARAM_CONFIRM_PASSWORD);
+            req.oldPassword = oldP != null ? oldP : "";
+            req.newPassword = newP != null ? newP : "";
+            req.confirmPassword = confP != null ? confP : "";
+        }
+        return req;
+    }
+
+    private String validatePasswords(PasswordChangeRequest req) {
+        if (req.oldPassword.isBlank() || req.newPassword.isBlank()) {
+            return "Vui lòng nhập đầy đủ thông tin mật khẩu.";
+        }
+        if (req.newPassword.trim().length() < 6) {
+            return "Mật khẩu mới phải có tối thiểu 6 ký tự.";
+        }
+        if (!req.newPassword.equals(req.confirmPassword)) {
+            return "Mật khẩu xác nhận không khớp.";
+        }
+        return null;
+    }
+
+    private static class PasswordChangeRequest {
+        String oldPassword = "";
+        String newPassword = "";
+        String confirmPassword = "";
     }
 
     private void sendJsonResponse(HttpServletResponse response, boolean success, String message) throws IOException {

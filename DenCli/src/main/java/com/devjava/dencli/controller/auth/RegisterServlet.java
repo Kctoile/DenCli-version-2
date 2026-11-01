@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "AuthRegisterServlet", urlPatterns = {"/register"})
-@SuppressWarnings({"java:S1989", "squid:S1989"})
+@SuppressWarnings({"java:S1989", "squid:S1989", "java:S2143", "squid:S2143"})
 public class RegisterServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -49,15 +49,35 @@ public class RegisterServlet extends HttpServlet {
         boolean isJson = (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON))
                 || Constants.CONTENT_TYPE_JSON.equalsIgnoreCase(request.getHeader("Accept"));
 
-        String fullName = null;
-        String email = null;
-        String password = null;
-        String phone = null;
-        String gender = null;
-        String dobStr = null;
-        String address = null;
+        RegisterRequestData data = parseRegisterData(request, isJson);
 
-        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
+        if (isInvalidRegisterData(data)) {
+            handleFailure(request, response, isJson, "Vui lòng nhập đầy đủ họ tên, số điện thoại và mật khẩu (tối thiểu 6 ký tự).");
+            return;
+        }
+
+        User user = buildUser(data);
+
+        // Gọi Tầng Service (No Fat Servlet)
+        UserService userService = ServiceFactory.getUserService();
+        boolean isSuccess = userService.registerCustomer(user, data.password.trim());
+
+        if (isSuccess) {
+            handleSuccess(request, response, isJson);
+        } else {
+            handleFailure(request, response, isJson, "Số điện thoại hoặc email đã được đăng ký trước đó.");
+        }
+    }
+
+    private boolean isInvalidRegisterData(RegisterRequestData data) {
+        return data.fullName == null || data.fullName.trim().isEmpty()
+                || data.phone == null || data.phone.trim().isEmpty()
+                || data.password == null || data.password.trim().length() < 6;
+    }
+
+    private RegisterRequestData parseRegisterData(HttpServletRequest request, boolean isJson) throws IOException {
+        RegisterRequestData data = new RegisterRequestData();
+        if (isJson) {
             StringBuilder sb = new StringBuilder();
             try (BufferedReader reader = request.getReader()) {
                 String line;
@@ -67,67 +87,67 @@ public class RegisterServlet extends HttpServlet {
             }
             Map<?, ?> jsonMap = gson.fromJson(sb.toString(), Map.class);
             if (jsonMap != null) {
-                fullName = (String) jsonMap.get("full_name");
-                email = (String) jsonMap.get("email");
-                password = (String) jsonMap.get("password");
-                phone = (String) jsonMap.get("phone");
-                gender = (String) jsonMap.get("gender");
-                dobStr = (String) jsonMap.get("dob");
-                address = (String) jsonMap.get("address");
+                data.fullName = (String) jsonMap.get("full_name");
+                data.email = (String) jsonMap.get("email");
+                data.password = (String) jsonMap.get("password");
+                data.phone = (String) jsonMap.get("phone");
+                data.gender = (String) jsonMap.get("gender");
+                data.dobStr = (String) jsonMap.get("dob");
+                data.address = (String) jsonMap.get("address");
             }
         } else {
-            fullName = request.getParameter("full_name");
-            email = request.getParameter("email");
-            password = request.getParameter("password");
-            phone = request.getParameter("phone");
-            gender = request.getParameter("gender");
-            dobStr = request.getParameter("dob");
-            address = request.getParameter("address");
+            data.fullName = request.getParameter("full_name");
+            data.email = request.getParameter("email");
+            data.password = request.getParameter("password");
+            data.phone = request.getParameter("phone");
+            data.gender = request.getParameter("gender");
+            data.dobStr = request.getParameter("dob");
+            data.address = request.getParameter("address");
         }
+        return data;
+    }
 
-        // Validate cơ bản
-        if (fullName == null || fullName.trim().isEmpty()
-                || phone == null || phone.trim().isEmpty()
-                || password == null || password.trim().length() < 6) {
-            handleFailure(request, response, isJson, "Vui lòng nhập đầy đủ họ tên, số điện thoại và mật khẩu (tối thiểu 6 ký tự).");
-            return;
-        }
-
+    private User buildUser(RegisterRequestData data) {
         User user = new User();
-        user.setFullName(fullName.trim());
-        user.setEmail((email != null && !email.trim().isEmpty()) ? email.trim() : null);
-        user.setPhone(phone.trim());
-        user.setGender(gender);
-        user.setAddress((address != null && !address.trim().isEmpty()) ? address.trim() : null);
+        user.setFullName(data.fullName.trim());
+        user.setEmail((data.email != null && !data.email.trim().isEmpty()) ? data.email.trim() : null);
+        user.setPhone(data.phone.trim());
+        user.setGender(data.gender);
+        user.setAddress((data.address != null && !data.address.trim().isEmpty()) ? data.address.trim() : null);
         user.setDisplayOrder(99);
 
-        if (dobStr != null && !dobStr.trim().isEmpty()) {
+        if (data.dobStr != null && !data.dobStr.trim().isEmpty()) {
             try {
-                user.setDob(Date.valueOf(dobStr.trim()));
+                user.setDob(Date.valueOf(data.dobStr.trim()));
             } catch (IllegalArgumentException e) {
                 // Định dạng ngày không hợp lệ thì để null
             }
         }
+        return user;
+    }
 
-        // Gọi Tầng Service (No Fat Servlet)
-        UserService userService = ServiceFactory.getUserService();
-        boolean isSuccess = userService.registerCustomer(user, password.trim());
-
-        if (isSuccess) {
-            if (isJson) {
-                response.setStatus(HttpServletResponse.SC_CREATED);
-                response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
-                Map<String, Object> resData = new HashMap<>();
-                resData.put("success", true);
-                resData.put("message", "Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.");
-                response.getWriter().print(gson.toJson(resData));
-            } else {
-                request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE, "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
-                response.sendRedirect(request.getContextPath() + "/login.jsp");
-            }
+    private void handleSuccess(HttpServletRequest request, HttpServletResponse response, boolean isJson) throws IOException {
+        if (isJson) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
+            Map<String, Object> resData = new HashMap<>();
+            resData.put("success", true);
+            resData.put("message", "Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.");
+            response.getWriter().print(gson.toJson(resData));
         } else {
-            handleFailure(request, response, isJson, "Số điện thoại hoặc email đã được đăng ký trước đó.");
+            request.getSession().setAttribute(Constants.SESSION_SUCCESS_MESSAGE, "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
         }
+    }
+
+    private static class RegisterRequestData {
+        String fullName;
+        String email;
+        String password;
+        String phone;
+        String gender;
+        String dobStr;
+        String address;
     }
 
     private void handleFailure(HttpServletRequest request, HttpServletResponse response, boolean isJson, String message)

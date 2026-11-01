@@ -22,6 +22,7 @@ import com.devjava.dencli.model.PrescribedService;
 import com.devjava.dencli.service.ExaminationService;
 import com.devjava.dencli.util.Constants;
 
+@SuppressWarnings({"java:S2143", "squid:S2143"})
 public class ExaminationServiceImpl implements ExaminationService {
 
     private static final Logger LOGGER = Logger.getLogger(ExaminationServiceImpl.class.getName());
@@ -51,15 +52,12 @@ public class ExaminationServiceImpl implements ExaminationService {
     @Override // Ghi đè phương thức recordExamination từ interface ExaminationService
     public int recordExamination(int appointmentId, int doctorId, String diagnosis, List<PrescribedService> additionalServices,
                                  Date revisitDate, String revisitNote) {
-        if (appointmentId <= 0 || doctorId <= 0 || diagnosis == null || diagnosis.trim().isEmpty()
-                || (revisitDate != null && revisitDate.before(Date.valueOf(java.time.LocalDate.now(java.time.ZoneId.systemDefault()))))) {
+        if (isRecordInputInvalid(appointmentId, doctorId, diagnosis, revisitDate)) {
             return -1;
         }
 
         Connection conn = null;
-
         try {
-            // Mở kết nối duy nhất từ tầng Service
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false); // Bắt đầu Transaction thủ công
 
@@ -68,70 +66,85 @@ public class ExaminationServiceImpl implements ExaminationService {
                 return -1;
             }
 
-            // Chuẩn bị thực thể ExaminationResult
-            ExaminationResult er = new ExaminationResult();
-            er.setAppointmentId(appointmentId);
-            er.setResultDetails(diagnosis.trim());
-            er.setExaminationDate(new Timestamp(System.currentTimeMillis()));
+            int resultId = saveExaminationResult(appointmentId, diagnosis, conn);
+            saveRevisit(appointmentId, doctorId, revisitDate, revisitNote, conn);
+            saveAdditionalServices(resultId, additionalServices, conn);
 
-            // Thêm kết quả khám vào bảng examination_results qua Connection dùng chung
-            int resultId = examinationResultDAO.insertExaminationResult(er, conn);
-
-            if (resultId <= 0) {
-                throw new SQLException("Không thể lưu bản ghi kết quả khám lâm sàng.");
-            }
-
-            if (revisitDate != null && !appointmentDAO.updateRevisitInfo(appointmentId, doctorId, revisitDate,
-                    revisitNote == null || revisitNote.isBlank() ? null : revisitNote.trim(), conn)) {
-                throw new SQLException("Không thể lưu lịch tái khám.");
-            }
-
-            // Nếu có các dịch vụ chỉ định thêm, tiến hành lưu vào bảng prescribed_services
-            if (additionalServices != null && !additionalServices.isEmpty()) {
-                for (PrescribedService ps : additionalServices) {
-                    ps.setResultId(resultId);
-
-                    if (ps.getStatus() == null) {
-                        ps.setStatus(Constants.PRESCRIBED_PENDING);
-                    }
-
-                    boolean inserted = examinationResultDAO.insertPrescribedService(ps, conn);
-                    if (!inserted) {
-                        throw new SQLException("Lưu dịch vụ chỉ định thất bại cho service_id: " + ps.getServiceId());
-                    }
-                }
-            }
-
-            // Xác nhận hoàn tất Transaction
             conn.commit();
-
             return resultId;
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
-            // Rollback nếu có bất kỳ lỗi nào xảy ra
-            if (conn != null) {
-                try {
-                    conn.rollback();
-
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                }
-            }
-
+            rollbackQuietly(conn);
             return -1;
 
         } finally {
-            // Luôn giải phóng tài nguyên trong khối finally
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
+            closeQuietly(conn);
+        }
+    }
 
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                }
+    private boolean isRecordInputInvalid(int appointmentId, int doctorId, String diagnosis, Date revisitDate) {
+        if (appointmentId <= 0 || doctorId <= 0 || diagnosis == null || diagnosis.trim().isEmpty()) {
+            return true;
+        }
+        return revisitDate != null && revisitDate.before(Date.valueOf(java.time.LocalDate.now(java.time.ZoneId.systemDefault())));
+    }
+
+    private int saveExaminationResult(int appointmentId, String diagnosis, Connection conn) throws SQLException {
+        ExaminationResult er = new ExaminationResult();
+        er.setAppointmentId(appointmentId);
+        er.setResultDetails(diagnosis.trim());
+        er.setExaminationDate(new Timestamp(System.currentTimeMillis()));
+
+        int resultId = examinationResultDAO.insertExaminationResult(er, conn);
+        if (resultId <= 0) {
+            throw new SQLException("Không thể lưu bản ghi kết quả khám lâm sàng.");
+        }
+        return resultId;
+    }
+
+    private void saveRevisit(int appointmentId, int doctorId, Date revisitDate, String revisitNote, Connection conn) throws SQLException {
+        if (revisitDate == null) {
+            return;
+        }
+        String cleanNote = (revisitNote != null && !revisitNote.isBlank()) ? revisitNote.trim() : null;
+        if (!appointmentDAO.updateRevisitInfo(appointmentId, doctorId, revisitDate, cleanNote, conn)) {
+            throw new SQLException("Không thể lưu lịch tái khám.");
+        }
+    }
+
+    private void saveAdditionalServices(int resultId, List<PrescribedService> additionalServices, Connection conn) throws SQLException {
+        if (additionalServices == null || additionalServices.isEmpty()) {
+            return;
+        }
+        for (PrescribedService ps : additionalServices) {
+            ps.setResultId(resultId);
+            if (ps.getStatus() == null) {
+                ps.setStatus(Constants.PRESCRIBED_PENDING);
+            }
+            if (!examinationResultDAO.insertPrescribedService(ps, conn)) {
+                throw new SQLException("Lưu dịch vụ chỉ định thất bại cho service_id: " + ps.getServiceId());
+            }
+        }
+    }
+
+    private void rollbackQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void closeQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
     }

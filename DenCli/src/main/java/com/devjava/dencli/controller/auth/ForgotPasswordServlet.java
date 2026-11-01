@@ -49,44 +49,54 @@ public class ForgotPasswordServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType(Constants.CONTENT_TYPE_JSON + ";charset=UTF-8");
 
-        String action = "";
-        String email = "";
-        String otp = "";
-        String newPassword = "";
-
-        // Kiểm tra request JSON hoặc form param
-        String contentType = request.getContentType();
-        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
-            try (BufferedReader reader = request.getReader()) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                if (json.has(PARAM_ACTION)) action = json.get(PARAM_ACTION).getAsString();
-                if (json.has(PARAM_EMAIL)) email = json.get(PARAM_EMAIL).getAsString().trim();
-                if (json.has("otp")) otp = json.get("otp").getAsString().trim();
-                if (json.has(PARAM_NEW_PASSWORD)) newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
-            } catch (Exception e) {
-                sendJsonResponse(response, false, "Dữ liệu JSON không hợp lệ.");
-                return;
-            }
-        } else {
-            action = request.getParameter(PARAM_ACTION);
-            email = request.getParameter(PARAM_EMAIL);
-            otp = request.getParameter("otp");
-            newPassword = request.getParameter(PARAM_NEW_PASSWORD);
-            if (action == null) action = "";
-            if (email == null) email = "";
-            if (otp == null) otp = "";
-            if (newPassword == null) newPassword = "";
+        ForgotPasswordParams params;
+        try {
+            params = extractParams(request);
+        } catch (Exception e) {
+            sendJsonResponse(response, false, "Dữ liệu JSON không hợp lệ.");
+            return;
         }
 
         HttpSession session = request.getSession(true);
 
-        if ("send-otp".equalsIgnoreCase(action)) {
-            handleSendOtp(response, session, email);
-        } else if ("verify-reset".equalsIgnoreCase(action)) {
-            handleVerifyAndReset(response, session, email, otp, newPassword);
+        if ("send-otp".equalsIgnoreCase(params.action)) {
+            handleSendOtp(response, session, params.email);
+        } else if ("verify-reset".equalsIgnoreCase(params.action)) {
+            handleVerifyAndReset(response, session, params.email, params.otp, params.newPassword);
         } else {
             sendJsonResponse(response, false, "Thao tác không được hỗ trợ.");
         }
+    }
+
+    private ForgotPasswordParams extractParams(HttpServletRequest request) throws IOException {
+        ForgotPasswordParams p = new ForgotPasswordParams();
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
+            try (BufferedReader reader = request.getReader()) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                if (json.has(PARAM_ACTION)) p.action = json.get(PARAM_ACTION).getAsString();
+                if (json.has(PARAM_EMAIL)) p.email = json.get(PARAM_EMAIL).getAsString().trim();
+                if (json.has("otp")) p.otp = json.get("otp").getAsString().trim();
+                if (json.has(PARAM_NEW_PASSWORD)) p.newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
+            }
+        } else {
+            String act = request.getParameter(PARAM_ACTION);
+            String em = request.getParameter(PARAM_EMAIL);
+            String ot = request.getParameter("otp");
+            String np = request.getParameter(PARAM_NEW_PASSWORD);
+            p.action = act != null ? act : "";
+            p.email = em != null ? em : "";
+            p.otp = ot != null ? ot : "";
+            p.newPassword = np != null ? np : "";
+        }
+        return p;
+    }
+
+    private static class ForgotPasswordParams {
+        String action = "";
+        String email = "";
+        String otp = "";
+        String newPassword = "";
     }
 
     private void handleSendOtp(HttpServletResponse response, HttpSession session, String email) throws IOException {

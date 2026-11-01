@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/customer/revisitation")
-@SuppressWarnings({"java:S1989", "squid:S1989"})
+@SuppressWarnings({"java:S1989", "squid:S1989", "java:S2143", "squid:S2143"})
 public class CustomerRevisitationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

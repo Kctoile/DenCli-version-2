@@ -54,22 +54,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
      */
     @Override
     public boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId) {
-        if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0 || doctorId <= 0) {
-            return false;
-        }
-
-        List<PrescriptionDetail> details = prescription.getDetails();
-        if (details == null || details.isEmpty()) {
+        if (isPrescriptionInputInvalid(prescription, doctorId)) {
             return false;
         }
 
         Connection conn = null;
 
         try {
-            // Bước 1: Tầng Service chủ động mở một kết nối duy nhất từ DBConnection
             conn = DBConnection.getConnection();
-
-            // Bước 2: Vô hiệu hóa chế độ tự động commit để bắt đầu một Transaction thủ công
             conn.setAutoCommit(false);
 
             if (!prescriptionDAO.isResultAssignedToDoctor(prescription.getResultId(), doctorId, conn)) {
@@ -77,73 +69,74 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 return false;
             }
 
-            // Bước 3: Tạo bản ghi đơn thuốc vào bảng prescriptions thông qua PrescriptionDAO với Connection dùng chung
             int prescriptionId = prescriptionDAO.insertPrescription(prescription, conn);
-
             if (prescriptionId <= 0) {
                 throw new SQLException("Thao tác tạo đơn thuốc thất bại, không thể lấy mã ID sinh ra.");
             }
 
-            // Bước 4: Duyệt qua từng chi tiết thuốc để trừ kho và lưu vào bảng prescription_details
-            for (PrescriptionDetail detail : details) {
-                if (detail.getMedicineId() <= 0 || detail.getPrescribedQuantity() <= 0) {
-                    throw new SQLException("Thông tin thuốc hoặc số lượng kê đơn không hợp lệ.");
-                }
+            processDetailsStockAndInsertion(prescriptionId, prescription.getDetails(), conn);
 
-                // Trừ số lượng tồn kho của thuốc trong bảng medicines (kiểm tra tồn kho đủ)
-                boolean stockDeducted = medicineDAO.deductStockQuantity(
-                        detail.getMedicineId(),
-                        detail.getPrescribedQuantity(),
-                        conn
-                );
-
-                if (!stockDeducted) {
-                    // Nếu số lượng tồn kho không đủ để trừ, phát sinh ngoại lệ để kích hoạt Rollback
-                    throw new SQLException("Không đủ số lượng tồn kho cho thuốc có mã ID: " + detail.getMedicineId());
-                }
-
-                // Gán mã đơn thuốc vừa tạo cho chi tiết
-                detail.setPrescriptionId(prescriptionId);
-
-                // Lưu bản ghi chi tiết vào bảng prescription_details bằng Connection dùng chung
-                boolean detailInserted = prescriptionDAO.insertPrescriptionDetail(detail, conn);
-
-                if (!detailInserted) {
-                    throw new SQLException("Lưu chi tiết đơn thuốc thất bại cho thuốc ID: " + detail.getMedicineId());
-                }
-            }
-
-            // Bước 5: Xác nhận commit toàn bộ các thay đổi trong Transaction khi mọi thao tác đều thành công
             conn.commit();
-
             return true;
 
         } catch (Exception e) {
-            // Ghi nhận ngoại lệ hệ thống
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
-            // Bước 6: Khôi phục lại trạng thái ban đầu nếu có bất kỳ lỗi nào xảy ra
-            if (conn != null) {
-                try {
-                    conn.rollback();
-
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                }
-            }
-
+            rollbackQuietly(conn);
             return false;
 
         } finally {
-            // Bước 7: Luôn giải phóng và đóng kết nối cơ sở dữ liệu trong khối finally
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true); // Trả lại chế độ auto-commit mặc định
-                    conn.close(); // Đóng kết nối
+            closeQuietly(conn);
+        }
+    }
 
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                }
+    private boolean isPrescriptionInputInvalid(Prescription prescription, int doctorId) {
+        if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0 || doctorId <= 0) {
+            return true;
+        }
+        List<PrescriptionDetail> details = prescription.getDetails();
+        return details == null || details.isEmpty();
+    }
+
+    private void processDetailsStockAndInsertion(int prescriptionId, List<PrescriptionDetail> details, Connection conn) throws SQLException {
+        for (PrescriptionDetail detail : details) {
+            if (detail.getMedicineId() <= 0 || detail.getPrescribedQuantity() <= 0) {
+                throw new SQLException("Thông tin thuốc hoặc số lượng kê đơn không hợp lệ.");
+            }
+
+            boolean stockDeducted = medicineDAO.deductStockQuantity(
+                    detail.getMedicineId(),
+                    detail.getPrescribedQuantity(),
+                    conn
+            );
+            if (!stockDeducted) {
+                throw new SQLException("Không đủ số lượng tồn kho cho thuốc có mã ID: " + detail.getMedicineId());
+            }
+
+            detail.setPrescriptionId(prescriptionId);
+            boolean detailInserted = prescriptionDAO.insertPrescriptionDetail(detail, conn);
+            if (!detailInserted) {
+                throw new SQLException("Lưu chi tiết đơn thuốc thất bại cho thuốc ID: " + detail.getMedicineId());
+            }
+        }
+    }
+
+    private void rollbackQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void closeQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
     }

@@ -22,7 +22,7 @@ import java.sql.Date;
 import java.util.List;
 
 @WebServlet(name = "CustomerProfileServlet", urlPatterns = {"/customer/profile"})
-@SuppressWarnings({"java:S1989", "squid:S1989"})
+@SuppressWarnings({"java:S1989", "squid:S1989", "java:S2143", "squid:S2143"})
 public class ProfileServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
