@@ -68,6 +68,18 @@
             });
         }
 
+        function markSlotReleased(slotTime) {
+            var formatted = (slotTime && slotTime.length >= 5) ? slotTime.substring(0, 5) : slotTime;
+            Array.from(timeSelect.options).forEach(function(opt) {
+                if (opt.value === formatted || opt.value.startsWith(formatted)) {
+                    opt.disabled = false;
+                    opt.style.color = '';
+                    opt.style.textDecoration = '';
+                    opt.textContent = opt.dataset.originalText || formatted;
+                }
+            });
+        }
+
         function fetchBookedSlots(doctorId, date) {
             var url = getContextPath() + '/api/appointments/booked-slots?doctorId=' + encodeURIComponent(doctorId) + '&date=' + encodeURIComponent(date);
             fetch(url)
@@ -162,6 +174,11 @@
                             markSlotBooked(data.timeSlot);
                             if (typeof window.showToast === 'function') {
                                 window.showToast('info', data.message || ('Khung giờ ' + data.timeSlot + ' vừa được đặt thành công!'));
+                            }
+                        } else if (data.event === 'SLOT_RELEASED') {
+                            markSlotReleased(data.timeSlot);
+                            if (typeof window.showToast === 'function') {
+                                window.showToast('success', data.message || ('Khung giờ ' + data.timeSlot + ' vừa được giải phóng, bạn có thể chọn!'));
                             }
                         }
                     } catch (e) {

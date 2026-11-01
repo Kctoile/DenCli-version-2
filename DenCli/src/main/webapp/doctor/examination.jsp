@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
 
     <style>
         .doctor-kpi-card {
@@ -118,49 +118,6 @@
                                 <a href="${pageContext.request.contextPath}/doctor/examination" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Xóa lọc</a>
                             </c:if>
                         </form>
-                    </div>
-                </div>
-
-                <!-- KPI Quick Summary Stats -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-lg-4">
-                        <div class="doctor-kpi-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Ca khám được phân công</span>
-                                <h4 class="fw-bold text-dark mb-0 mt-1">${appointments.size()}</h4>
-                            </div>
-                            <div class="doctor-kpi-icon" style="background: #E0F2FE; color: #0284C7;">📅</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-4">
-                        <div class="doctor-kpi-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Đang chờ khám (Checked-in)</span>
-                                <h4 class="fw-bold mb-0 mt-1" style="color: #0891B2;">
-                                    <c:set var="docWaitCount" value="0" />
-                                    <c:forEach items="${appointments}" var="a">
-                                        <c:if test="${a.status == 'Checked In'}"><c:set var="docWaitCount" value="${docWaitCount + 1}" /></c:if>
-                                    </c:forEach>
-                                    ${docWaitCount}
-                                </h4>
-                            </div>
-                            <div class="doctor-kpi-icon" style="background: #CCFBF1; color: #0F766E;">⚡</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-4">
-                        <div class="doctor-kpi-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Đã hoàn thành phiên khám</span>
-                                <h4 class="fw-bold mb-0 mt-1" style="color: #16A34A;">
-                                    <c:set var="docDoneCount" value="0" />
-                                    <c:forEach items="${appointments}" var="a">
-                                        <c:if test="${a.status == 'Completed'}"><c:set var="docDoneCount" value="${docDoneCount + 1}" /></c:if>
-                                    </c:forEach>
-                                    ${docDoneCount}
-                                </h4>
-                            </div>
-                            <div class="doctor-kpi-icon" style="background: #DCFCE7; color: #16A34A;">✅</div>
-                        </div>
                     </div>
                 </div>
 

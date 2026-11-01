@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
 
     <style>
         /* Reception Dashboard Specific UX Styles */
@@ -121,64 +121,6 @@
                         <a href="${pageContext.request.contextPath}/customer/book" class="btn btn-primary rounded-pill px-3 py-2 fw-semibold btn-sm shadow-sm" style="background: #0891B2; border-color: #0891B2;">
                             + Tạo lịch Walk-in tại quầy
                         </a>
-                    </div>
-                </div>
-
-                <!-- KPI Quick Summary Stats -->
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-lg-3">
-                        <div class="kpi-stat-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Lịch hẹn hôm nay</span>
-                                <h4 class="fw-bold text-dark mb-0 mt-1">${appointments.size()}</h4>
-                            </div>
-                            <div class="kpi-icon" style="background: #E0F2FE; color: #0284C7;">📅</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="kpi-stat-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Chờ xác nhận</span>
-                                <h4 class="fw-bold mb-0 mt-1" style="color: #D97706;">
-                                    <c:set var="pendingCount" value="0" />
-                                    <c:forEach items="${appointments}" var="a">
-                                        <c:if test="${a.status == 'Pending'}"><c:set var="pendingCount" value="${pendingCount + 1}" /></c:if>
-                                    </c:forEach>
-                                    ${pendingCount}
-                                </h4>
-                            </div>
-                            <div class="kpi-icon" style="background: #FEF3C7; color: #D97706;">⏳</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="kpi-stat-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Đang trong phòng</span>
-                                <h4 class="fw-bold mb-0 mt-1" style="color: #0891B2;">
-                                    <c:set var="checkedInCount" value="0" />
-                                    <c:forEach items="${appointments}" var="a">
-                                        <c:if test="${a.status == 'Checked In'}"><c:set var="checkedInCount" value="${checkedInCount + 1}" /></c:if>
-                                    </c:forEach>
-                                    ${checkedInCount}
-                                </h4>
-                            </div>
-                            <div class="kpi-icon" style="background: #CCFBF1; color: #0F766E;">🩺</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3">
-                        <div class="kpi-stat-card">
-                            <div>
-                                <span class="text-muted small fw-semibold d-block">Đã khám xong</span>
-                                <h4 class="fw-bold mb-0 mt-1" style="color: #16A34A;">
-                                    <c:set var="completedCount" value="0" />
-                                    <c:forEach items="${appointments}" var="a">
-                                        <c:if test="${a.status == 'Completed'}"><c:set var="completedCount" value="${completedCount + 1}" /></c:if>
-                                    </c:forEach>
-                                    ${completedCount}
-                                </h4>
-                            </div>
-                            <div class="kpi-icon" style="background: #DCFCE7; color: #16A34A;">✅</div>
-                        </div>
                     </div>
                 </div>
 
