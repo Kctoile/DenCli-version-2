@@ -223,13 +223,37 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointmentId <= 0 || userId <= 0) {
             return false;
         }
-        if (roleId == Constants.ROLE_CUSTOMER_ID) {
-            return appointmentDAO.cancelAppointmentForPatient(appointmentId, userId);
+
+        Appointment app = null;
+        try {
+            app = appointmentDAO.getAppointmentById(appointmentId);
+        } catch (Exception ignored) {
+            // Best-effort retrieval for realtime notification
         }
-        if (roleId != Constants.ROLE_ADMIN_ID && roleId != Constants.ROLE_STAFF_ID) {
+
+        boolean success;
+        if (roleId == Constants.ROLE_CUSTOMER_ID) {
+            success = appointmentDAO.cancelAppointmentForPatient(appointmentId, userId);
+        } else if (roleId == Constants.ROLE_ADMIN_ID || roleId == Constants.ROLE_STAFF_ID) {
+            success = updateStatusIfAllowed(appointmentId, Constants.APPOINTMENT_CANCELLED);
+        } else {
             return false;
         }
-        return updateStatusIfAllowed(appointmentId, Constants.APPOINTMENT_CANCELLED);
+
+        if (success) {
+            try {
+                if (app != null && app.getDoctorId() != null && app.getAppointmentDate() != null && app.getAppointmentTime() != null) {
+                    String dateStr = app.getAppointmentDate().toString();
+                    String timeStr = app.getAppointmentTime().toString();
+                    AppointmentCalendarEndpoint.broadcastSlotReleased(app.getDoctorId(), dateStr, timeStr);
+                }
+                AppointmentWebSocket.broadcast("{\"event\":\"APPOINTMENT_CANCELLED\",\"appointmentId\":" + appointmentId + "}");
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Failed to broadcast appointment cancellation", e);
+            }
+        }
+
+        return success;
     }
 
     /**

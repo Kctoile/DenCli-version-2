@@ -75,7 +75,7 @@ class LoginServletTest {
 
         verify(session).setAttribute(Constants.SESSION_USER, mockAdmin);
         verify(session).setAttribute(Constants.SESSION_ROLE, Constants.ROLE_ADMIN_NAME);
-        verify(response).sendRedirect("/DenCli/admin/dashboard");
+        verify(response).sendRedirect("/DenCli/admin/users");
     }
 
     /**

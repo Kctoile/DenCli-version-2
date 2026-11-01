@@ -544,7 +544,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     public boolean cancelAppointmentForPatient(int appointmentId, int patientId) {
         String sql = "UPDATE appointments SET status = 'Cancelled' "
                    + "WHERE appointment_id = ? AND patient_id = ? "
-                   + "AND status IN ('Pending', 'Confirmed', 'Checked In')";
+                   + "AND status IN ('Pending', 'Confirmed')";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointmentId);
             ps.setInt(2, patientId);

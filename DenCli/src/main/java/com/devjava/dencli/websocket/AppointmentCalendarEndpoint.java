@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 /**
  * WebSocket Server Endpoint hỗ trợ đồng bộ trạng thái khung giờ khám thời gian thực (Real-time Appointment Calendar).
- * Khi một ca khám được đặt thành công, endpoint sẽ phát broadcast tới tất cả các client đang xem cùng Bác sĩ và Ngày khám.
+ * Khi một ca khám được đặt hoặc hủy, endpoint sẽ phát broadcast tới tất cả các client đang xem cùng Bác sĩ và Ngày khám.
  */
 @ServerEndpoint("/ws/appointment-calendar/{doctorId}/{date}")
 public class AppointmentCalendarEndpoint {
@@ -101,8 +101,46 @@ public class AppointmentCalendarEndpoint {
                 try {
                     s.getBasicRemote().sendText(json);
                 } catch (IOException e) {
-                        LOGGER.log(Level.WARNING, "[WebSocket Calendar] Failed to send slot update to {0}: {1}",
-                            new Object[]{safeLogValue(s.getId()), safeLogValue(e.getMessage())});
+                    LOGGER.log(Level.WARNING, "[WebSocket Calendar] Failed to send slot update to {0}: {1}",
+                        new Object[]{safeLogValue(s.getId()), safeLogValue(e.getMessage())});
+                    try {
+                        s.close();
+                    } catch (IOException ignored) {
+                        // Best-effort session closure
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Phát broadcast thông báo khung giờ vừa được hủy/giải phóng tới toàn bộ client đang theo dõi cùng Bác sĩ và Ngày hẹn.
+     */
+    public static void broadcastSlotReleased(int doctorId, String date, String timeSlot) {
+        String key = buildKey(String.valueOf(doctorId), date);
+        Set<Session> sessions = TOPIC_SESSIONS.get(key);
+        if (sessions == null || sessions.isEmpty()) {
+            return;
+        }
+
+        String formattedSlot = (timeSlot != null && timeSlot.length() >= 5) ? timeSlot.substring(0, 5) : timeSlot;
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("event", "SLOT_RELEASED");
+        payload.put("doctorId", doctorId);
+        payload.put("date", date);
+        payload.put("timeSlot", formattedSlot);
+        payload.put("message", "Khung giờ " + formattedSlot + " vừa được giải phóng!");
+
+        String json = GSON.toJson(payload);
+
+        for (Session s : sessions) {
+            if (s.isOpen()) {
+                try {
+                    s.getBasicRemote().sendText(json);
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "[WebSocket Calendar] Failed to send slot release to {0}: {1}",
+                        new Object[]{safeLogValue(s.getId()), safeLogValue(e.getMessage())});
                     try {
                         s.close();
                     } catch (IOException ignored) {

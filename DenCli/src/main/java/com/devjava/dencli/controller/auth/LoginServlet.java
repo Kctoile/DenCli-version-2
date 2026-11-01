@@ -193,7 +193,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private String resolveDashboardUrl(String contextPath, int roleId) {
-        if (roleId == Constants.ROLE_ADMIN_ID) return contextPath + "/admin/dashboard";
+        if (roleId == Constants.ROLE_ADMIN_ID) return contextPath + "/admin/users";
         if (roleId == Constants.ROLE_DOCTOR_ID) return contextPath + "/doctor/examination";
         if (roleId == Constants.ROLE_STAFF_ID) return contextPath + "/staff/reception";
         return contextPath + "/customer/book";
