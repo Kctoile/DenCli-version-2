@@ -7,7 +7,6 @@ package com.devjava.dencli.dao;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date; // NOSONAR
 import java.sql.PreparedStatement;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.ExaminationResult;
-import com.devjava.dencli.model.dto.RevenueDTO;
 
 @SuppressWarnings({ "java:S2143", "squid:S2143" })
 public class AppointmentDAO {
@@ -358,37 +356,6 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức đếm tổng số lịch hẹn phân công cho bác sĩ theo ngày.
-     * 
-     * @param doctorId Mã bác sĩ
-     * @param date     Ngày hẹn
-     * @return Số lượng cuộc hẹn
-     */
-    public int countAppointmentsByDoctor(int doctorId, Date date) {
-        String sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = ? AND (? IS NULL OR appointment_date = ?)";
-
-        // Sử dụng try-with-resources đóng tài nguyên tự động
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, doctorId);
-            ps.setDate(2, date);
-            ps.setDate(3, date);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return 0;
-    }
-
-    /**
      * Phương thức lấy danh sách lịch hẹn chung có lọc theo trạng thái và ngày phục
      * vụ quản trị viên/lễ tân.
      * 
@@ -532,61 +499,6 @@ public class AppointmentDAO {
             ps.setString(4, currentStatus);
             return ps.executeUpdate() == 1;
         }
-    }
-
-    /**
-     * Phương thức thống kê doanh thu tổng hợp của phòng khám theo từng tháng trong
-     * năm phục vụ biểu đồ Chart.js.
-     * 
-     * @param year Năm cần thống kê
-     * @return Danh sách 12 đối tượng RevenueDTO tương ứng 12 tháng
-     */
-    public List<RevenueDTO> getMonthlyRevenueStatistics(int year) {
-        List<RevenueDTO> result = new ArrayList<>();
-
-        // Khởi tạo trước danh sách rỗng cho 12 tháng từ tháng 1 đến tháng 12
-        for (int m = 1; m <= 12; m++) {
-            String label = "Tháng " + m;
-            result.add(new RevenueDTO(year, m, label, BigDecimal.ZERO, 0));
-        }
-
-        // Truy vấn tính tổng tiền dịch vụ đã thực hiện từ các cuộc hẹn hoàn tất
-        // (Completed)
-        String sql = "SELECT MONTH(a.appointment_date) AS [month], "
-                + "       COUNT(DISTINCT a.appointment_id) AS total_appointments, "
-                + "       ISNULL(SUM(s.price), 0) AS total_revenue "
-                + "FROM appointments a "
-                + "LEFT JOIN appointment_services asv ON a.appointment_id = asv.appointment_id "
-                + "LEFT JOIN services s ON asv.service_id = s.service_id "
-                + "WHERE YEAR(a.appointment_date) = ? AND a.status = 'Completed' "
-                + "GROUP BY MONTH(a.appointment_date)";
-
-        // Sử dụng try-with-resources để tự động giải phóng tài nguyên
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, year);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int month = rs.getInt("month");
-                    int totalApps = rs.getInt("total_appointments");
-                    BigDecimal rev = rs.getBigDecimal("total_revenue");
-
-                    // Cập nhật giá trị vào danh sách tháng tương ứng (vị trí index = month - 1)
-                    if (month >= 1 && month <= 12) {
-                        RevenueDTO dto = result.get(month - 1);
-                        dto.setTotalAppointments(totalApps);
-                        dto.setRevenue(rev != null ? rev : BigDecimal.ZERO);
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return result;
     }
 
     /**
