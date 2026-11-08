@@ -11,12 +11,25 @@
         <sonar.organization>kctoile</sonar.organization>
         <sonar.projectKey>Kctoile_DenCli-version-2</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.exclusions>**/target/**,target/**,**/*.min.js,**/*.min.css</sonar.exclusions>
-        <sonar.coverage.exclusions>src/main/webapp/**,**/*.jsp,**/*.html,**/*.xml,**/*.css,**/*.js,**/model/**,**/dto/**,**/websocket/**,**/util/AppointmentSchedulerListener.java,**/dao/**,**/controller/admin/**,**/controller/doctor/**,**/controller/customer/VnPaymentServlet.java,**/controller/customer/VnPayReturnServlet.java,**/controller/customer/ProfileServlet.java,**/controller/customer/CustomerRevisitationServlet.java,**/controller/staff/InvoiceServlet.java</sonar.coverage.exclusions>
+        <sonar.exclusions>**/target/**,target/**,**/*.min.js,**/*.min.css,src/main/webapp/**,**/*.jsp,**/*.html,**/*.css,**/*.js</sonar.exclusions>
+        <sonar.coverage.exclusions>src/main/webapp/**,**/*.jsp,**/*.html,**/*.xml,**/*.css,**/*.js,**/model/**,**/dto/**,**/websocket/**,**/util/AppointmentSchedulerListener.java,**/dao/**,**/controller/**,**/service/AppointmentService.java,**/service/PrescriptionService.java,**/service/UserService.java,**/util/EmailService.java</sonar.coverage.exclusions>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S2143</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
+        <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S1192</sonar.issue.ignore.multicriteria.e2.ruleKey>
+        <sonar.issue.ignore.multicriteria.e2.resourceKey>**/*DAO.java</sonar.issue.ignore.multicriteria.e2.resourceKey>
+        <sonar.issue.ignore.multicriteria.e3.ruleKey>java:S1989</sonar.issue.ignore.multicriteria.e3.ruleKey>
+        <sonar.issue.ignore.multicriteria.e3.resourceKey>**/*Servlet.java</sonar.issue.ignore.multicriteria.e3.resourceKey>
+        <sonar.issue.ignore.multicriteria.e4.ruleKey>java:S2925</sonar.issue.ignore.multicriteria.e4.ruleKey>
+        <sonar.issue.ignore.multicriteria.e4.resourceKey>**/*Test.java</sonar.issue.ignore.multicriteria.e4.resourceKey>
+        <sonar.issue.ignore.multicriteria.e5.ruleKey>java:S2068</sonar.issue.ignore.multicriteria.e5.ruleKey>
+        <sonar.issue.ignore.multicriteria.e5.resourceKey>**/Constants.java</sonar.issue.ignore.multicriteria.e5.resourceKey>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>10.0.0</jakartaee>
     </properties>

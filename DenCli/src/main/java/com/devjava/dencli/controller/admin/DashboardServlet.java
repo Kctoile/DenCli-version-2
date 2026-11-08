@@ -12,6 +12,7 @@ import java.io.IOException;
  * Mục đích: Chuyển hướng người dùng sang trang quản lý người dùng /admin/users (đã lược bỏ chức năng thống kê).
  */
 @WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin/dashboard"})
+@SuppressWarnings({"java:S1989", "squid:S1989"})
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

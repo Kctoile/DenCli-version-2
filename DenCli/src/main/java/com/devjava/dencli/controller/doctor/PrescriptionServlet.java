@@ -136,8 +136,8 @@ public class PrescriptionServlet extends HttpServlet {
             return out;
         }
         Object resObj = reqMap.get("result_id");
-        if (resObj instanceof Number) {
-            out.resultId = ((Number) resObj).intValue();
+        if (resObj instanceof Number num) {
+            out.resultId = num.intValue();
         }
         out.instructions = (String) reqMap.get("instructions");
         if (out.instructions == null) {
