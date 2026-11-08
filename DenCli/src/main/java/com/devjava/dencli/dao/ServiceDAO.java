@@ -1,76 +1,45 @@
 /**
  * File: ServiceDAO.java
- * Mục đích: Triển khai các phương thức truy xuất bảng 'services' sử dụng JDBC thuần và PreparedStatement.
+ * Mục đích: Triển khai các phương thức truy xuất dữ liệu từ bảng 'services' sử dụng JDBC thuần.
  */
 package com.devjava.dencli.dao;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.devjava.dencli.model.Service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import com.devjava.dencli.model.Service;
 
 public class ServiceDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ServiceDAO.class.getName());
 
     /**
-     * Phương thức lấy toàn bộ danh sách dịch vụ nha khoa hiện có, sắp xếp theo tên dịch vụ.
-     * @return Danh sách các dịch vụ
+     * Phương thức lấy toàn bộ danh sách dịch vụ nha khoa hiện có.
+     * @return Danh sách các dịch vụ (List of Service)
      */
     public List<Service> getAllServices() {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services ORDER BY service_id ASC";
 
-        // Sử dụng try-with-resources để tự động giải phóng tài nguyên kết nối
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql); // Chuẩn bị câu lệnh truy vấn qua JDBC
-             ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn SELECT lấy dữ liệu
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-            while (rs.next()) { // Lặp qua tập kết quả ResultSet
-                Service service = mapResultSetToService(rs); // Ánh xạ dữ liệu sang thực thể Service
-
-                services.add(service); // Thêm dịch vụ vào danh sách
+            while (rs.next()) {
+                services.add(mapResultSetToService(rs));
             }
 
         } catch (SQLException e) {
-            // Ghi nhận lỗi khi lấy danh sách dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return services;
-    }
-
-    /**
-     * Phương thức tìm kiếm thông tin dịch vụ nha khoa theo mã service_id.
-     * @param serviceId Mã dịch vụ
-     * @return Đối tượng Service hoặc null nếu không tìm thấy
-     */
-    public Service getServiceById(int serviceId) {
-        String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services WHERE service_id = ?";
-
-        // Sử dụng try-with-resources đóng Connection và PreparedStatement an toàn
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh tìm kiếm theo ID
-
-            ps.setInt(1, serviceId);
-
-            try (ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn trên SQL Server
-                if (rs.next()) {
-                    return mapResultSetToService(rs); // Ánh xạ kết quả sang thực thể Service
-                }
-            }
-
-        } catch (SQLException e) {
-            // In ngoại lệ khi truy vấn dịch vụ theo ID thất bại
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return null;
     }
 
     /**
@@ -84,177 +53,22 @@ public class ServiceDAO {
                    + "INNER JOIN appointment_services asv ON s.service_id = asv.service_id "
                    + "WHERE asv.appointment_id = ?";
 
-        // Sử dụng try-with-resources đóng tài nguyên tự động
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị truy vấn kết hợp bảng trung gian
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, appointmentId);
 
-            try (ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn qua JDBC
-                while (rs.next()) { // Lặp qua danh sách dịch vụ của cuộc hẹn
-                    Service service = mapResultSetToService(rs);
-
-                    services.add(service);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    services.add(mapResultSetToService(rs));
                 }
             }
 
         } catch (SQLException e) {
-            // Ghi nhận ngoại lệ hệ thống
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return services;
-    }
-
-    /**
-     * Phương thức lấy danh sách dịch vụ có phân trang bằng cú pháp SQL Server OFFSET ... FETCH.
-     * @param offset Số bản ghi bỏ qua
-     * @param limit Số bản ghi tối đa
-     * @return Danh sách dịch vụ của trang
-     */
-    public List<Service> getServicesWithPagination(int offset, int limit) {
-        List<Service> services = new ArrayList<>();
-        String sql = "SELECT service_id, service_name, description, price, duration_minutes FROM services ORDER BY service_id ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-        // Sử dụng try-with-resources để tự động giải phóng Connection
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị truy vấn phân trang
-
-            ps.setInt(1, offset);
-            ps.setInt(2, limit);
-
-            try (ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn phân trang qua JDBC
-                while (rs.next()) { // Đọc từng dòng kết quả
-                    Service s = mapResultSetToService(rs);
-
-                    services.add(s);
-                }
-            }
-
-        } catch (SQLException e) {
-            // In vết lỗi phân trang dịch vụ
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return services;
-    }
-
-    /**
-     * Phương thức đếm tổng số dịch vụ nha khoa hiện có trong bảng services.
-     * @return Tổng số lượng dịch vụ
-     */
-    public int countServices() {
-        String sql = "SELECT COUNT(*) FROM services";
-
-        // Sử dụng try-with-resources giải phóng tài nguyên tự động
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql); // Chuẩn bị câu lệnh COUNT
-             ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn đếm
-
-            if (rs.next()) {
-                return rs.getInt(1); // Trả về số lượng ở cột đầu tiên
-            }
-
-        } catch (SQLException e) {
-            // Ghi nhận lỗi khi đếm số dịch vụ
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return 0;
-    }
-
-    /**
-     * Phương thức thêm mới một dịch vụ nha khoa vào cơ sở dữ liệu.
-     * @param service Đối tượng dịch vụ cần thêm
-     * @return true nếu thêm thành công
-     */
-    public boolean insertService(Service service) {
-        String sql = "INSERT INTO services (service_name, description, price, duration_minutes) VALUES (?, ?, ?, ?)";
-
-        // Sử dụng try-with-resources đóng tài nguyên tự động
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh INSERT
-
-            ps.setString(1, service.getServiceName());
-            ps.setString(2, service.getDescription());
-            ps.setBigDecimal(3, service.getPrice());
-
-            if (service.getDurationMinutes() != null) {
-                ps.setInt(4, service.getDurationMinutes());
-            } else {
-                ps.setNull(4, java.sql.Types.INTEGER);
-            }
-
-            // Thực thi lệnh cập nhật qua executeUpdate
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            // In ngoại lệ khi thêm mới dịch vụ thất bại
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
-    }
-
-    /**
-     * Phương thức cập nhật thông tin dịch vụ nha khoa theo service_id.
-     * @param service Đối tượng dịch vụ chứa thông tin mới
-     * @return true nếu cập nhật thành công
-     */
-    public boolean updateService(Service service) {
-        String sql = "UPDATE services SET service_name = ?, description = ?, price = ?, duration_minutes = ? "
-                   + "WHERE service_id = ?";
-
-        // Sử dụng try-with-resources đóng kết nối an toàn
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh UPDATE qua JDBC
-
-            ps.setString(1, service.getServiceName());
-            ps.setString(2, service.getDescription());
-            ps.setBigDecimal(3, service.getPrice());
-
-            if (service.getDurationMinutes() != null) {
-                ps.setInt(4, service.getDurationMinutes());
-            } else {
-                ps.setNull(4, java.sql.Types.INTEGER);
-            }
-
-            ps.setInt(5, service.getServiceId());
-
-            // Gọi phương thức executeUpdate để thực thi sửa đổi dữ liệu
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            // Ghi nhận lỗi cập nhật thông tin dịch vụ
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
-    }
-
-    /**
-     * Phương thức xóa dịch vụ nha khoa theo mã định danh.
-     * @param serviceId Mã dịch vụ cần xóa
-     * @return true nếu xóa thành công
-     */
-    public boolean deleteService(int serviceId) {
-        String sql = "DELETE FROM services WHERE service_id = ?";
-
-        // Sử dụng try-with-resources đóng Connection và PreparedStatement
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh DELETE
-
-            ps.setInt(1, serviceId);
-
-            // Gọi phương thức executeUpdate để thực hiện thao tác xóa
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            // Bắt lỗi khi xóa dịch vụ
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
     }
 
     /**
@@ -265,8 +79,6 @@ public class ServiceDAO {
      */
     private Service mapResultSetToService(ResultSet rs) throws SQLException {
         Service service = new Service();
-
-        // Trích xuất các trường từ cột ResultSet của JDBC
         service.setServiceId(rs.getInt("service_id"));
         service.setServiceName(rs.getString("service_name"));
         service.setDescription(rs.getString("description"));

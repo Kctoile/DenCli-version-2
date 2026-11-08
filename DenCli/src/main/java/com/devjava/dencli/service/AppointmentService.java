@@ -11,7 +11,6 @@ import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.Service;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
-import com.devjava.dencli.model.dto.RevenueDTO;
 import com.devjava.dencli.util.Constants;
 import com.devjava.dencli.util.DateUtil;
 import com.devjava.dencli.websocket.AppointmentCalendarEndpoint;
@@ -141,16 +140,6 @@ public class AppointmentService {
     }
 
     /**
-     * Phương thức đếm số lượng lịch hẹn của bác sĩ theo ngày.
-     * @param doctorId Mã bác sĩ
-     * @param date Ngày hẹn
-     * @return Tổng số cuộc hẹn
-     */
-    public int countDoctorAppointments(int doctorId, Date date) {
-        return appointmentDAO.countAppointmentsByDoctor(doctorId, date);
-    }
-
-    /**
      * Phương thức lấy danh sách toàn bộ lịch hẹn hệ thống theo tiêu chí lọc và phân trang.
      * @param status Trạng thái lọc
      * @param date Ngày lọc
@@ -266,16 +255,6 @@ public class AppointmentService {
         return success;
     }
 
-    /**
-     * Phương thức lấy báo cáo thống kê doanh thu 12 tháng phục vụ Chart.js.
-     * @param year Năm cần thống kê
-     * @return Danh sách số liệu doanh thu 12 tháng
-     */
-    public List<RevenueDTO> getMonthlyRevenueReport(int year) {
-        int validYear = (year <= 0) ? 2026 : year;
-
-        return appointmentDAO.getMonthlyRevenueStatistics(validYear);
-    }
     public boolean isValidStatusTransition(String currentStatus, String targetStatus) {
         if (currentStatus == null || targetStatus == null) {
             return false;

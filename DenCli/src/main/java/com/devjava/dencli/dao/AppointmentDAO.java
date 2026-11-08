@@ -27,38 +27,6 @@ public class AppointmentDAO {
     private static final Logger LOGGER = Logger.getLogger(AppointmentDAO.class.getName());
 
     /**
-     * Phương thức kiểm tra bác sĩ có bị trùng lịch vào cùng ngày và giờ hay không.
-     * 
-     * @param doctorId Mã bác sĩ phụ trách
-     * @param date     Ngày hẹn khám
-     * @param time     Giờ hẹn khám
-     * @return true nếu đã có lịch trùng khác trạng thái Cancelled
-     */
-    public boolean checkDuplicateSlot(int doctorId, Date date, Time time) {
-        String sql = "SELECT 1 FROM appointments "
-                + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? AND status <> 'Cancelled'";
-
-        // Áp dụng try-with-resources tự động giải phóng Connection và PreparedStatement
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) { // Khởi tạo câu lệnh PreparedStatement
-
-            ps.setInt(1, doctorId);
-            ps.setDate(2, date);
-            ps.setTime(3, time);
-
-            try (ResultSet rs = ps.executeQuery()) { // Thực thi truy vấn kiểm tra trùng slot
-                return rs.next(); // Trả về true nếu đã có bản ghi tồn tại
-            }
-
-        } catch (SQLException e) {
-            // Ghi nhận ngoại lệ khi kiểm tra trùng lịch
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
-    }
-
-    /**
      * Phương thức thêm mới một lịch hẹn kèm danh sách dịch vụ đi kèm sử dụng
      * Transaction trên Connection.
      * 
@@ -501,32 +469,6 @@ public class AppointmentDAO {
         return 0;
     }
 
-    /**
-     * Phương thức cập nhật trạng thái lịch hẹn.
-     * 
-     * @param appointmentId Mã lịch hẹn
-     * @param status        Trạng thái mới
-     * @return true nếu cập nhật thành công
-     */
-    public boolean updateAppointmentStatus(int appointmentId, String status) {
-        String sql = "UPDATE appointments SET status = ? WHERE appointment_id = ?";
-
-        // Sử dụng try-with-resources đóng kết nối
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, status);
-            ps.setInt(2, appointmentId);
-
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
-    }
-
     public boolean updateAppointmentStatusIfCurrent(int appointmentId, String currentStatus, String targetStatus) {
         String sql = "UPDATE appointments SET status = ? WHERE appointment_id = ? AND status = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -590,33 +532,6 @@ public class AppointmentDAO {
             ps.setString(4, currentStatus);
             return ps.executeUpdate() == 1;
         }
-    }
-
-    /**
-     * Phương thức cập nhật phòng khám cho lịch hẹn khi bệnh nhân làm thủ tục tiếp
-     * đón.
-     * 
-     * @param appointmentId Mã lịch hẹn
-     * @param room          Tên phòng khám
-     * @return true nếu cập nhật thành công
-     */
-    public boolean updateAppointmentRoom(int appointmentId, String room) {
-        String sql = "UPDATE appointments SET room = ? WHERE appointment_id = ?";
-
-        // Sử dụng try-with-resources đóng kết nối
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, room);
-            ps.setInt(2, appointmentId);
-
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
     }
 
     /**

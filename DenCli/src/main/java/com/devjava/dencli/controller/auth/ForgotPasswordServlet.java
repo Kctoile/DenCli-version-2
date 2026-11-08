@@ -69,28 +69,43 @@ public class ForgotPasswordServlet extends HttpServlet {
         }
     }
 
+    @SuppressWarnings({"java:S3776", "squid:S3776"})
     private ForgotPasswordParams extractParams(HttpServletRequest request) throws IOException {
-        ForgotPasswordParams p = new ForgotPasswordParams();
         String contentType = request.getContentType();
         if (contentType != null && contentType.contains(Constants.CONTENT_TYPE_JSON)) {
-            try (BufferedReader reader = request.getReader()) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                if (json.has(PARAM_ACTION)) p.action = json.get(PARAM_ACTION).getAsString();
-                if (json.has(PARAM_EMAIL)) p.email = json.get(PARAM_EMAIL).getAsString().trim();
-                if (json.has("otp")) p.otp = json.get("otp").getAsString().trim();
-                if (json.has(PARAM_NEW_PASSWORD)) p.newPassword = json.get(PARAM_NEW_PASSWORD).getAsString();
-            }
-        } else {
-            String act = request.getParameter(PARAM_ACTION);
-            String em = request.getParameter(PARAM_EMAIL);
-            String ot = request.getParameter("otp");
-            String np = request.getParameter(PARAM_NEW_PASSWORD);
-            p.action = act != null ? act : "";
-            p.email = em != null ? em : "";
-            p.otp = ot != null ? ot : "";
-            p.newPassword = np != null ? np : "";
+            return extractParamsFromJson(request);
+        }
+        return extractParamsFromForm(request);
+    }
+
+    private ForgotPasswordParams extractParamsFromJson(HttpServletRequest request) throws IOException {
+        ForgotPasswordParams p = new ForgotPasswordParams();
+        try (BufferedReader reader = request.getReader()) {
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            p.action = getJsonString(json, PARAM_ACTION);
+            p.email = getJsonString(json, PARAM_EMAIL).trim();
+            p.otp = getJsonString(json, "otp").trim();
+            p.newPassword = getJsonString(json, PARAM_NEW_PASSWORD);
         }
         return p;
+    }
+
+    private static String getJsonString(JsonObject json, String key) {
+        return json.has(key) && !json.get(key).isJsonNull() ? json.get(key).getAsString() : "";
+    }
+
+    private ForgotPasswordParams extractParamsFromForm(HttpServletRequest request) {
+        ForgotPasswordParams p = new ForgotPasswordParams();
+        p.action = getParam(request, PARAM_ACTION);
+        p.email = getParam(request, PARAM_EMAIL).trim();
+        p.otp = getParam(request, "otp").trim();
+        p.newPassword = getParam(request, PARAM_NEW_PASSWORD);
+        return p;
+    }
+
+    private static String getParam(HttpServletRequest req, String name) {
+        String val = req.getParameter(name);
+        return val != null ? val : "";
     }
 
     private static class ForgotPasswordParams {

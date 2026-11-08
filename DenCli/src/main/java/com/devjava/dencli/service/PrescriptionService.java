@@ -17,7 +17,6 @@ import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.model.PrescriptionDetail;
-import com.devjava.dencli.util.Constants;
 
 public class PrescriptionService {
 
@@ -158,32 +157,6 @@ public class PrescriptionService {
      */
     public List<Medicine> getAllMedicines() {
         return medicineDAO.getAllMedicines();
-    }
-
-    /**
-     * Phương thức tìm kiếm thuốc theo từ khóa có phân trang.
-     *
-     * @param keyword Từ khóa tìm kiếm
-     * @param page Trang
-     * @param pageSize Số lượng bản ghi trên một trang
-     * @return Danh sách thuốc
-     */
-    public List<Medicine> searchMedicines(String keyword, int page, int pageSize) {
-        int validPage = (page <= 0) ? Constants.DEFAULT_PAGE_NUMBER : page;
-        int validPageSize = (pageSize <= 0) ? Constants.DEFAULT_PAGE_SIZE : pageSize;
-        int offset = (validPage - 1) * validPageSize;
-
-        return medicineDAO.getMedicinesWithPagination(keyword, offset, validPageSize);
-    }
-
-    /**
-     * Phương thức đếm tổng số loại thuốc thỏa từ khóa tìm kiếm.
-     *
-     * @param keyword Từ khóa
-     * @return Tổng số loại thuốc
-     */
-    public int countMedicines(String keyword) {
-        return medicineDAO.countMedicines(keyword);
     }
 
     /**

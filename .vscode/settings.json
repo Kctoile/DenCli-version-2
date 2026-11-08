@@ -5,5 +5,10 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "kctoile",
         "projectKey": "Kctoile_DenCli-version-2"
+    },
+    "sonarlint.rules": {
+        "java:S2143": {
+            "level": "off"
+        }
     }
 }

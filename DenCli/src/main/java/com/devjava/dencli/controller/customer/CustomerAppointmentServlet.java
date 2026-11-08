@@ -45,10 +45,7 @@ public class CustomerAppointmentServlet extends HttpServlet {
         int pageSize = 10;
         List<Appointment> list = svc.getPatientAppointments(user.getUserId(), page, pageSize);
         int totalAppointments = svc.countPatientAppointments(user.getUserId());
-        int totalPages = (totalAppointments + pageSize - 1) / pageSize;
-        if (totalPages < 1) {
-            totalPages = 1;
-        }
+        int totalPages = Math.max(1, (totalAppointments + pageSize - 1) / pageSize);
 
         req.setAttribute("appointments", list);
         req.setAttribute("page", page);

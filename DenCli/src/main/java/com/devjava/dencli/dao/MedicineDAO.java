@@ -44,106 +44,6 @@ public class MedicineDAO {
     }
 
     /**
-     * Phương thức tìm kiếm thông tin chi tiết một loại thuốc theo mã medicine_id.
-     * @param medicineId Mã thuốc
-     * @return Đối tượng Medicine hoặc null nếu không tồn tại
-     */
-    public Medicine getMedicineById(int medicineId) {
-        String sql = "SELECT medicine_id, medicine_name, price, stock_quantity FROM medicines WHERE medicine_id = ?";
-
-        // Sử dụng try-with-resources để tự động giải phóng kết nối
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, medicineId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToMedicine(rs);
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return null;
-    }
-
-    /**
-     * Phương thức lấy danh sách thuốc có tìm kiếm và phân trang bằng cú pháp SQL Server OFFSET ... FETCH.
-     * @param searchKeyword Từ khóa tìm kiếm theo tên thuốc
-     * @param offset Số bản ghi bỏ qua
-     * @param limit Số bản ghi tối đa
-     * @return Danh sách thuốc của trang
-     */
-    public List<Medicine> getMedicinesWithPagination(String searchKeyword, int offset, int limit) {
-        List<Medicine> list = new ArrayList<>();
-        String sql = "SELECT * FROM medicines "
-                   + "WHERE (? IS NULL OR ? = '' OR medicine_name LIKE ?) "
-                   + "ORDER BY medicine_id ASC "
-                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-        // Sử dụng try-with-resources đóng tài nguyên an toàn
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            String keywordParam = (searchKeyword != null && !searchKeyword.trim().isEmpty()) 
-                                  ? "%" + searchKeyword.trim() + "%" : "";
-
-            ps.setString(1, searchKeyword);
-            ps.setString(2, searchKeyword);
-            ps.setString(3, keywordParam);
-            ps.setInt(4, offset);
-            ps.setInt(5, limit);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapResultSetToMedicine(rs));
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return list;
-    }
-
-    /**
-     * Phương thức đếm tổng số loại thuốc phù hợp với từ khóa tìm kiếm.
-     * @param searchKeyword Từ khóa tìm kiếm
-     * @return Tổng số loại thuốc
-     */
-    public int countMedicines(String searchKeyword) {
-        String sql = "SELECT COUNT(*) FROM medicines "
-                   + "WHERE (? IS NULL OR ? = '' OR medicine_name LIKE ?)";
-
-        // Sử dụng try-with-resources đóng tài nguyên an toàn
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            String keywordParam = (searchKeyword != null && !searchKeyword.trim().isEmpty()) 
-                                  ? "%" + searchKeyword.trim() + "%" : "";
-
-            ps.setString(1, searchKeyword);
-            ps.setString(2, searchKeyword);
-            ps.setString(3, keywordParam);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return 0;
-    }
-
-    /**
      * Phương thức thêm mới một loại thuốc vào cơ sở dữ liệu.
      * @param medicine Đối tượng thuốc cần thêm
      * @return true nếu thêm thành công
@@ -234,29 +134,6 @@ public class MedicineDAO {
                 return false;
             }
         }
-    }
-
-    /**
-     * Phương thức xóa một loại thuốc khỏi kho.
-     * @param medicineId Mã thuốc cần xóa
-     * @return true nếu xóa thành công
-     */
-    public boolean deleteMedicine(int medicineId) {
-        String sql = "DELETE FROM medicines WHERE medicine_id = ?";
-
-        // Sử dụng try-with-resources đóng tài nguyên
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, medicineId);
-
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return false;
     }
 
     /**

@@ -45,7 +45,6 @@ public final class Constants {
 
     // --- TRẠNG THÁI DỊCH VỤ ĐƯỢC CHỈ ĐỊNH (PRESCRIBED SERVICES STATUS) ---
     public static final String PRESCRIBED_PENDING = "Pending";
-    public static final String PRESCRIBED_COMPLETED = "Completed";
 
     // --- CẤU HÌNH PHÂN TRANG (PAGINATION) ---
     public static final int DEFAULT_PAGE_SIZE = 10;
@@ -57,7 +56,6 @@ public final class Constants {
     public static final String SESSION_ERROR_MESSAGE = "errorMessage";
     public static final String SESSION_SUCCESS_MESSAGE = "successMessage";
 
-    // --- ĐỊNH DẠNG VÀ MÚI GIỜ (CONTENT TYPE & TIMEZONE) ---
+    // --- ĐỊNH DẠNG VÀ MÚI GIỜ (CONTENT TYPE) ---
     public static final String CONTENT_TYPE_JSON = "application/json";
-    public static final String DEFAULT_TIMEZONE = "Asia/Ho_Chi_Minh";
 }
