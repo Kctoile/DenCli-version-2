@@ -2,12 +2,25 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.debug.settings.onBuildFailureProceed": true,
     "liveServer.settings.port": 5501,
+    "sonarlint.files.exclusions": [
+        "**/src/main/webapp/**",
+        "**/*.jsp",
+        "**/*.html",
+        "**/*.css",
+        "**/*.js"
+    ],
     "sonarlint.connectedMode.project": {
         "connectionId": "kctoile",
         "projectKey": "Kctoile_DenCli-version-2"
     },
     "sonarlint.rules": {
         "java:S2143": {
+            "level": "off"
+        },
+        "java:S1192": {
+            "level": "off"
+        },
+        "java:S1989": {
             "level": "off"
         }
     }
