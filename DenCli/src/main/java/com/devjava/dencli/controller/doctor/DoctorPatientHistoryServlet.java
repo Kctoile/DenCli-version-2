@@ -25,6 +25,9 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/doctor/patient-history")
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class DoctorPatientHistoryServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
     private final transient ExaminationResultDAO examDAO = new ExaminationResultDAO();
     private final transient PrescriptionDAO rxDAO = new PrescriptionDAO();
     private final transient AppointmentDAO appointmentDAO = new AppointmentDAO();

@@ -22,6 +22,8 @@ import java.io.IOException;
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ChangePasswordServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String PARAM_OLD_PASSWORD = "old_password";
     private static final String PARAM_NEW_PASSWORD = "new_password";
     private static final String PARAM_CONFIRM_PASSWORD = "confirm_password";

@@ -20,6 +20,9 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/customer/revisitation")
 @SuppressWarnings({"java:S1989", "squid:S1989", "java:S2143", "squid:S2143"})
 public class CustomerRevisitationServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);

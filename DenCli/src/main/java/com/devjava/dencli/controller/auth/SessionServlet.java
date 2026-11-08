@@ -17,6 +17,8 @@ import java.util.Map;
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class SessionServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Gson gson = new Gson();
 
     @Override

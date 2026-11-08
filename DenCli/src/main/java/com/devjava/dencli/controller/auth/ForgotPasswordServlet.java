@@ -24,6 +24,8 @@ import java.security.SecureRandom;
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class ForgotPasswordServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_NEW_PASSWORD = "new_password";
