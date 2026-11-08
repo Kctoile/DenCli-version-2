@@ -8,7 +8,6 @@ import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
-import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.util.Constants;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

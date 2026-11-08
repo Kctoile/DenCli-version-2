@@ -6,7 +6,6 @@ package com.devjava.dencli.dao;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.model.Service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

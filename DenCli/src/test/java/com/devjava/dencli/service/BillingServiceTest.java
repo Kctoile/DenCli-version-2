@@ -15,7 +15,6 @@ import com.devjava.dencli.model.Prescription;
 import com.devjava.dencli.model.PrescriptionDetail;
 import com.devjava.dencli.model.Service;
 import com.devjava.dencli.model.dto.InvoiceResponseDTO;
-import com.devjava.dencli.service.BillingService;
 import com.devjava.dencli.util.Constants;
 import java.math.BigDecimal;
 import java.sql.Date;

@@ -98,18 +98,18 @@ class BookingFlowAutomationTest {
 
         WebElement btnTomorrow = quickDateBtns.get(1); // Nút "Ngày mai"
         btnTomorrow.click();
-        assertTrue(btnTomorrow.getAttribute("class").contains("active"), "Nút Ngày mai phải có class active sau khi click");
+        assertTrue(btnTomorrow.getDomAttribute("class").contains("active"), "Nút Ngày mai phải có class active sau khi click");
 
         // 2. Thử chọn Slot "09:00"
         WebElement slot9 = wait.until(ExpectedConditions.elementToBeClickable(
                 By.cssSelector(".slot-card[data-slot='09:00']")));
         slot9.click();
 
-        assertTrue(slot9.getAttribute("class").contains("selected"), "Slot 09:00 phải có class selected sau khi click");
+        assertTrue(slot9.getDomAttribute("class").contains("selected"), "Slot 09:00 phải có class selected sau khi click");
 
         // Kiểm tra hidden select đã được đồng bộ giá trị 09:00
         WebElement hiddenTimeSelect = driver.findElement(By.id("appointmentTime"));
-        assertEquals("09:00", hiddenTimeSelect.getAttribute("value"), "Hidden select appointmentTime phải được đồng bộ thành 09:00");
+        assertEquals("09:00", hiddenTimeSelect.getDomProperty("value"), "Hidden select appointmentTime phải được đồng bộ thành 09:00");
     }
 
     @Test

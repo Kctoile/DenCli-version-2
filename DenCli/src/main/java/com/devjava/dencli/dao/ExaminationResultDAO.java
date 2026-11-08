@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.PrescribedService;
 

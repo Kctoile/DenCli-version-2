@@ -23,7 +23,6 @@ import com.devjava.dencli.dao.MedicineDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
-import com.devjava.dencli.service.PrescriptionService;
 class PrescriptionServiceTest {
 
     private PrescriptionDAO prescriptionDAO;

@@ -4,7 +4,6 @@ import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
-import com.devjava.dencli.service.AppointmentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +19,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * TDD Test Suite - Kiểm thử Concurrency & Race Condition khi đặt lịch hẹn.

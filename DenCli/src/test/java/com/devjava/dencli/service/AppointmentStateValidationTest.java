@@ -1,6 +1,5 @@
 package com.devjava.dencli.service;
 
-import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.util.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

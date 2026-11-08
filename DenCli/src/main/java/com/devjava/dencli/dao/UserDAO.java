@@ -4,7 +4,6 @@
  */
 package com.devjava.dencli.dao;
 
-import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
