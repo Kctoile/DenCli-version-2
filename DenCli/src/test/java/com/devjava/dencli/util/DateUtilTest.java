@@ -32,7 +32,7 @@ class DateUtilTest {
     }
 
     /**
-     * Phương thức kiểm thử việc parse chuỗi giờ hợp lệ cả 5 ký tự và 8 ký tự.
+     * Phương thức kiểm thử việc parse chuỗi giờ hợp lệ cả 5 ký tự và 8 ký tự, và invalid.
      */
     @Test
     void testParseTimeValid() {
@@ -41,5 +41,19 @@ class DateUtilTest {
 
         Time t2 = DateUtil.parseTime("14:45:00");
         assertNotNull(t2);
+
+        assertNull(DateUtil.parseTime(null));
+        assertNull(DateUtil.parseTime(""));
+        assertNull(DateUtil.parseTime("invalid-time"));
+    }
+
+    @Test
+    void testParseTimestampAndFormat() {
+        assertNotNull(DateUtil.getCurrentTimestamp());
+        assertNotNull(DateUtil.parseTimestamp("2026-08-15 10:30:00"));
+        assertNull(DateUtil.parseTimestamp(null));
+        assertNull(DateUtil.parseTimestamp("   "));
+        assertNull(DateUtil.parseTimestamp("invalid-timestamp"));
+        assertEquals("", DateUtil.formatDate(null));
     }
 }
