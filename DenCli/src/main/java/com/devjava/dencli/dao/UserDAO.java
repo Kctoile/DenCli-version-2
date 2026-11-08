@@ -37,7 +37,7 @@ public class UserDAO {
                 return rs.next(); // Trả về true nếu con trỏ ResultSet có dữ liệu
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi truy vấn ra console
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -63,7 +63,7 @@ public class UserDAO {
                 return rs.next(); // Kiểm tra có bản ghi nào trùng khớp không
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn CSDL
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -104,7 +104,7 @@ public class UserDAO {
 
             return affectedRows > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In vết lỗi chi tiết khi thực thi câu lệnh INSERT thất bại
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -135,7 +135,7 @@ public class UserDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e, () -> "Login lookup failed for identifier: " + emailOrPhone);
             throw new IllegalStateException("Unable to query the user account.", e);
         }
@@ -165,7 +165,7 @@ public class UserDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Bắt và in ngoại lệ hệ thống
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -194,7 +194,7 @@ public class UserDAO {
                 doctors.add(doctor); // Thêm bác sĩ vào danh sách kết quả
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi khi tải danh sách bác sĩ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -234,7 +234,7 @@ public class UserDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Bắt lỗi khi phân trang người dùng
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -263,7 +263,7 @@ public class UserDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi khi đếm số lượng người dùng
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -295,7 +295,7 @@ public class UserDAO {
             // Gọi phương thức executeUpdate để thực hiện sửa đổi dữ liệu
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In ngoại lệ khi cập nhật thông tin người dùng thất bại
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -322,7 +322,7 @@ public class UserDAO {
             // Gọi phương thức executeUpdate từ PreparedStatement của JDBC
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi đổi mật khẩu
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }

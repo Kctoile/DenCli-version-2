@@ -87,7 +87,7 @@ public class ExaminationResultDAO {
                     }
                 }
 
-            } catch (ClassNotFoundException | SQLException e) {
+            } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
@@ -128,7 +128,7 @@ public class ExaminationResultDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -170,7 +170,7 @@ public class ExaminationResultDAO {
 
                 return ps.executeUpdate() > 0;
 
-            } catch (ClassNotFoundException | SQLException e) {
+            } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
@@ -208,7 +208,7 @@ public class ExaminationResultDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 

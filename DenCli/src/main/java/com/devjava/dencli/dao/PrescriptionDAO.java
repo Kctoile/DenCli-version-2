@@ -76,7 +76,7 @@ public class PrescriptionDAO {
         }
         try (Connection localConn = DBConnection.getConnection()) {
             return executeInsertPrescription(localConn, prescription);
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return -1;
         }
@@ -106,7 +106,7 @@ public class PrescriptionDAO {
         }
         try (Connection localConn = DBConnection.getConnection()) {
             return executeInsertPrescriptionDetail(localConn, detail);
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
@@ -140,7 +140,7 @@ public class PrescriptionDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -184,7 +184,7 @@ public class PrescriptionDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 

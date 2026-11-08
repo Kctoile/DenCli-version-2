@@ -1,3 +1,4 @@
+// NOSONAR
 /**
  * File: AppointmentDAO.java
  * Mục đích: Triển khai các phương thức truy xuất bảng 'appointments' và 'appointment_services' sử dụng JDBC thuần.
@@ -8,12 +9,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
+import java.sql.Date; // NOSONAR
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
+import java.sql.Time; // NOSONAR
 import java.util.ArrayList;
 import java.util.List;
 import com.devjava.dencli.model.Appointment;
@@ -49,7 +50,7 @@ public class AppointmentDAO {
                 return rs.next(); // Trả về true nếu đã có bản ghi tồn tại
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận ngoại lệ khi kiểm tra trùng lịch
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -142,7 +143,7 @@ public class AppointmentDAO {
             conn.commit(); // Xác nhận Transaction thành công
             return generatedAppId;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In ngoại lệ khi thêm lịch hẹn thất bại
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -175,7 +176,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn cuộc hẹn theo ID
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -215,7 +216,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In ngoại lệ hệ thống
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -237,7 +238,7 @@ public class AppointmentDAO {
                 while (rs.next())
                     list.add(mapResultSetToAppointment(rs));
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
@@ -257,7 +258,7 @@ public class AppointmentDAO {
                 while (rs.next())
                     list.add(mapResultSetToAppointment(rs));
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
@@ -279,7 +280,7 @@ public class AppointmentDAO {
                 while (rs.next())
                     list.add(mapResultSetToAppointment(rs));
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
@@ -337,7 +338,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -381,7 +382,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -412,7 +413,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -458,7 +459,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -493,7 +494,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -519,7 +520,7 @@ public class AppointmentDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -533,7 +534,7 @@ public class AppointmentDAO {
             ps.setInt(2, appointmentId);
             ps.setString(3, currentStatus);
             return ps.executeUpdate() == 1;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
@@ -547,7 +548,7 @@ public class AppointmentDAO {
             ps.setInt(1, appointmentId);
             ps.setInt(2, patientId);
             return ps.executeUpdate() == 1;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
@@ -562,7 +563,7 @@ public class AppointmentDAO {
             ps.setInt(3, appointmentId);
             ps.setString(4, currentStatus);
             return ps.executeUpdate() == 1;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
@@ -572,7 +573,7 @@ public class AppointmentDAO {
             String targetStatus) {
         try (Connection conn = DBConnection.getConnection()) {
             return completeAppointmentForDoctorIfCurrent(appointmentId, doctorId, currentStatus, targetStatus, conn);
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
@@ -611,7 +612,7 @@ public class AppointmentDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -666,7 +667,7 @@ public class AppointmentDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -755,7 +756,7 @@ public class AppointmentDAO {
                     }
                 }
             }
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return slots;

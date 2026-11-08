@@ -35,7 +35,7 @@ public class MedicineDAO {
                 medicines.add(mapResultSetToMedicine(rs)); // Thêm thuốc vào danh sách
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận ngoại lệ khi truy vấn danh sách thuốc
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -63,7 +63,7 @@ public class MedicineDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -103,7 +103,7 @@ public class MedicineDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -136,7 +136,7 @@ public class MedicineDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -161,7 +161,7 @@ public class MedicineDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -187,7 +187,7 @@ public class MedicineDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -229,7 +229,7 @@ public class MedicineDAO {
 
                 return ps.executeUpdate() > 0;
 
-            } catch (ClassNotFoundException | SQLException e) {
+            } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return false;
             }
@@ -252,7 +252,7 @@ public class MedicineDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 

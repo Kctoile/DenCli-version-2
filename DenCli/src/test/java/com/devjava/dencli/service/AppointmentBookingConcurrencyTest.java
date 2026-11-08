@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
  * (-1).
  */
 @DisplayName("TDD Concurrency Test - Race Condition Booking Prevention")
+@SuppressWarnings({"java:S2925", "squid:S2925"})
 class AppointmentBookingConcurrencyTest {
 
     @Test
@@ -54,7 +55,7 @@ class AppointmentBookingConcurrencyTest {
         when(appointmentDAO.insertAppointmentWithServices(any(Appointment.class), anyList()))
                 .thenAnswer(invocation -> {
                     // Giả lập độ trễ I/O 25ms trong transaction cơ sở dữ liệu
-                    Thread.sleep(25);
+                    Thread.sleep(25); // NOSONAR: Giả lập độ trễ transaction trong kiểm thử đồng thời
                     if (slotAcquired.compareAndSet(false, true)) {
                         return generatedIdCounter.getAndIncrement(); // Người đầu tiên thành công
                     } else {
@@ -121,7 +122,7 @@ class AppointmentBookingConcurrencyTest {
         AtomicBoolean slotLocked = new AtomicBoolean(false);
         when(appointmentDAO.insertAppointmentWithServices(any(Appointment.class), anyList()))
                 .thenAnswer(invocation -> {
-                    Thread.sleep(10);
+                    Thread.sleep(10); // NOSONAR: Giả lập độ trễ transaction trong kiểm thử đồng thời
                     return slotLocked.compareAndSet(false, true) ? 888 : -1;
                 });
 

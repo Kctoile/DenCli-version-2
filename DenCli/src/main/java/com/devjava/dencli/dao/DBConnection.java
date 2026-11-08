@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 public final class DBConnection {
 
-    private static final String DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
 
     // Khởi tạo constructor private để ngăn chặn khởi tạo đối tượng từ bên ngoài
@@ -50,10 +49,9 @@ public final class DBConnection {
     /**
      * Phương thức mở và trả về một kết nối cơ sở dữ liệu từ Connection Pool (hoặc DriverManager dự phòng).
      * @return Đối tượng java.sql.Connection đang mở
-     * @throws ClassNotFoundException khi không tìm thấy driver SQL Server
      * @throws SQLException khi kết nối thất bại
      */
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() throws SQLException {
         if (Constants.DB_PASSWORD.isBlank()) {
             throw new SQLException("DENCLI_DB_PASSWORD is not configured for SQL Server user "
                     + Constants.DB_USER + ".");

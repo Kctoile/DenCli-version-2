@@ -37,7 +37,7 @@ public class ServiceDAO {
                 services.add(service); // Thêm dịch vụ vào danh sách
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi khi lấy danh sách dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -65,7 +65,7 @@ public class ServiceDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In ngoại lệ khi truy vấn dịch vụ theo ID thất bại
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -98,7 +98,7 @@ public class ServiceDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận ngoại lệ hệ thống
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -131,7 +131,7 @@ public class ServiceDAO {
                 }
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In vết lỗi phân trang dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -155,7 +155,7 @@ public class ServiceDAO {
                 return rs.getInt(1); // Trả về số lượng ở cột đầu tiên
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi khi đếm số dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -188,7 +188,7 @@ public class ServiceDAO {
             // Thực thi lệnh cập nhật qua executeUpdate
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // In ngoại lệ khi thêm mới dịch vụ thất bại
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -224,7 +224,7 @@ public class ServiceDAO {
             // Gọi phương thức executeUpdate để thực thi sửa đổi dữ liệu
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Ghi nhận lỗi cập nhật thông tin dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -249,7 +249,7 @@ public class ServiceDAO {
             // Gọi phương thức executeUpdate để thực hiện thao tác xóa
             return ps.executeUpdate() > 0;
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             // Bắt lỗi khi xóa dịch vụ
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
