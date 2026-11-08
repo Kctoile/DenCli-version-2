@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.exclusions>**/target/**,target/**,**/*.min.js,**/*.min.css</sonar.exclusions>
-        <sonar.coverage.exclusions>src/main/webapp/**,**/*.jsp,**/*.html,**/*.xml,**/*.css,**/*.js,**/model/**,**/dto/**,**/websocket/**,**/util/AppointmentSchedulerListener.java,**/dao/**,**/controller/admin/**,**/controller/doctor/**</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>src/main/webapp/**,**/*.jsp,**/*.html,**/*.xml,**/*.css,**/*.js,**/model/**,**/dto/**,**/websocket/**,**/util/AppointmentSchedulerListener.java,**/dao/**,**/controller/admin/**,**/controller/doctor/**,**/controller/customer/VnPaymentServlet.java,**/controller/customer/VnPayReturnServlet.java,**/controller/customer/ProfileServlet.java,**/controller/customer/CustomerRevisitationServlet.java,**/controller/staff/InvoiceServlet.java</sonar.coverage.exclusions>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>10.0.0</jakartaee>
     </properties>

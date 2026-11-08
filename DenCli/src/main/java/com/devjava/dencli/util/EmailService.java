@@ -8,6 +8,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -69,7 +70,7 @@ public final class EmailService {
             Transport.send(message);
             return true;
         } catch (Exception e) {
-            LOGGER.warning("[EmailService] Email delivery failed.");
+            LOGGER.log(Level.WARNING, "[EmailService] Email delivery failed.", e);
             return false;
         }
     }

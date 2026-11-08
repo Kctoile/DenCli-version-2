@@ -45,13 +45,14 @@ class VnPayUtilTest {
         fields.put("vnp_Amount", "10000000");
         fields.put("vnp_ResponseCode", "00");
         fields.put("vnp_SecureHashType", "SHA512");
-        String signature = VnPayUtil.hmacSHA512(VnPayUtil.VNP_HASH_SECRET,
-                "vnp_Amount=10000000&vnp_ResponseCode=00");
-        fields.put("vnp_SecureHash", signature);
 
         if (VnPayUtil.VNP_HASH_SECRET.isBlank()) {
-            assertFalse(VnPayUtil.verifySignature(fields, signature));
+            // No secret configured — verifySignature must return false
+            assertFalse(VnPayUtil.verifySignature(fields, "any-hash"));
         } else {
+            String signature = VnPayUtil.hmacSHA512(VnPayUtil.VNP_HASH_SECRET,
+                    "vnp_Amount=10000000&vnp_ResponseCode=00");
+            fields.put("vnp_SecureHash", signature);
             assertTrue(VnPayUtil.verifySignature(fields, signature));
             fields.put("vnp_Amount", "1");
             assertFalse(VnPayUtil.verifySignature(fields, signature));

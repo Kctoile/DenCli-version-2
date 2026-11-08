@@ -42,7 +42,9 @@ public class AppointmentDAO {
 
         // Sử dụng try-with-resources để tự động đóng kết nối sau khi hoàn tất
         // Transaction
-        try (Connection conn = DBConnection.getConnection()) {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
             conn.setAutoCommit(false); // Vô hiệu hóa chế độ tự động commit để bắt đầu Transaction thủ công
 
             try (PreparedStatement psDuplicate = conn.prepareStatement(sqlDuplicate)) {
@@ -110,8 +112,15 @@ public class AppointmentDAO {
             return generatedAppId;
 
         } catch (SQLException e) {
-            // In ngoại lệ khi thêm lịch hẹn thất bại
+            // Rollback tường minh khi transaction thất bại
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException rbEx) { LOGGER.log(Level.SEVERE, rbEx.getMessage(), rbEx); }
+            }
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException closeEx) { LOGGER.log(Level.WARNING, closeEx.getMessage(), closeEx); }
+            }
         }
 
         return -1;
@@ -532,15 +541,16 @@ public class AppointmentDAO {
         try {
             app.setRevisitDate(rs.getDate("revisit_date"));
             app.setRevisitNote(rs.getString("revisit_note"));
-        } catch (SQLException ignored) {
-            /* bang cu chua co cot revisit */ }
+        } catch (SQLException e) {
+            LOGGER.log(Level.FINE, "revisit columns not in ResultSet", e);
+        }
 
         try {
             app.setPatientName(rs.getString("patient_name"));
             app.setPatientPhone(rs.getString("patient_phone"));
             app.setDoctorName(rs.getString("doctor_name"));
-        } catch (SQLException ignored) {
-            // Bỏ qua nếu truy vấn không kèm các cột kết nối JOIN
+        } catch (SQLException e) {
+            LOGGER.log(Level.FINE, "JOIN columns not in ResultSet", e);
         }
 
         try {
@@ -550,8 +560,8 @@ public class AppointmentDAO {
                 er.setResultId(resId);
                 app.setExaminationResult(er);
             }
-        } catch (SQLException ignored) {
-            // Bỏ qua nếu truy vấn không kèm cột result_id
+        } catch (SQLException e) {
+            LOGGER.log(Level.FINE, "result_id column not in ResultSet", e);
         }
 
         return app;

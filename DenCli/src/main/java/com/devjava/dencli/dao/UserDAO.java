@@ -136,7 +136,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e, () -> "Login lookup failed for identifier: " + emailOrPhone);
+            LOGGER.log(Level.SEVERE, e, () -> "Login lookup failed for identifier (masked).");
             throw new IllegalStateException("Unable to query the user account.", e);
         }
 

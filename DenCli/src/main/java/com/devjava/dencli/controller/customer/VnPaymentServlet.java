@@ -60,6 +60,10 @@ public class VnPaymentServlet extends HttpServlet {
 
         BillingService billingService = ServiceFactory.getBillingService();
         InvoiceResponseDTO invoice = billingService.calculateInvoice(appointmentId);
+        if (invoice == null) {
+            response.sendRedirect(request.getContextPath() + "/customer/invoice?appointment_id=" + appointmentId);
+            return;
+        }
         long amount = (invoice.getGrandTotal() != null) ? invoice.getGrandTotal().longValue() : 0L;
         if (amount <= 0) {
             response.sendRedirect(request.getContextPath() + "/customer/invoice?appointment_id=" + appointmentId);

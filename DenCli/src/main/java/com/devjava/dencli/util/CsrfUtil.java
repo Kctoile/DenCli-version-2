@@ -2,8 +2,10 @@ package com.devjava.dencli.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Tiện ích quản lý và xác thực CSRF Token.
@@ -56,7 +58,12 @@ public final class CsrfUtil {
         if (requestToken == null || requestToken.isBlank()) {
             requestToken = request.getParameter(CSRF_PARAM);
         }
+        if (requestToken == null || requestToken.isBlank()) {
+            return false;
+        }
 
-        return sessionToken.equals(requestToken);
+        return MessageDigest.isEqual(
+                sessionToken.getBytes(StandardCharsets.UTF_8),
+                requestToken.getBytes(StandardCharsets.UTF_8));
     }
 }

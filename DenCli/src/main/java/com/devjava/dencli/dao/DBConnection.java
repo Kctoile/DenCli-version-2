@@ -62,33 +62,22 @@ public final class DBConnection {
         }
     }
 
+    // ponytail: tested by DBConnectionTest — keep these null-safe close helpers
     public static void closeResultSet(ResultSet rs) {
         if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
+            try { rs.close(); } catch (SQLException e) { LOGGER.log(Level.SEVERE, e.getMessage(), e); }
         }
     }
 
     public static void closeStatement(Statement stmt) {
         if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
+            try { stmt.close(); } catch (SQLException e) { LOGGER.log(Level.SEVERE, e.getMessage(), e); }
         }
     }
 
     public static void closeConnection(Connection conn) {
         if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
+            try { conn.close(); } catch (SQLException e) { LOGGER.log(Level.SEVERE, e.getMessage(), e); }
         }
     }
 }

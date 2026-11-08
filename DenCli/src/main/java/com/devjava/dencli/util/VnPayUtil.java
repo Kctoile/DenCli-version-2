@@ -13,6 +13,8 @@ import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Tiện ích tạo URL thanh toán và kiểm tra chữ ký số cổng thanh toán VNPAY (UC mở rộng).
@@ -118,6 +120,9 @@ public final class VnPayUtil {
     }
 
     public static String hmacSHA512(String key, String data) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalArgumentException("HMAC key must not be blank");
+        }
         try {
             Mac hmac512 = Mac.getInstance("HmacSHA512");
             SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
@@ -130,8 +135,8 @@ public final class VnPayUtil {
                 hash.append(hex);
             }
             return hash.toString();
-        } catch (Exception e) {
-            return "";
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new IllegalStateException("HMAC-SHA512 not available", e);
         }
     }
 }
