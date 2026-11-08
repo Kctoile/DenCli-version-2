@@ -23,8 +23,7 @@ import com.devjava.dencli.dao.MedicineDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
 import com.devjava.dencli.model.Medicine;
 import com.devjava.dencli.model.Prescription;
-import com.devjava.dencli.service.impl.PrescriptionServiceImpl;
-
+import com.devjava.dencli.service.PrescriptionService;
 class PrescriptionServiceTest {
 
     private PrescriptionDAO prescriptionDAO;
@@ -38,7 +37,7 @@ class PrescriptionServiceTest {
     void setUp() {
         prescriptionDAO = mock(PrescriptionDAO.class);
         medicineDAO = mock(MedicineDAO.class);
-        prescriptionService = new PrescriptionServiceImpl(prescriptionDAO, medicineDAO);
+        prescriptionService = new PrescriptionService(prescriptionDAO, medicineDAO);
     }
 
     /**

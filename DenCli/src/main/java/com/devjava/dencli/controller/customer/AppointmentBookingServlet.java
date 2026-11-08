@@ -6,7 +6,6 @@
 package com.devjava.dencli.controller.customer;
 
 import com.devjava.dencli.dao.ServiceDAO;
-import com.devjava.dencli.dao.impl.ServiceDAOImpl;
 import com.devjava.dencli.model.Service;
 import com.devjava.dencli.model.User;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
@@ -33,7 +32,7 @@ public class AppointmentBookingServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Gson gson = new Gson();
-    private static final ServiceDAO serviceDAO = new ServiceDAOImpl();
+    private static final ServiceDAO serviceDAO = new ServiceDAO();
     private static final String JSON_CONTENT_TYPE = Constants.CONTENT_TYPE_JSON + ";charset=UTF-8";
     private static final String KEY_SUCCESS = "success";
     private static final String KEY_MESSAGE = "message";

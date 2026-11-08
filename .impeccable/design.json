@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T18:48:00.000Z",
+  "title": "Design System: DenCli Dental Clinic",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Mediterranean Sky Cyan",
+        "canonical": "#0EA5E9",
+        "tonalRamp": [
+          "#042638",
+          "#064566",
+          "#0284C7",
+          "#0EA5E9",
+          "#38BDF8",
+          "#7DD3FC",
+          "#BAE6FD",
+          "#E0F2FE"
+        ]
+      },
+      "navy": {
+        "role": "neutral",
+        "displayName": "Alpine Medical Navy",
+        "canonical": "#1E3A5F",
+        "tonalRamp": [
+          "#0D1B2A",
+          "#1E3A5F",
+          "#284B75",
+          "#3B6494",
+          "#507FB7",
+          "#7E9EC9",
+          "#B6C5D6",
+          "#F1F5F9"
+        ]
+      },
+      "danger": {
+        "role": "neutral",
+        "displayName": "Solid Crimson",
+        "canonical": "#DC2626",
+        "tonalRamp": [
+          "#450A0A",
+          "#7F1D1D",
+          "#991B1B",
+          "#B91C1C",
+          "#DC2626",
+          "#EF4444",
+          "#F87171",
+          "#FEE2E2"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Soft Paper Wash",
+        "canonical": "#F8FAFC",
+        "tonalRamp": [
+          "#0F172A",
+          "#1E293B",
+          "#334155",
+          "#64748B",
+          "#94A3B8",
+          "#CBD5E1",
+          "#E2E8F0",
+          "#F8FAFC"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Major landing statements and clinic hero banners."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles and modal headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Clinical diagnoses, doctor instructions, and patient details."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-rest",
+        "value": "0 2px 6px -1px rgba(15, 39, 68, 0.06)",
+        "purpose": "Resting elevation for appointment and EMR cards."
+      },
+      {
+        "name": "elevated-hover",
+        "value": "0 6px 18px -2px rgba(15, 39, 68, 0.08)",
+        "purpose": "Tactile elevation response on hover."
+      },
+      {
+        "name": "brand-glow",
+        "value": "0 8px 24px -2px rgba(14, 165, 233, 0.30)",
+        "purpose": "High-emphasis focus on active slot or primary action."
+      }
+    ],
+    "motion": [
+      {
+        "name": "tactile-ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Smooth spring-like response for buttons, cards, and modal entries."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "576px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "992px" },
+      { "name": "xl", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button for booking, saving, and confirming.",
+      "html": "<button class=\"ds-btn-primary\">Đặt Lịch Khám Ngay</button>",
+      "css": ".ds-btn-primary { background: #0EA5E9; color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 14px; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); transition: background 0.2s, transform 0.2s; } .ds-btn-primary:hover { background: #0284C7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35); }"
+    },
+    {
+      "name": "Logout Pill Button",
+      "kind": "button",
+      "refersTo": "button-logout",
+      "description": "High-contrast WCAG AAA session logout button on dark navigation bars.",
+      "html": "<a class=\"ds-btn-logout\" href=\"#\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path><polyline points=\"16 17 21 12 16 7\"></polyline><line x1=\"21\" y1=\"12\" x2=\"9\" y2=\"12\"></line></svg> Đăng xuất</a>",
+      "css": ".ds-btn-logout { background: #DC2626; color: #FFFFFF !important; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35); transition: background 0.2s, transform 0.2s; } .ds-btn-logout:hover { background: #B91C1C; transform: translateY(-1px); }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip-confirmed",
+      "description": "Status badge for confirmed clinical appointments.",
+      "html": "<span class=\"ds-chip-success\"><span class=\"ds-chip-dot\"></span> Đã Xác Nhận</span>",
+      "css": ".ds-chip-success { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600; border-radius: 9999px; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; } .ds-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: #059669; }"
+    },
+    {
+      "name": "Clinical Record Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Medical record and appointment container card with high-contrast metadata.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><h4 class=\"ds-card-title\">Khám Răng Định Kỳ & Cạo Vôi</h4><span class=\"ds-chip-success\"><span class=\"ds-chip-dot\"></span> Hoàn thành</span></div><p class=\"ds-card-body\">Bác sĩ: BS. Nguyễn Văn A &bull; Ngày khám: 20/11/2026</p></div>",
+      "css": ".ds-card { background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; padding: 20px; box-shadow: 0 2px 6px -1px rgba(15, 39, 68, 0.06); font-family: 'Plus Jakarta Sans', sans-serif; } .ds-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; } .ds-card-title { font-size: 16px; font-weight: 700; color: #1E3A5F; margin: 0; } .ds-card-body { font-size: 14px; color: #334155; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The European Precision Sanctuary",
+    "overview": "DenCli embodies a high-trust, modern European dental healthcare philosophy. The aesthetic avoids cold sterile hospital tropes and generic corporate SaaS palettes alike, projecting instead the serene authority of an advanced dental atelier.",
+    "keyCharacteristics": [
+      "Clinical Serenity & Modern Authority",
+      "High-Contrast Readability by Default",
+      "Tactile State Confidence"
+    ],
+    "rules": [
+      {
+        "name": "The High-Contrast Integrity Rule",
+        "body": "No functional text or actionable metadata may use gray lighter than #334155 on light surfaces or darker than #CBD5E1 on dark surfaces.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Crimson Rule",
+        "body": "Red (#DC2626) is exclusively reserved for cancellation confirmations, clinical allergy warnings, and session termination (Đăng xuất).",
+        "section": "colors"
+      },
+      {
+        "name": "The Heading Immersion Rule",
+        "body": "Any dark container must render headings in pure white (#FFFFFF) and supporting copy in icy sky tints (#E0F2FE or #CBD5E1).",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-Rest Floating-Active Rule",
+        "body": "Cards and data containers remain anchored to the canvas with crisp border lines at rest; glow and elevation appear strictly as dynamic feedback.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do maintain #334155 or darker for all secondary descriptions, sublabels, and timestamps to ensure WCAG AA readability.",
+      "Do confirm cancellations and destructive actions inside dedicated Bootstrap 5 dialogs with explicit reason dropdowns.",
+      "Do display instantaneous feedback on asynchronous actions using toast notifications and localized DOM swaps.",
+      "Do provide print-optimized layouts (@media print) for invoices and medical prescriptions."
+    ],
+    "donts": [
+      "Don't use faint gray (#94A3B8 or #CBD5E1) for body text on white backgrounds.",
+      "Don't render dark navbars with generic gray logout links; always use the high-contrast .btn-nav-logout button.",
+      "Don't perform full page reloads when confirming appointment status changes; use realtime DOM updates with toast confirmations.",
+      "Don't invent arbitrary colors outside the cyan/navy/slate/crimson palette system."
+    ]
+  }
+}
+

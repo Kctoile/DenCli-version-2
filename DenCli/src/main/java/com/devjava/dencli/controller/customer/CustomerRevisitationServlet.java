@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.devjava.dencli.dao.AppointmentDAO;
-import com.devjava.dencli.dao.impl.AppointmentDAOImpl;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.User;
 import com.devjava.dencli.util.Constants;
@@ -26,7 +25,7 @@ public class CustomerRevisitationServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
         User u = session == null ? null : (User) session.getAttribute(Constants.SESSION_USER);
         if (u == null) { resp.sendRedirect(req.getContextPath() + "/login.jsp"); return; }
-        AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
         List<Appointment> revisits = appointmentDAO.getUpcomingRevisitsByPatient(
             u.getUserId(), Date.valueOf(LocalDate.now(java.time.ZoneId.systemDefault())));
         req.setAttribute("revisits", revisits);

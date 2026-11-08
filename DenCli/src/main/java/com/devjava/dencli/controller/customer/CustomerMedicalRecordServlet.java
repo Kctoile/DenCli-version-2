@@ -9,9 +9,6 @@ import java.util.Map;
 import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ExaminationResultDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
-import com.devjava.dencli.dao.impl.AppointmentDAOImpl;
-import com.devjava.dencli.dao.impl.ExaminationResultDAOImpl;
-import com.devjava.dencli.dao.impl.PrescriptionDAOImpl;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.User;
@@ -30,9 +27,9 @@ import jakarta.servlet.http.HttpSession;
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class CustomerMedicalRecordServlet extends HttpServlet {
     // ponytail: dung DAOImpl truc tiep thay vi them DAO vao ServiceFactory
-    private final transient AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
-    private final transient PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
+    private final transient AppointmentDAO appointmentDAO = new AppointmentDAO();
+    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAO();
+    private final transient PrescriptionDAO rxDAO = new PrescriptionDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

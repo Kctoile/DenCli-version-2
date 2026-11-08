@@ -314,7 +314,7 @@
                             <label class="form-label fw-bold text-dark d-block">
                                 Chỉ định dịch vụ / Thủ thuật thực hiện thêm
                             </label>
-                            <div class="border rounded-3 p-3 bg-light" style="max-height: 220px; overflow-y: auto;">
+                            <div class="border rounded-3 p-3 bg-light" style="max-height: 180px; overflow-y: auto;">
                                 <div class="row g-2">
                                     <c:forEach items="${services}" var="svc">
                                         <div class="col-md-6">
@@ -332,6 +332,32 @@
                                 </div>
                             </div>
                             <div class="form-text text-muted mt-1">Các thủ thuật/dịch vụ chỉ định thêm sẽ được tự động đồng bộ sang hóa đơn viện phí tại quầy tiếp đón.</div>
+                        </div>
+
+                        <!-- Kê đơn thuốc kèm theo (Hợp nhất Seam Consultation) -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold text-dark mb-0">
+                                    💊 Kê đơn thuốc điều trị (Tùy chọn)
+                                </label>
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-semibold" onclick="addMedicineRow()">
+                                    + Thêm thuốc
+                                </button>
+                            </div>
+                            <div id="medicineRowsContainer" class="d-flex flex-column gap-2">
+                                <!-- Hàng chọn thuốc sẽ được thêm qua JS -->
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" name="instructions" class="form-control rounded-3 small" placeholder="Dặn dò dùng thuốc chung (Ví dụ: Uống sau bữa ăn, không dùng chung với rượu bia...)">
+                            </div>
+                        </div>
+
+                        <!-- Tự động hoàn tất lịch hẹn -->
+                        <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" name="complete_appointment" value="true" id="checkCompleteApp" checked>
+                            <label class="form-check-label fw-bold text-dark small" for="checkCompleteApp">
+                                Tự động chuyển lịch hẹn sang trạng thái <span class="text-success fw-bold">"Đã khám xong" (Completed)</span> và thông báo quầy tiếp đón
+                            </label>
                         </div>
                     </div>
                     <div class="modal-footer px-4 py-3 bg-light border-0">
@@ -361,14 +387,57 @@
         </div>
     </div>
 
+    <!-- Template chọn thuốc phục vụ thêm hàng động -->
+    <template id="medicineRowTemplate">
+        <div class="medicine-row p-2 bg-light rounded-3 border d-flex gap-2 align-items-center">
+            <div class="flex-grow-1">
+                <select name="medicine_id" class="form-select form-select-sm" required>
+                    <option value="">-- Chọn loại thuốc trong kho --</option>
+                    <c:forEach items="${medicines}" var="m">
+                        <option value="${m.medicineId}">
+                            <c:out value="${m.medicineName}" /> (Kho: ${m.stockQuantity} ${m.unit})
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div style="width: 90px;">
+                <input type="number" name="quantity" class="form-control form-control-sm text-center" min="1" value="1" placeholder="SL" required title="Số lượng">
+            </div>
+            <div class="flex-grow-1">
+                <input type="text" name="dosage" class="form-control form-control-sm" placeholder="Liều dùng (VD: 2v/ngày)" maxlength="255">
+            </div>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeMedicineRow(this)" title="Xóa dòng thuốc">✕</button>
+            </div>
+        </div>
+    </template>
+
     <!-- Footer dùng chung -->
     <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
     <script>
+        function addMedicineRow() {
+            const container = document.getElementById('medicineRowsContainer');
+            const template = document.getElementById('medicineRowTemplate');
+            if (container && template) {
+                const clone = template.content.cloneNode(true);
+                container.appendChild(clone);
+            }
+        }
+
+        function removeMedicineRow(btn) {
+            const row = btn.closest('.medicine-row');
+            if (row) {
+                row.remove();
+            }
+        }
+
         function openExamModal(appId, patientId, patientName) {
             document.getElementById('modalAppointmentId').value = appId;
             document.getElementById('modalAppIdText').textContent = appId;
             document.getElementById('modalPatientName').textContent = patientName ? (patientName + ' (BN-#' + patientId + ')') : ('BN-#' + patientId);
+            const container = document.getElementById('medicineRowsContainer');
+            if (container) container.replaceChildren();
             var modal = new bootstrap.Modal(document.getElementById('examModal'));
             modal.show();
         }

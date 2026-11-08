@@ -4,7 +4,7 @@ import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
-import com.devjava.dencli.service.impl.AppointmentServiceImpl;
+import com.devjava.dencli.service.AppointmentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ class AppointmentBookingConcurrencyTest {
         // 1. Arrange: Mock DAO mô phỏng cơ chế khóa UPDLOCK, HOLDLOCK nguyên tử
         AppointmentDAO appointmentDAO = mock(AppointmentDAO.class);
         ServiceDAO serviceDAO = mock(ServiceDAO.class);
-        AppointmentService appointmentService = new AppointmentServiceImpl(appointmentDAO, serviceDAO);
+        AppointmentService appointmentService = new AppointmentService(appointmentDAO, serviceDAO);
 
         // Mô phỏng atomic slot acquisition: chỉ người đầu tiên giữ lock mới lấy được
         // slot thành công
@@ -113,7 +113,7 @@ class AppointmentBookingConcurrencyTest {
     void testStressTenConcurrentUsersCompetingOneSlot() throws InterruptedException {
         AppointmentDAO appointmentDAO = mock(AppointmentDAO.class);
         ServiceDAO serviceDAO = mock(ServiceDAO.class);
-        AppointmentService appointmentService = new AppointmentServiceImpl(appointmentDAO, serviceDAO);
+        AppointmentService appointmentService = new AppointmentService(appointmentDAO, serviceDAO);
 
         AtomicBoolean slotLocked = new AtomicBoolean(false);
         when(appointmentDAO.insertAppointmentWithServices(any(Appointment.class), anyList()))

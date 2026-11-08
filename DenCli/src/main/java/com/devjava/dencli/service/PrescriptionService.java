@@ -1,63 +1,217 @@
 /**
  * File: PrescriptionService.java
- * Mục đích: Interface định nghĩa các phương thức xử lý nghiệp vụ kê đơn thuốc, quản lý kho thuốc và Transaction trừ kho.
+ * Mục đích: Triển khai các phương thức nghiệp vụ kê đơn thuốc và quản lý Transaction đa bảng thủ công (kê đơn & trừ tồn kho).
  */
 package com.devjava.dencli.service;
 
-import com.devjava.dencli.model.Medicine;
-import com.devjava.dencli.model.Prescription;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
-public interface PrescriptionService {
+import com.devjava.dencli.dao.DBConnection;
+import com.devjava.dencli.dao.MedicineDAO;
+import com.devjava.dencli.dao.PrescriptionDAO;
+
+import com.devjava.dencli.model.Medicine;
+import com.devjava.dencli.model.Prescription;
+import com.devjava.dencli.model.PrescriptionDetail;
+import com.devjava.dencli.util.Constants;
+
+public class PrescriptionService {
+
+    private static final Logger LOGGER = Logger.getLogger(PrescriptionService.class.getName());
+
+    private final PrescriptionDAO prescriptionDAO;
+    private final MedicineDAO medicineDAO;
+
+    // Constructor mặc định khởi tạo các DAO
+    public PrescriptionService() {
+        this.prescriptionDAO = new PrescriptionDAO();
+        this.medicineDAO = new MedicineDAO();
+    }
+
+    // Constructor hỗ trợ tiêm phụ thuộc DAO phục vụ kiểm thử
+    public PrescriptionService(PrescriptionDAO prescriptionDAO, MedicineDAO medicineDAO) {
+        this.prescriptionDAO = prescriptionDAO;
+        this.medicineDAO = medicineDAO;
+    }
 
     /**
-     * Phương thức kê đơn thuốc và trừ số lượng kho thuốc tương ứng trong một Transaction cơ sở dữ liệu duy nhất.
-     * Tầng Service mở 1 Connection, tắt autoCommit, truyền Connection vào các DAO và gọi commit/rollback trong try-catch-finally.
+     * Phương thức thực hiện nghiệp vụ kê đơn thuốc và tự động trừ số lượng tồn
+     * kho trong một Transaction duy nhất. Tầng Service chủ động mở Connection,
+     * tắt autoCommit, truyền Connection cho DAO và commit/rollback trong
+     * try-catch-finally.
+     *
      * @param prescription Đối tượng đơn thuốc chứa danh sách các chi tiết thuốc
-     * @return true nếu kê đơn và trừ kho thành công, false nếu thuốc không đủ tồn kho hoặc có lỗi
+     * cần kê
+     * @return true nếu kê đơn và trừ tồn kho thành công cho toàn bộ thuốc,
+     * ngược lại false
      */
-    boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId);
+    public boolean createPrescriptionWithStockDeduction(Prescription prescription, int doctorId) {
+        if (isPrescriptionInputInvalid(prescription, doctorId)) {
+            return false;
+        }
+
+        Connection conn = null;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            if (!prescriptionDAO.isResultAssignedToDoctor(prescription.getResultId(), doctorId, conn)) {
+                conn.rollback();
+                return false;
+            }
+
+            int prescriptionId = prescriptionDAO.insertPrescription(prescription, conn);
+            if (prescriptionId <= 0) {
+                throw new SQLException("Thao tác tạo đơn thuốc thất bại, không thể lấy mã ID sinh ra.");
+            }
+
+            processDetailsStockAndInsertion(prescriptionId, prescription.getDetails(), conn);
+
+            conn.commit();
+            return true;
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            rollbackQuietly(conn);
+            return false;
+
+        } finally {
+            closeQuietly(conn);
+        }
+    }
+
+    private boolean isPrescriptionInputInvalid(Prescription prescription, int doctorId) {
+        if (prescription == null || prescription.getResultId() == null || prescription.getResultId() <= 0 || doctorId <= 0) {
+            return true;
+        }
+        List<PrescriptionDetail> details = prescription.getDetails();
+        return details == null || details.isEmpty();
+    }
+
+    private void processDetailsStockAndInsertion(int prescriptionId, List<PrescriptionDetail> details, Connection conn) throws SQLException {
+        for (PrescriptionDetail detail : details) {
+            if (detail.getMedicineId() <= 0 || detail.getPrescribedQuantity() <= 0) {
+                throw new SQLException("Thông tin thuốc hoặc số lượng kê đơn không hợp lệ.");
+            }
+
+            boolean stockDeducted = medicineDAO.deductStockQuantity(
+                    detail.getMedicineId(),
+                    detail.getPrescribedQuantity(),
+                    conn
+            );
+            if (!stockDeducted) {
+                throw new SQLException("Không đủ số lượng tồn kho cho thuốc có mã ID: " + detail.getMedicineId());
+            }
+
+            detail.setPrescriptionId(prescriptionId);
+            boolean detailInserted = prescriptionDAO.insertPrescriptionDetail(detail, conn);
+            if (!detailInserted) {
+                throw new SQLException("Lưu chi tiết đơn thuốc thất bại cho thuốc ID: " + detail.getMedicineId());
+            }
+        }
+    }
+
+    private void rollbackQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void closeQuietly(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+    }
 
     /**
-     * Phương thức lấy thông tin đơn thuốc theo mã kết quả khám.
+     * Phương thức lấy đơn thuốc gắn liền với kết quả khám bệnh.
+     *
      * @param resultId Mã kết quả khám
-     * @return Đối tượng Prescription kèm danh sách chi tiết thuốc
+     * @return Đối tượng Prescription
      */
-    Prescription getPrescriptionByResultId(int resultId);
+    public Prescription getPrescriptionByResultId(int resultId) {
+        if (resultId <= 0) {
+            return null;
+        }
+
+        return prescriptionDAO.getPrescriptionByResultId(resultId);
+    }
 
     /**
      * Phương thức lấy toàn bộ danh mục thuốc trong kho.
+     *
      * @return Danh sách thuốc
      */
-    List<Medicine> getAllMedicines();
+    public List<Medicine> getAllMedicines() {
+        return medicineDAO.getAllMedicines();
+    }
 
     /**
-     * Phương thức tìm kiếm danh mục thuốc có phân trang.
-     * @param keyword Từ khóa tìm kiếm tên thuốc
-     * @param page Trang hiện tại
-     * @param pageSize Số bản ghi mỗi trang
+     * Phương thức tìm kiếm thuốc theo từ khóa có phân trang.
+     *
+     * @param keyword Từ khóa tìm kiếm
+     * @param page Trang
+     * @param pageSize Số lượng bản ghi trên một trang
      * @return Danh sách thuốc
      */
-    List<Medicine> searchMedicines(String keyword, int page, int pageSize);
+    public List<Medicine> searchMedicines(String keyword, int page, int pageSize) {
+        int validPage = (page <= 0) ? Constants.DEFAULT_PAGE_NUMBER : page;
+        int validPageSize = (pageSize <= 0) ? Constants.DEFAULT_PAGE_SIZE : pageSize;
+        int offset = (validPage - 1) * validPageSize;
+
+        return medicineDAO.getMedicinesWithPagination(keyword, offset, validPageSize);
+    }
 
     /**
-     * Phương thức đếm số lượng loại thuốc theo từ khóa.
+     * Phương thức đếm tổng số loại thuốc thỏa từ khóa tìm kiếm.
+     *
      * @param keyword Từ khóa
      * @return Tổng số loại thuốc
      */
-    int countMedicines(String keyword);
+    public int countMedicines(String keyword) {
+        return medicineDAO.countMedicines(keyword);
+    }
 
     /**
-     * Phương thức thêm mới một loại thuốc vào kho.
-     * @param medicine Đối tượng thuốc cần thêm
+     * Phương thức thêm mới một loại thuốc vào danh mục kho.
+     *
+     * @param medicine Đối tượng thuốc
      * @return true nếu thêm thành công
      */
-    boolean addMedicine(Medicine medicine);
+    public boolean addMedicine(Medicine medicine) {
+        if (medicine == null || medicine.getMedicineName() == null || medicine.getMedicineName().trim().isEmpty()
+                || medicine.getPrice() == null || medicine.getStockQuantity() < 0) {
+            return false;
+        }
+
+        return medicineDAO.insertMedicine(medicine);
+    }
 
     /**
-     * Phương thức cập nhật thông tin thuốc (tên, giá, tồn kho).
-     * @param medicine Đối tượng thuốc chứa thông tin mới
+     * Phương thức cập nhật thông tin thuốc trong kho.
+     *
+     * @param medicine Đối tượng thuốc
      * @return true nếu cập nhật thành công
      */
-    boolean updateMedicine(Medicine medicine);
+    public boolean updateMedicine(Medicine medicine) {
+        if (medicine == null || medicine.getMedicineId() <= 0) {
+            return false;
+        }
+
+        return medicineDAO.updateMedicine(medicine);
+    }
 }

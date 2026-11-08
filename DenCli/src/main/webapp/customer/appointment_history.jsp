@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
 </head>
 
@@ -43,11 +43,11 @@
                     </div>
                 </div>
 
-                <!-- Policy Alert Banner -->
-                <div class="alert alert-info border-0 rounded-4 p-3 mb-4 shadow-sm d-flex align-items-center gap-3" style="background-color: #EFF6FF; border-left: 4px solid #2563EB !important;">
-                    <span class="fs-4">ℹ️</span>
-                    <div class="small">
-                        <strong class="text-primary">Quy định hủy lịch hẹn trực tuyến:</strong>
+                <!-- Policy Alert Banner (Refined European Medical Card) -->
+                <div class="card border rounded-4 p-3 mb-4 shadow-sm d-flex flex-row align-items-center gap-3" style="background-color: var(--den-info-bg, #EFF6FF); border-color: var(--den-info-border, #BFDBFE) !important;">
+                    <span class="fs-4 text-info">ℹ️</span>
+                    <div class="small text-secondary">
+                        <strong class="text-info fw-bold">Quy định hủy lịch hẹn trực tuyến:</strong>
                         Quý khách có thể tự hủy các lịch hẹn ở trạng thái <em>"Chờ xác nhận"</em> hoặc <em>"Đã xác nhận"</em>. 
                         Sau khi hủy, khung giờ sẽ lập tức được giải phóng cho bệnh nhân khác. Đối với ca khám đã <em>"Check-in"</em> tại phòng khám, vui lòng liên hệ trực tiếp nhân viên Lễ tân.
                     </div>
@@ -55,7 +55,7 @@
 
                 <c:if test="${empty appointments}">
                     <div class="dencli-card p-5 text-center bg-white shadow-sm rounded-4 border-0 my-4">
-                        <div class="empty-state-icon mb-3" style="font-size: 3.5rem;">🗓️</div>
+                        <div class="empty-state-icon mb-3 display-4">🗓️</div>
                         <h5 class="fw-bold mb-2 text-dark">Bạn chưa có lịch hẹn nào</h5>
                         <p class="text-muted small mb-4 mx-auto" style="max-width: 480px;">
                             Hãy chủ động đặt lịch khám định kỳ để được đội ngũ Bác sĩ chuyên khoa tại DenCli thăm khám và tư vấn tận tâm nhất.
@@ -67,6 +67,34 @@
                 </c:if>
 
                 <c:if test="${not empty appointments}">
+                    <!-- Instant Search & Quick Filter Toolbar -->
+                    <div class="card bg-white p-3 rounded-4 shadow-sm border mb-4" style="border-color: var(--den-border, #CBD5E1) !important;">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-12 col-md-6 col-lg-7">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">🔍</span>
+                                    <input type="text" id="appointmentSearchInput" class="form-control border-start-0 bg-light" 
+                                           placeholder="Tìm theo Mã hẹn (#), Bác sĩ, Ngày khám hoặc Phòng...">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 col-lg-3">
+                                <select id="appointmentFilterStatus" class="form-select bg-light">
+                                    <option value="all">Tất cả trạng thái</option>
+                                    <option value="Pending">Chờ xác nhận</option>
+                                    <option value="Confirmed">Đã xác nhận</option>
+                                    <option value="Checked In">Đã check-in</option>
+                                    <option value="Completed">Hoàn thành</option>
+                                    <option value="Cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3 col-lg-2 text-end">
+                                <span class="badge bg-light text-dark border px-3 py-2 fw-semibold" id="appointmentCounter">
+                                    ${appointments.size()} lịch hẹn
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="dencli-card bg-white shadow-sm rounded-4 border-0 p-3 mb-4 overflow-hidden">
                         <div class="table-responsive border-0">
                             <table class="table table-hover align-middle mb-0">
@@ -163,7 +191,7 @@
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #FEE2E2; color: #DC2626;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: var(--den-danger-bg, #FEF2F2); color: var(--den-danger, #DC2626);">
                             <span class="fs-5">✕</span>
                         </div>
                         <div>
@@ -175,7 +203,7 @@
                 </div>
                 <div class="modal-body px-4 py-3">
                     <!-- Tóm tắt ca hẹn -->
-                    <div class="p-3 rounded-3 mb-3" style="background: #FFF1F2; border: 1px solid #FFE4E6;">
+                    <div class="p-3 rounded-3 mb-3" style="background: var(--den-coral-light, #FFF1F2); border: 1px solid rgba(255, 107, 107, 0.25);">
                         <div class="small text-danger fw-bold mb-2">Thông tin lịch khám:</div>
                         <div class="d-flex justify-content-between text-secondary small py-1 border-bottom border-danger-subtle">
                             <span>Bác sĩ điều trị:</span>
@@ -209,7 +237,7 @@
                         <textarea id="cancelNoteInput" class="form-control form-control-sm rounded-3" rows="2" placeholder="Nhập thêm lý do chi tiết nếu muốn..."></textarea>
                     </div>
 
-                    <div class="alert alert-warning py-2 px-3 small mb-0 d-flex align-items-center gap-2 rounded-3 border-0" style="background: #FEF3C7; color: #92400E;">
+                    <div class="alert alert-warning py-2 px-3 small mb-0 d-flex align-items-center gap-2 rounded-3 border-0" style="background: var(--den-warning-bg, #FFFBEB); color: var(--den-warning-text, #78350F); border: 1px solid var(--den-warning-border, #FDE68A);">
                         <span>💡</span>
                         <span>Khung giờ khám này sau khi hủy sẽ lập tức được mở lại cho bệnh nhân khác.</span>
                     </div>
@@ -243,6 +271,47 @@
     <!-- Script điều phối Hủy Lịch Hẹn Khám (Feature 7) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Live Search & Status Filter
+            const searchInput = document.getElementById('appointmentSearchInput');
+            const filterStatus = document.getElementById('appointmentFilterStatus');
+            const counterBadge = document.getElementById('appointmentCounter');
+            const tableRows = document.querySelectorAll('tbody tr[id^="row-app-"]');
+
+            function filterAppointments() {
+                if (!searchInput || !filterStatus) return;
+                const query = searchInput.value.toLowerCase().trim();
+                const status = filterStatus.value;
+                let visibleCount = 0;
+
+                tableRows.forEach(function(row) {
+                    const text = row.innerText.toLowerCase();
+                    const matchesQuery = !query || text.includes(query);
+                    const rowStatus = row.querySelector('[id^="status-cell-"]')?.innerText.trim() || '';
+
+                    let matchesStatus = (status === 'all');
+                    if (!matchesStatus) {
+                        if (status === 'Pending' && rowStatus.includes('Chờ xác nhận')) matchesStatus = true;
+                        else if (status === 'Confirmed' && rowStatus.includes('Đã xác nhận')) matchesStatus = true;
+                        else if (status === 'Checked In' && rowStatus.includes('check-in')) matchesStatus = true;
+                        else if (status === 'Completed' && rowStatus.includes('Hoàn thành')) matchesStatus = true;
+                        else if (status === 'Cancelled' && rowStatus.includes('Đã hủy')) matchesStatus = true;
+                    }
+
+                    if (matchesQuery && matchesStatus) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (counterBadge) {
+                    counterBadge.textContent = visibleCount + ' lịch hẹn';
+                }
+            }
+
+            if (searchInput) searchInput.addEventListener('input', filterAppointments);
+            if (filterStatus) filterStatus.addEventListener('change', filterAppointments);
             let selectedAppointmentId = null;
             const cancelModalEl = document.getElementById('cancelAppointmentModal');
             const cancelModal = new bootstrap.Modal(cancelModalEl);

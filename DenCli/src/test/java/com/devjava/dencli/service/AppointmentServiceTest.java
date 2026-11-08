@@ -8,7 +8,7 @@ import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.ServiceDAO;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.dto.BookingRequestDTO;
-import com.devjava.dencli.service.impl.AppointmentServiceImpl;
+import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.util.Constants;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ class AppointmentServiceTest {
     void setUp() {
         appointmentDAO = mock(AppointmentDAO.class);
         serviceDAO = mock(ServiceDAO.class);
-        appointmentService = new AppointmentServiceImpl(appointmentDAO, serviceDAO);
+        appointmentService = new AppointmentService(appointmentDAO, serviceDAO);
     }
 
     /**

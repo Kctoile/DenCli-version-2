@@ -3,9 +3,6 @@ package com.devjava.dencli.controller.doctor;
 import com.devjava.dencli.dao.ExaminationResultDAO;
 import com.devjava.dencli.dao.AppointmentDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
-import com.devjava.dencli.dao.impl.AppointmentDAOImpl;
-import com.devjava.dencli.dao.impl.ExaminationResultDAOImpl;
-import com.devjava.dencli.dao.impl.PrescriptionDAOImpl;
 import com.devjava.dencli.model.*;
 import com.devjava.dencli.util.Constants;
 import com.google.gson.Gson;
@@ -18,9 +15,9 @@ import java.util.*;
 @WebServlet("/doctor/patient-history")
 @SuppressWarnings({"java:S1989", "squid:S1989"})
 public class DoctorPatientHistoryServlet extends HttpServlet {
-    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAOImpl();
-    private final transient PrescriptionDAO rxDAO = new PrescriptionDAOImpl();
-    private final transient AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+    private final transient ExaminationResultDAO examDAO = new ExaminationResultDAO();
+    private final transient PrescriptionDAO rxDAO = new PrescriptionDAO();
+    private final transient AppointmentDAO appointmentDAO = new AppointmentDAO();
     private static final Gson gson = new Gson();
 
     @Override

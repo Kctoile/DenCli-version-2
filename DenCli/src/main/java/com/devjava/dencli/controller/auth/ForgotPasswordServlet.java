@@ -1,7 +1,6 @@
 package com.devjava.dencli.controller.auth;
 
 import com.devjava.dencli.dao.UserDAO;
-import com.devjava.dencli.dao.impl.UserDAOImpl;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.service.UserService;
 import com.devjava.dencli.util.Constants;
@@ -33,7 +32,7 @@ public class ForgotPasswordServlet extends HttpServlet {
     private static final String ATTR_FP_TIME = "fp_time";
 
     private final transient UserService userService = ServiceFactory.getUserService();
-    private final transient UserDAO userDAO = new UserDAOImpl();
+    private final transient UserDAO userDAO = new UserDAO();
     private final transient SecureRandom secureRandom = new SecureRandom();
 
     @Override

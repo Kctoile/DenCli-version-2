@@ -1,6 +1,6 @@
 package com.devjava.dencli.dao;
 
-import com.devjava.dencli.dao.impl.MedicineDAOImpl;
+import com.devjava.dencli.dao.MedicineDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("ISTQB Boundary Value Analysis (BVA) - Kiểm thử Giá trị biên Tồn kho Thuốc")
 class MedicineInventoryBVATest {
 
-    private MedicineDAOImpl medicineDAO;
+    private MedicineDAO medicineDAO;
     private Connection mockConnection;
     private PreparedStatement mockPreparedStatement;
 
@@ -25,7 +25,7 @@ class MedicineInventoryBVATest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        medicineDAO = new MedicineDAOImpl();
+        medicineDAO = new MedicineDAO();
         mockConnection = mock(Connection.class);
         mockPreparedStatement = mock(PreparedStatement.class);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);

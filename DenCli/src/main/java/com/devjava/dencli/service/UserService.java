@@ -1,80 +1,194 @@
 /**
  * File: UserService.java
- * Mục đích: Interface định nghĩa các phương thức xử lý nghiệp vụ liên quan đến người dùng (đăng nhập, đăng ký, thông tin tài khoản).
+ * Mục đích: Triển khai các phương thức xử lý nghiệp vụ người dùng, xác thực và phân quyền tài khoản.
  */
 package com.devjava.dencli.service;
 
+import com.devjava.dencli.dao.UserDAO;
 import com.devjava.dencli.model.User;
+import com.devjava.dencli.util.Constants;
+import com.devjava.dencli.util.PasswordUtil;
 import java.util.List;
 
-public interface UserService {
+public class UserService {
+
+    private final UserDAO userDAO;
+
+    // Constructor mặc định khởi tạo đối tượng UserDAO
+    public UserService() {
+        this.userDAO = new UserDAO();
+    }
+
+    // Constructor cho phép tiêm phụ thuộc UserDAO phục vụ viết Unit Test
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     /**
-     * Phương thức xác thực thông tin đăng nhập của người dùng qua email/số điện thoại và mật khẩu.
-     * @param emailOrPhone Địa chỉ email hoặc số điện thoại người dùng nhập
-     * @param rawPassword Mật khẩu thô do người dùng nhập
-     * @return Đối tượng User nếu đăng nhập thành công, hoặc null nếu thông tin không chính xác
+     * Phương thức xác thực thông tin đăng nhập của người dùng qua email hoặc số điện thoại.
+     * @param emailOrPhone Chuỗi email hoặc số điện thoại
+     * @param rawPassword Mật khẩu chưa mã hóa
+     * @return Đối tượng User nếu mật khẩu khớp, ngược lại trả về null
      */
-    User login(String emailOrPhone, String rawPassword);
+    public User login(String emailOrPhone, String rawPassword) {
+        if (emailOrPhone == null || emailOrPhone.trim().isEmpty() || rawPassword == null || rawPassword.trim().isEmpty()) {
+            return null;
+        }
+
+        // Tìm kiếm người dùng trong cơ sở dữ liệu qua UserDAO
+        User user = userDAO.getUserByEmailOrPhone(emailOrPhone.trim());
+
+        if (user == null) {
+            return null;
+        }
+
+        // Gọi hàm kiểm tra mật khẩu bằng thuật toán BCrypt từ PasswordUtil
+        boolean isMatch = PasswordUtil.checkPassword(rawPassword, user.getPassword());
+
+        if (isMatch) {
+            return user;
+        }
+
+        return null;
+    }
 
     /**
-     * Phương thức đăng ký tài khoản mới cho bệnh nhân (vai trò CUSTOMER).
-     * @param user Đối tượng chứa thông tin cá nhân của người dùng
-     * @param rawPassword Mật khẩu thô cần được băm an toàn trước khi lưu trữ
-     * @return true nếu đăng ký thành công, false nếu email/sđt đã tồn tại hoặc dữ liệu không hợp lệ
+     * Phương thức kiểm tra tính hợp lệ và đăng ký tài khoản mới cho bệnh nhân.
+     * @param user Đối tượng người dùng
+     * @param rawPassword Mật khẩu thô cần băm
+     * @return true nếu đăng ký thành công
      */
-    boolean registerCustomer(User user, String rawPassword);
+    public boolean registerCustomer(User user, String rawPassword) {
+        if (user == null || rawPassword == null || rawPassword.trim().length() < 6) {
+            return false;
+        }
+
+        // Kiểm tra tính bắt buộc của họ tên và số điện thoại
+        if (user.getFullName() == null || user.getFullName().trim().isEmpty() ||
+            user.getPhone() == null || user.getPhone().trim().isEmpty()) {
+            return false;
+        }
+
+        // Kiểm tra xem số điện thoại đã được đăng ký trước đó chưa
+        if (userDAO.checkPhoneExists(user.getPhone().trim())) {
+            return false;
+        }
+
+        // Nếu người dùng có nhập email thì kiểm tra email trùng lặp
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty() && userDAO.checkEmailExists(user.getEmail().trim())) {
+            return false;
+        }
+
+        // Gọi hàm băm mật khẩu BCrypt từ lớp tiện ích PasswordUtil
+        String hashedPassword = PasswordUtil.hashPassword(rawPassword.trim());
+        user.setPassword(hashedPassword);
+
+        // Gán vai trò mặc định cho tài khoản đăng ký trực tuyến là Bệnh nhân (CUSTOMER)
+        user.setRoleId(Constants.ROLE_CUSTOMER_ID);
+
+        // Gọi hàm insertUser của tầng DAO để ghi dữ liệu vào CSDL
+        return userDAO.insertUser(user);
+    }
 
     /**
      * Phương thức lấy thông tin người dùng theo mã định danh user_id.
      * @param userId Mã người dùng
-     * @return Đối tượng User tương ứng
+     * @return Đối tượng User
      */
-    User getUserById(int userId);
+    public User getUserById(int userId) {
+        if (userId <= 0) {
+            return null;
+        }
+
+        return userDAO.getUserById(userId);
+    }
 
     /**
-     * Phương thức lấy danh sách tất cả các bác sĩ nha khoa đang hoạt động trong hệ thống.
-     * @return Danh sách các bác sĩ
+     * Phương thức lấy danh sách toàn bộ bác sĩ nha khoa trong hệ thống.
+     * @return Danh sách bác sĩ
      */
-    List<User> getDoctors();
+    public List<User> getDoctors() {
+        return userDAO.getDoctors();
+    }
 
     /**
-     * Phương thức lấy danh sách người dùng theo vai trò có hỗ trợ phân trang.
-     * @param roleId Mã vai trò (1: ADMIN, 2: DOCTOR, 4: STAFF, 5: CUSTOMER, 0: Tất cả)
-     * @param page Số trang hiện tại (bắt đầu từ 1)
+     * Phương thức lấy danh sách người dùng theo vai trò có phân trang.
+     * @param roleId Mã vai trò
+     * @param page Trang hiện tại
      * @param pageSize Số lượng bản ghi trên một trang
-     * @return Danh sách người dùng của trang
+     * @return Danh sách người dùng
      */
-    List<User> getUsersByRole(int roleId, int page, int pageSize);
+    public List<User> getUsersByRole(int roleId, int page, int pageSize) {
+        int validPage = (page <= 0) ? Constants.DEFAULT_PAGE_NUMBER : page;
+        int validPageSize = (pageSize <= 0) ? Constants.DEFAULT_PAGE_SIZE : pageSize;
+
+        // Tính toán số bản ghi cần bỏ qua cho phân trang SQL Server
+        int offset = (validPage - 1) * validPageSize;
+
+        return userDAO.getUsersByRole(roleId, offset, validPageSize);
+    }
 
     /**
-     * Phương thức đếm tổng số lượng người dùng theo vai trò.
-     * @param roleId Mã vai trò cần đếm
-     * @return Tổng số người dùng
+     * Phương thức đếm tổng số lượng người dùng theo vai trò phục vụ tính tổng số trang.
+     * @param roleId Mã vai trò
+     * @return Tổng số lượng bản ghi
      */
-    int countUsersByRole(int roleId);
+    public int countUsersByRole(int roleId) {
+        return userDAO.countUsersByRole(roleId);
+    }
 
     /**
-     * Phương thức cập nhật thông tin hồ sơ cá nhân của người dùng.
-     * @param user Đối tượng người dùng chứa thông tin cập nhật
-     * @return true nếu cập nhật thành công, ngược lại false
+     * Phương thức cập nhật thông tin hồ sơ của người dùng.
+     * @param user Đối tượng người dùng chứa thông tin mới
+     * @return true nếu cập nhật thành công
      */
-    boolean updateProfile(User user);
+    public boolean updateProfile(User user) {
+        if (user == null || user.getUserId() <= 0) {
+            return false;
+        }
+
+        return userDAO.updateUser(user);
+    }
 
     /**
-     * Phương thức đổi mật khẩu tài khoản người dùng có xác thực mật khẩu cũ.
+     * Phương thức thay đổi mật khẩu người dùng với cơ chế xác thực mật khẩu cũ.
      * @param userId Mã người dùng
      * @param oldPassword Mật khẩu hiện tại
      * @param newPassword Mật khẩu mới mong muốn
-     * @return true nếu đổi mật khẩu thành công, false nếu mật khẩu cũ không đúng
+     * @return true nếu đổi thành công, ngược lại false
      */
-    boolean changePassword(int userId, String oldPassword, String newPassword);
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        if (userId <= 0 || oldPassword == null || newPassword == null || newPassword.trim().length() < 6) {
+            return false;
+        }
 
-    /**
-     * Phương thức đặt lại mật khẩu mới cho người dùng sau khi xác thực OTP thành công.
-     * @param email Email tài khoản cần đặt lại mật khẩu
-     * @param newPassword Mật khẩu mới
-     * @return true nếu cập nhật thành công, ngược lại false
-     */
-    boolean resetPassword(String email, String newPassword);
+        User user = userDAO.getUserById(userId);
+        if (user == null) {
+            return false;
+        }
+
+        // Xác thực mật khẩu cũ bằng BCrypt
+        boolean isOldMatch = PasswordUtil.checkPassword(oldPassword, user.getPassword());
+        if (!isOldMatch) {
+            return false;
+        }
+
+        // Băm mật khẩu mới và lưu vào cơ sở dữ liệu
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword.trim());
+
+        return userDAO.updatePassword(userId, hashedNewPassword);
+    }
+    public boolean resetPassword(String email, String newPassword) {
+        if (email == null || email.isBlank() || newPassword == null || newPassword.trim().length() < 6) {
+            return false;
+        }
+
+        User user = userDAO.getUserByEmailOrPhone(email.trim());
+        if (user == null) {
+            return false;
+        }
+
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword.trim());
+        return userDAO.updatePassword(user.getUserId(), hashedNewPassword);
+    }
 }

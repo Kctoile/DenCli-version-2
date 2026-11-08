@@ -13,7 +13,7 @@
     <!-- Google Fonts: Plus Jakarta Sans & Figtree -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dencli-theme.css?v=7">
 
     <style>
@@ -45,8 +45,8 @@
         }
         .diagnosis-box {
             background: #F0FDFA;
-            border-left: 4px solid #0891B2;
-            border-radius: 0 10px 10px 0;
+            border: 1px solid #99F6E4;
+            border-radius: var(--den-radius-md, 12px);
             padding: 1rem 1.25rem;
         }
         .prescription-badge {

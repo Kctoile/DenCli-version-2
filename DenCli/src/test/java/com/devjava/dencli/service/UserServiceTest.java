@@ -6,7 +6,7 @@ package com.devjava.dencli.service;
 
 import com.devjava.dencli.dao.UserDAO;
 import com.devjava.dencli.model.User;
-import com.devjava.dencli.service.impl.UserServiceImpl;
+import com.devjava.dencli.service.UserService;
 import com.devjava.dencli.util.Constants;
 import com.devjava.dencli.util.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         userDAO = mock(UserDAO.class);
-        userService = new UserServiceImpl(userDAO);
+        userService = new UserService(userDAO);
     }
 
     /**
