@@ -1,6 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-        <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
             <!-- Header dùng chung cho toàn bộ hệ thống DenCli (Bootstrap 5 & Impeccable Design) -->
             <meta name="csrf-token" content="${csrfToken}">
             <script>

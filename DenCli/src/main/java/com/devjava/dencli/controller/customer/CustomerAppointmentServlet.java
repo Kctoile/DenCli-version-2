@@ -1,15 +1,20 @@
 package com.devjava.dencli.controller.customer;
 
-import com.devjava.dencli.model.*;
+import java.io.IOException;
+import java.util.List;
+
+import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.User;
 import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.List;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/customer/appointments")
 @SuppressWarnings({"java:S1989", "squid:S1989"})

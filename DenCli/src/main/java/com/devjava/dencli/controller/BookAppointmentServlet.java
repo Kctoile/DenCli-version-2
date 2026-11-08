@@ -11,7 +11,6 @@ import com.devjava.dencli.model.dto.BookingRequestDTO;
 import com.devjava.dencli.service.AppointmentService;
 import com.devjava.dencli.service.ServiceFactory;
 import com.devjava.dencli.util.Constants;
-import com.devjava.dencli.util.DateUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -1,16 +1,26 @@
 package com.devjava.dencli.controller.doctor;
 
-import com.devjava.dencli.dao.ExaminationResultDAO;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.devjava.dencli.dao.AppointmentDAO;
+import com.devjava.dencli.dao.ExaminationResultDAO;
 import com.devjava.dencli.dao.PrescriptionDAO;
-import com.devjava.dencli.model.*;
+import com.devjava.dencli.model.Appointment;
+import com.devjava.dencli.model.ExaminationResult;
+import com.devjava.dencli.model.User;
 import com.devjava.dencli.util.Constants;
 import com.google.gson.Gson;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/doctor/patient-history")
 @SuppressWarnings({"java:S1989", "squid:S1989"})

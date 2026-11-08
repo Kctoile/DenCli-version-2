@@ -16,31 +16,30 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.devjava.dencli.dao.DBConnection;
 import com.devjava.dencli.model.Appointment;
 import com.devjava.dencli.model.ExaminationResult;
 import com.devjava.dencli.model.dto.RevenueDTO;
 
-@SuppressWarnings({"java:S2143", "squid:S2143"})
+@SuppressWarnings({ "java:S2143", "squid:S2143" })
 public class AppointmentDAO {
 
     private static final Logger LOGGER = Logger.getLogger(AppointmentDAO.class.getName());
 
     /**
      * Phương thức kiểm tra bác sĩ có bị trùng lịch vào cùng ngày và giờ hay không.
+     * 
      * @param doctorId Mã bác sĩ phụ trách
-     * @param date Ngày hẹn khám
-     * @param time Giờ hẹn khám
+     * @param date     Ngày hẹn khám
+     * @param time     Giờ hẹn khám
      * @return true nếu đã có lịch trùng khác trạng thái Cancelled
      */
     public boolean checkDuplicateSlot(int doctorId, Date date, Time time) {
         String sql = "SELECT 1 FROM appointments "
-                   + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? AND status <> 'Cancelled'";
+                + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? AND status <> 'Cancelled'";
 
         // Áp dụng try-with-resources tự động giải phóng Connection và PreparedStatement
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Khởi tạo câu lệnh PreparedStatement
+                PreparedStatement ps = conn.prepareStatement(sql)) { // Khởi tạo câu lệnh PreparedStatement
 
             ps.setInt(1, doctorId);
             ps.setDate(2, date);
@@ -59,20 +58,23 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức thêm mới một lịch hẹn kèm danh sách dịch vụ đi kèm sử dụng Transaction trên Connection.
+     * Phương thức thêm mới một lịch hẹn kèm danh sách dịch vụ đi kèm sử dụng
+     * Transaction trên Connection.
+     * 
      * @param appointment Đối tượng lịch hẹn
-     * @param serviceIds Danh sách mã dịch vụ
+     * @param serviceIds  Danh sách mã dịch vụ
      * @return Mã appointment_id vừa tạo, hoặc -1 nếu thất bại
      */
     public int insertAppointmentWithServices(Appointment appointment, List<Integer> serviceIds) {
         String sqlDuplicate = "SELECT 1 FROM appointments WITH (UPDLOCK, HOLDLOCK) "
-                            + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? "
-                            + "AND status <> 'Cancelled'";
+                + "WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? "
+                + "AND status <> 'Cancelled'";
         String sqlApp = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, status, notes, room) "
-                      + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         String sqlService = "INSERT INTO appointment_services (appointment_id, service_id) VALUES (?, ?)";
 
-        // Sử dụng try-with-resources để tự động đóng kết nối sau khi hoàn tất Transaction
+        // Sử dụng try-with-resources để tự động đóng kết nối sau khi hoàn tất
+        // Transaction
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false); // Vô hiệu hóa chế độ tự động commit để bắt đầu Transaction thủ công
 
@@ -150,19 +152,20 @@ public class AppointmentDAO {
 
     /**
      * Phương thức lấy thông tin chi tiết của một cuộc hẹn theo mã ID.
+     * 
      * @param appointmentId Mã cuộc hẹn
      * @return Đối tượng Appointment kèm tên bệnh nhân, số điện thoại và tên bác sĩ
      */
     public Appointment getAppointmentById(int appointmentId) {
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a "
-                   + "LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE a.appointment_id = ?";
+                + "FROM appointments a "
+                + "LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE a.appointment_id = ?";
 
         // Sử dụng try-with-resources đóng tài nguyên tự động
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh tìm kiếm theo ID
+                PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị câu lệnh tìm kiếm theo ID
 
             ps.setInt(1, appointmentId);
 
@@ -182,24 +185,25 @@ public class AppointmentDAO {
 
     /**
      * Phương thức lấy danh sách lịch hẹn của một bệnh nhân có phân trang.
+     * 
      * @param patientId Mã bệnh nhân
-     * @param offset Số bản ghi bỏ qua
-     * @param limit Số bản ghi tối đa
+     * @param offset    Số bản ghi bỏ qua
+     * @param limit     Số bản ghi tối đa
      * @return Danh sách lịch hẹn
      */
     public List<Appointment> getAppointmentsByPatient(int patientId, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a "
-                   + "LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE a.patient_id = ? "
-                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC "
-                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                + "FROM appointments a "
+                + "LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE a.patient_id = ? "
+                + "ORDER BY a.appointment_date DESC, a.appointment_time DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         // Sử dụng try-with-resources đóng Connection và PreparedStatement
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị truy vấn phân trang
+                PreparedStatement ps = conn.prepareStatement(sql)) { // Chuẩn bị truy vấn phân trang
 
             ps.setInt(1, patientId);
             ps.setInt(2, offset);
@@ -218,65 +222,72 @@ public class AppointmentDAO {
 
         return list;
     }
+
     public List<Appointment> getUpcomingRevisitsByPatient(int patientId, Date fromDate) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE a.patient_id = ? AND a.revisit_date >= ? "
-                   + "ORDER BY a.revisit_date ASC, a.appointment_time ASC";
+                + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE a.patient_id = ? AND a.revisit_date >= ? "
+                + "ORDER BY a.revisit_date ASC, a.appointment_time ASC";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             ps.setDate(2, fromDate);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+                while (rs.next())
+                    list.add(mapResultSetToAppointment(rs));
             }
         } catch (ClassNotFoundException | SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
     }
+
     public List<Appointment> getCompletedAppointmentsByPatient(int patientId) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE a.patient_id = ? AND a.status = 'Completed' "
-                   + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
-                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+                + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE a.patient_id = ? AND a.status = 'Completed' "
+                + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
+                + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+                while (rs.next())
+                    list.add(mapResultSetToAppointment(rs));
             }
         } catch (ClassNotFoundException | SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
     }
+
     public List<Appointment> getCompletedAppointmentsForDoctorPatient(int doctorId, int patientId) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE a.patient_id = ? AND EXISTS (SELECT 1 FROM appointments access "
-                   + "WHERE access.patient_id = a.patient_id AND access.doctor_id = ?) AND a.status = 'Completed' "
-                   + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
-                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+                + "FROM appointments a LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE a.patient_id = ? AND EXISTS (SELECT 1 FROM appointments access "
+                + "WHERE access.patient_id = a.patient_id AND access.doctor_id = ?) AND a.status = 'Completed' "
+                + "AND EXISTS (SELECT 1 FROM examination_results er WHERE er.appointment_id = a.appointment_id) "
+                + "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, patientId);
             ps.setInt(2, doctorId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapResultSetToAppointment(rs));
+                while (rs.next())
+                    list.add(mapResultSetToAppointment(rs));
             }
         } catch (ClassNotFoundException | SQLException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return list;
     }
+
     public boolean isAppointmentAssignedToDoctor(int appointmentId, int doctorId, Connection conn) {
         String sql = "SELECT 1 FROM appointments WITH (UPDLOCK, HOLDLOCK) "
-                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
+                + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointmentId);
             ps.setInt(2, doctorId);
@@ -288,9 +299,11 @@ public class AppointmentDAO {
             return false;
         }
     }
-    public boolean updateRevisitInfo(int appointmentId, int doctorId, Date revisitDate, String revisitNote, Connection conn) {
+
+    public boolean updateRevisitInfo(int appointmentId, int doctorId, Date revisitDate, String revisitNote,
+            Connection conn) {
         String sql = "UPDATE appointments SET revisit_date = ?, revisit_note = ? "
-                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
+                + "WHERE appointment_id = ? AND doctor_id = ? AND status = 'Checked In'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1, revisitDate);
             ps.setString(2, revisitNote);
@@ -305,6 +318,7 @@ public class AppointmentDAO {
 
     /**
      * Phương thức đếm tổng số cuộc hẹn của một bệnh nhân.
+     * 
      * @param patientId Mã bệnh nhân
      * @return Tổng số cuộc hẹn
      */
@@ -313,7 +327,7 @@ public class AppointmentDAO {
 
         // Sử dụng try-with-resources để tự động giải phóng kết nối
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, patientId);
 
@@ -331,27 +345,29 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức lấy danh sách lịch hẹn phân công cho bác sĩ theo ngày (tùy chọn) có phân trang.
+     * Phương thức lấy danh sách lịch hẹn phân công cho bác sĩ theo ngày (tùy chọn)
+     * có phân trang.
+     * 
      * @param doctorId Mã bác sĩ
-     * @param date Ngày hẹn (nếu null thì lấy toàn bộ)
-     * @param offset Số bản ghi bỏ qua
-     * @param limit Số bản ghi tối đa
+     * @param date     Ngày hẹn (nếu null thì lấy toàn bộ)
+     * @param offset   Số bản ghi bỏ qua
+     * @param limit    Số bản ghi tối đa
      * @return Danh sách lịch hẹn phân công
      */
     public List<Appointment> getAppointmentsByDoctor(int doctorId, Date date, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name, er.result_id AS result_id "
-                   + "FROM appointments a "
-                   + "LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "LEFT JOIN examination_results er ON a.appointment_id = er.appointment_id "
-                   + "WHERE a.doctor_id = ? AND (? IS NULL OR a.appointment_date = ?) "
-                   + "ORDER BY a.appointment_date ASC, a.appointment_time ASC "
-                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                + "FROM appointments a "
+                + "LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "LEFT JOIN examination_results er ON a.appointment_id = er.appointment_id "
+                + "WHERE a.doctor_id = ? AND (? IS NULL OR a.appointment_date = ?) "
+                + "ORDER BY a.appointment_date ASC, a.appointment_time ASC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         // Sử dụng try-with-resources đóng tài nguyên sau truy vấn
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, doctorId);
             ps.setDate(2, date);
@@ -374,8 +390,9 @@ public class AppointmentDAO {
 
     /**
      * Phương thức đếm tổng số lịch hẹn phân công cho bác sĩ theo ngày.
+     * 
      * @param doctorId Mã bác sĩ
-     * @param date Ngày hẹn
+     * @param date     Ngày hẹn
      * @return Số lượng cuộc hẹn
      */
     public int countAppointmentsByDoctor(int doctorId, Date date) {
@@ -383,7 +400,7 @@ public class AppointmentDAO {
 
         // Sử dụng try-with-resources đóng tài nguyên tự động
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, doctorId);
             ps.setDate(2, date);
@@ -403,27 +420,29 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức lấy danh sách lịch hẹn chung có lọc theo trạng thái và ngày phục vụ quản trị viên/lễ tân.
+     * Phương thức lấy danh sách lịch hẹn chung có lọc theo trạng thái và ngày phục
+     * vụ quản trị viên/lễ tân.
+     * 
      * @param status Trạng thái lọc (nếu null/rỗng thì lấy tất cả)
-     * @param date Ngày lọc (nếu null thì lấy tất cả)
+     * @param date   Ngày lọc (nếu null thì lấy tất cả)
      * @param offset Số bản ghi bỏ qua
-     * @param limit Số bản ghi tối đa
+     * @param limit  Số bản ghi tối đa
      * @return Danh sách lịch hẹn phù hợp
      */
     public List<Appointment> getAllAppointmentsWithPagination(String status, Date date, int offset, int limit) {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.*, p.full_name AS patient_name, p.phone AS patient_phone, d.full_name AS doctor_name "
-                   + "FROM appointments a "
-                   + "LEFT JOIN users p ON a.patient_id = p.user_id "
-                   + "LEFT JOIN users d ON a.doctor_id = d.user_id "
-                   + "WHERE (? IS NULL OR ? = '' OR a.status = ?) "
-                   + "  AND (? IS NULL OR a.appointment_date = ?) "
-                   + "ORDER BY a.appointment_date DESC, a.appointment_time DESC "
-                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                + "FROM appointments a "
+                + "LEFT JOIN users p ON a.patient_id = p.user_id "
+                + "LEFT JOIN users d ON a.doctor_id = d.user_id "
+                + "WHERE (? IS NULL OR ? = '' OR a.status = ?) "
+                + "  AND (? IS NULL OR a.appointment_date = ?) "
+                + "ORDER BY a.appointment_date DESC, a.appointment_time DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         // Sử dụng try-with-resources đóng tài nguyên an toàn
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);
             ps.setString(2, status);
@@ -448,18 +467,19 @@ public class AppointmentDAO {
 
     /**
      * Phương thức đếm tổng số lịch hẹn theo tiêu chí lọc trạng thái và ngày.
+     * 
      * @param status Trạng thái
-     * @param date Ngày
+     * @param date   Ngày
      * @return Tổng số lượng bản ghi
      */
     public int countAllAppointments(String status, Date date) {
         String sql = "SELECT COUNT(*) FROM appointments "
-                   + "WHERE (? IS NULL OR ? = '' OR status = ?) "
-                   + "  AND (? IS NULL OR appointment_date = ?)";
+                + "WHERE (? IS NULL OR ? = '' OR status = ?) "
+                + "  AND (? IS NULL OR appointment_date = ?)";
 
         // Sử dụng try-with-resources đóng tài nguyên tự động
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);
             ps.setString(2, status);
@@ -482,8 +502,9 @@ public class AppointmentDAO {
 
     /**
      * Phương thức cập nhật trạng thái lịch hẹn.
+     * 
      * @param appointmentId Mã lịch hẹn
-     * @param status Trạng thái mới
+     * @param status        Trạng thái mới
      * @return true nếu cập nhật thành công
      */
     public boolean updateAppointmentStatus(int appointmentId, String status) {
@@ -491,7 +512,7 @@ public class AppointmentDAO {
 
         // Sử dụng try-with-resources đóng kết nối
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);
             ps.setInt(2, appointmentId);
@@ -504,6 +525,7 @@ public class AppointmentDAO {
 
         return false;
     }
+
     public boolean updateAppointmentStatusIfCurrent(int appointmentId, String currentStatus, String targetStatus) {
         String sql = "UPDATE appointments SET status = ? WHERE appointment_id = ? AND status = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -516,10 +538,11 @@ public class AppointmentDAO {
             return false;
         }
     }
+
     public boolean cancelAppointmentForPatient(int appointmentId, int patientId) {
         String sql = "UPDATE appointments SET status = 'Cancelled' "
-                   + "WHERE appointment_id = ? AND patient_id = ? "
-                   + "AND status IN ('Pending', 'Confirmed')";
+                + "WHERE appointment_id = ? AND patient_id = ? "
+                + "AND status IN ('Pending', 'Confirmed')";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, appointmentId);
             ps.setInt(2, patientId);
@@ -529,7 +552,9 @@ public class AppointmentDAO {
             return false;
         }
     }
-    public boolean checkInAppointmentIfCurrent(int appointmentId, String currentStatus, String room, String targetStatus) {
+
+    public boolean checkInAppointmentIfCurrent(int appointmentId, String currentStatus, String room,
+            String targetStatus) {
         String sql = "UPDATE appointments SET room = ?, status = ? WHERE appointment_id = ? AND status = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, room);
@@ -542,7 +567,9 @@ public class AppointmentDAO {
             return false;
         }
     }
-    public boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus, String targetStatus) {
+
+    public boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus,
+            String targetStatus) {
         try (Connection conn = DBConnection.getConnection()) {
             return completeAppointmentForDoctorIfCurrent(appointmentId, doctorId, currentStatus, targetStatus, conn);
         } catch (ClassNotFoundException | SQLException e) {
@@ -551,9 +578,10 @@ public class AppointmentDAO {
         }
     }
 
-    public boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus, String targetStatus, Connection conn) throws SQLException {
+    public boolean completeAppointmentForDoctorIfCurrent(int appointmentId, int doctorId, String currentStatus,
+            String targetStatus, Connection conn) throws SQLException {
         String sql = "UPDATE appointments SET status = ? "
-                   + "WHERE appointment_id = ? AND doctor_id = ? AND status = ?";
+                + "WHERE appointment_id = ? AND doctor_id = ? AND status = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, targetStatus);
             ps.setInt(2, appointmentId);
@@ -564,9 +592,11 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức cập nhật phòng khám cho lịch hẹn khi bệnh nhân làm thủ tục tiếp đón.
+     * Phương thức cập nhật phòng khám cho lịch hẹn khi bệnh nhân làm thủ tục tiếp
+     * đón.
+     * 
      * @param appointmentId Mã lịch hẹn
-     * @param room Tên phòng khám
+     * @param room          Tên phòng khám
      * @return true nếu cập nhật thành công
      */
     public boolean updateAppointmentRoom(int appointmentId, String room) {
@@ -574,7 +604,7 @@ public class AppointmentDAO {
 
         // Sử dụng try-with-resources đóng kết nối
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, room);
             ps.setInt(2, appointmentId);
@@ -589,7 +619,9 @@ public class AppointmentDAO {
     }
 
     /**
-     * Phương thức thống kê doanh thu tổng hợp của phòng khám theo từng tháng trong năm phục vụ biểu đồ Chart.js.
+     * Phương thức thống kê doanh thu tổng hợp của phòng khám theo từng tháng trong
+     * năm phục vụ biểu đồ Chart.js.
+     * 
      * @param year Năm cần thống kê
      * @return Danh sách 12 đối tượng RevenueDTO tương ứng 12 tháng
      */
@@ -602,19 +634,20 @@ public class AppointmentDAO {
             result.add(new RevenueDTO(year, m, label, BigDecimal.ZERO, 0));
         }
 
-        // Truy vấn tính tổng tiền dịch vụ đã thực hiện từ các cuộc hẹn hoàn tất (Completed)
+        // Truy vấn tính tổng tiền dịch vụ đã thực hiện từ các cuộc hẹn hoàn tất
+        // (Completed)
         String sql = "SELECT MONTH(a.appointment_date) AS [month], "
-                   + "       COUNT(DISTINCT a.appointment_id) AS total_appointments, "
-                   + "       ISNULL(SUM(s.price), 0) AS total_revenue "
-                   + "FROM appointments a "
-                   + "LEFT JOIN appointment_services asv ON a.appointment_id = asv.appointment_id "
-                   + "LEFT JOIN services s ON asv.service_id = s.service_id "
-                   + "WHERE YEAR(a.appointment_date) = ? AND a.status = 'Completed' "
-                   + "GROUP BY MONTH(a.appointment_date)";
+                + "       COUNT(DISTINCT a.appointment_id) AS total_appointments, "
+                + "       ISNULL(SUM(s.price), 0) AS total_revenue "
+                + "FROM appointments a "
+                + "LEFT JOIN appointment_services asv ON a.appointment_id = asv.appointment_id "
+                + "LEFT JOIN services s ON asv.service_id = s.service_id "
+                + "WHERE YEAR(a.appointment_date) = ? AND a.status = 'Completed' "
+                + "GROUP BY MONTH(a.appointment_date)";
 
         // Sử dụng try-with-resources để tự động giải phóng tài nguyên
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, year);
 
@@ -642,6 +675,7 @@ public class AppointmentDAO {
 
     /**
      * Phương thức phụ trợ ánh xạ một dòng ResultSet sang đối tượng Appointment.
+     * 
      * @param rs Tập kết quả ResultSet
      * @return Đối tượng Appointment
      * @throws SQLException khi trích xuất cột gặp lỗi
@@ -670,7 +704,8 @@ public class AppointmentDAO {
         try {
             app.setRevisitDate(rs.getDate("revisit_date"));
             app.setRevisitNote(rs.getString("revisit_note"));
-        } catch (SQLException ignored) { /* bang cu chua co cot revisit */ }
+        } catch (SQLException ignored) {
+            /* bang cu chua co cot revisit */ }
 
         try {
             app.setPatientName(rs.getString("patient_name"));
@@ -695,15 +730,16 @@ public class AppointmentDAO {
     }
 
     /**
-     * Lấy danh sách các khung giờ đã được đặt của bác sĩ trong ngày cụ thể (trạng thái khác Cancelled).
+     * Lấy danh sách các khung giờ đã được đặt của bác sĩ trong ngày cụ thể (trạng
+     * thái khác Cancelled).
      */
     public List<String> getBookedTimeSlots(int doctorId, Date date) {
         List<String> slots = new ArrayList<>();
         String sql = "SELECT appointment_time FROM appointments "
-                   + "WHERE doctor_id = ? AND appointment_date = ? AND status <> 'Cancelled'";
+                + "WHERE doctor_id = ? AND appointment_date = ? AND status <> 'Cancelled'";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, doctorId);
             ps.setDate(2, date);
